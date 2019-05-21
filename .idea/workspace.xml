@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f35422d8-84b1-4df0-ad00-23595e7d376f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/litewallet/eth/getAccount.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/eth/getAccount.go" afterDir="false" />
-    </list>
+    <list default="true" id="f35422d8-84b1-4df0-ad00-23595e7d376f" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,8 +43,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/litewallet/eth/getAccount.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="11" column="1" lean-forward="true" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+            <state relative-caret-position="462">
+              <caret line="14" column="34" lean-forward="true" selection-start-line="14" selection-start-column="34" selection-end-line="14" selection-end-column="34" />
               <folding>
                 <element signature="e#13#277#0" expanded="true" />
               </folding>
@@ -73,7 +71,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="260" />
     <option name="y" value="48" />
     <option name="width" value="1400" />
@@ -163,8 +161,16 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="TestHistory">
+    <history-entry file="TestEncrypt_in_github_com_litewallet_litewallet_slim - 2019.05.21 at 19h 34m 46s.xml">
+      <configuration name="TestEncrypt in github.com/litewallet/litewallet/slim" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestCreateAccount_in_github_com_litewallet_litewallet_eth - 2019.05.21 at 19h 35m 45s.xml">
+      <configuration name="TestCreateAccount in github.com/litewallet/litewallet/eth" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1050" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
@@ -218,8 +224,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/litewallet/eth/getAccount.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="11" column="1" lean-forward="true" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+        <state relative-caret-position="462">
+          <caret line="14" column="34" lean-forward="true" selection-start-line="14" selection-start-column="34" selection-end-line="14" selection-end-column="34" />
           <folding>
             <element signature="e#13#277#0" expanded="true" />
           </folding>
