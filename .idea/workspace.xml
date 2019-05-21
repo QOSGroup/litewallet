@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GOROOT" path="C:\Go" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="260" />
+    <option name="y" value="48" />
+    <option name="width" value="1400" />
+    <option name="height" value="978" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunManager" selected="Go Test.TestCreateAccount in github.com/litewallet/litewallet/eth">
+    <configuration name="TestCreateAccount in github.com/litewallet/litewallet/eth" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="litewallet" />
+      <working_directory value="$PROJECT_DIR$/litewallet/eth" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/litewallet/litewallet/eth" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestCreateAccount$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestEncrypt in github.com/litewallet/litewallet/slim" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="litewallet" />
+      <working_directory value="$PROJECT_DIR$/litewallet/slim" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/litewallet/litewallet/slim" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestEncrypt$" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Test.TestEncrypt in github.com/litewallet/litewallet/slim" />
+      <item itemvalue="Go Test.TestCreateAccount in github.com/litewallet/litewallet/eth" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.TestCreateAccount in github.com/litewallet/litewallet/eth" />
+        <item itemvalue="Go Test.TestEncrypt in github.com/litewallet/litewallet/slim" />
+      </list>
+    </recent_temporary>
+  </component>
+</project>
