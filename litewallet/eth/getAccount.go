@@ -2,10 +2,10 @@ package eth
 
 import (
 	"context"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/eth/contracts_erc20"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/litewallet/litewallet/eth/contracts_erc20"
 	"log"
 	"math"
 	"math/big"
