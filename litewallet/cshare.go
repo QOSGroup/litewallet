@@ -4,9 +4,9 @@ import "C"
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/eth"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/sdksource"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim"
+	"github.com/QOSGroup/litewallet/litewallet/eth"
+	"github.com/QOSGroup/litewallet/litewallet/sdksource"
+	"github.com/QOSGroup/litewallet/litewallet/slim"
 	"strings"
 )
 
