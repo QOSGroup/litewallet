@@ -1,6 +1,5 @@
-package cosmoswallet
+package litewallet
 
-import "C"
 import (
 	"encoding/json"
 	"fmt"
@@ -17,104 +16,110 @@ func CreateSeed() string {
 	return output
 }
 
+//WalletAddressCheck for different chains
+func WalletAddressCheck(addr string) string {
+	output := sdksource.WalletAddressCheck(addr)
+	return output
+}
+
 //create account
-func CreateAccount(rootDir, name, password, seed string) string {
+func CosmosCreateAccount(rootDir, name, password, seed string) string {
 	output := sdksource.CreateAccount(rootDir,name, password, seed)
 	return output
 }
 
 
 //recover key
-func RecoverKey(rootDir, name,password,seed string) string {
+func CosmosRecoverKey(rootDir, name,password,seed string) string {
 	output := sdksource.RecoverKey(rootDir, name, password, seed)
 	return output
 }
 
 //update password
-func UpdateKey(rootDir, name, oldpass, newpass string) string {
+func CosmosUpdateKey(rootDir, name, oldpass, newpass string) string {
 	output := sdksource.UpdateKey(rootDir, name, oldpass, newpass)
 	return output
 }
 
 //get account info
-func GetAccount(rootDir,node,chainID,addr string) string {
+func CosmosGetAccount(rootDir,node,chainID,addr string) string {
 	output := sdksource.GetAccount(rootDir,node,chainID,addr)
 	return output
 }
 
 
 //transfer
-func Transfer(rootDir,node,chainId,fromName,password,toStr,coinStr,feeStr, broadcastMode string) string  {
+func CosmosTransfer(rootDir,node,chainId,fromName,password,toStr,coinStr,feeStr, broadcastMode string) string  {
 	output := sdksource.Transfer(rootDir,node,chainId,fromName,password,toStr,coinStr,feeStr,broadcastMode)
 	return output
 }
 
 //delegate
-func Delegate(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, delegationCoinStr, feeStr, broadcastMode string) string {
+func CosmosDelegate(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, delegationCoinStr, feeStr, broadcastMode string) string {
 	output := sdksource.Delegate(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, delegationCoinStr, feeStr, broadcastMode)
 	return output
 }
 
 //get a specific delegation shares
-func GetDelegationShares(rootDir, node, chainID, delegatorAddr, validatorAddr string) string {
+func CosmosGetDelegationShares(rootDir, node, chainID, delegatorAddr, validatorAddr string) string {
 	output := sdksource.GetDelegationShares(rootDir, node, chainID, delegatorAddr, validatorAddr)
 	return output
 }
 
 //for unbond delegation shares from specific validator
-func UnbondingDelegation(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, Ubdshares,feeStr, broadcastMode string) string {
+func CosmosUnbondingDelegation(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, Ubdshares,feeStr, broadcastMode string) string {
 	output := sdksource.UnbondingDelegation(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, Ubdshares,feeStr, broadcastMode)
 	return output
 }
 
 //get all unbonding delegations from a specific delegator
-func GetAllUnbondingDelegations (rootDir, node, chainID, delegatorAddr string) string {
+func CosmosGetAllUnbondingDelegations (rootDir, node, chainID, delegatorAddr string) string {
 	output := sdksource.GetAllUnbondingDelegations(rootDir, node, chainID, delegatorAddr)
 	return output
 }
 
 //Get bonded validators
-func GetBondValidators(rootDir, node, chainID, delegatorAddr string) string {
+func CosmosGetBondValidators(rootDir, node, chainID, delegatorAddr string) string {
 	output := sdksource.GetBondValidators(rootDir, node, chainID, delegatorAddr)
 	return output
 }
 
 //get all the validators
-func GetAllValidators(rootDir, node, chainID string) string {
+func CosmosGetAllValidators(rootDir, node, chainID string) string {
 	output := sdksource.GetAllValidators(rootDir, node, chainID)
 	return output
 }
 
 //get all delegations from the delegator
-func GetAllDelegations(rootDir, node, chainID, delegatorAddr string) string {
+func CosmosGetAllDelegations(rootDir, node, chainID, delegatorAddr string) string {
 	output := sdksource.GetAllDelegations(rootDir, node, chainID, delegatorAddr)
 	return output
 }
 
 //Withdraw rewards from a specific validator
-func WithdrawDelegationReward(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, feeStr, broadcastMode string) string {
+func CosmosWithdrawDelegationReward(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, feeStr, broadcastMode string) string {
 	output := sdksource.WithdrawDelegationReward(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr, feeStr, broadcastMode)
 	return output
 }
 
 //get a delegation reward between delegator and validator
-func GetDelegationRewards(rootDir, node, chainID, delegatorAddr, validatorAddr string) string {
+func CosmosGetDelegationRewards(rootDir, node, chainID, delegatorAddr, validatorAddr string) string {
 	output := sdksource.GetDelegationRewards(rootDir, node, chainID, delegatorAddr, validatorAddr)
 	return output
 }
 
 //query the tx result by txHash generated via async broadcast
-func QueryTx(rootDir,node,chainId,txHash string) string {
+func CosmosQueryTx(rootDir,node,chainId,txHash string) string {
 	output := sdksource.QueryTx(rootDir,node,chainId,txHash)
 	return output
 }
 
-func GetValSelfBondShares (rootDir, node, chainID, validatorAddr string) string {
+func CosmosGetValSelfBondShares (rootDir, node, chainID, validatorAddr string) string {
 	output := sdksource.GetValSelfBondShares(rootDir, node, chainID, validatorAddr)
 	return output
 }
 
-func GetDelegtorRewardsShares(rootDir,node,chainId,delegatorAddr string) string {
+func CosmosGetDelegtorRewardsShares(rootDir,node,chainId,delegatorAddr string) string {
 	output := sdksource.GetDelegtorRewardsShares(rootDir,node,chainId,delegatorAddr)
 	return output
 }
@@ -204,36 +209,36 @@ func QOSTransferRecordsQuery(chainid, addr, cointype, offset, limit string) stri
 	return output
 }
 
-func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr string) string {
+func CosmosTransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr string) string {
 	output := sdksource.TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr)
 	return output
 }
 
-func BroadcastTransferTx(rootDir, node, chainID, txString, broadcastMode string) string {
+func CosmosBroadcastTransferTx(rootDir, node, chainID, txString, broadcastMode string) string {
 	output := sdksource.BroadcastTransferTx(rootDir, node, chainID, txString, broadcastMode)
 	return output
 }
 
 //for AdvertisersTrue
-func AdvertisersTrue( privatekey,  coinsType, coinAmount,qscchainid string) string {
+func QOSAdvertisersTrue( privatekey,  coinsType, coinAmount,qscchainid string) string {
 	output := slim.AdvertisersTrue( privatekey,  coinsType, coinAmount,qscchainid )
 	return output
 }
 
 //for AdvertisersFalse
-func AdvertisersFalse( privatekey,  coinsType, coinAmount,qscchainid string) string {
+func QOSAdvertisersFalse( privatekey,  coinsType, coinAmount,qscchainid string) string {
 	output := slim.AdvertisersFalse( privatekey,  coinsType, coinAmount,qscchainid )
 	return output
 }
 
 //for GetTx
-func GetTx(tx string)string{
+func QOSGetTx(tx string)string{
 	output := slim.GetTx( tx )
 	return output
 }
 
 
-func GetBlance(addrs string)string{
+func QOSGetBlance(addrs string)string{
 	path := fmt.Sprintf("/store/%s/%s", "aoeaccount", "key")
 	output,_ := slim.Query(path,[]byte(addrs))
 	var basecoin *slim.BaseCoins
@@ -244,8 +249,8 @@ func GetBlance(addrs string)string{
 }
 
 
-func GetBlanceByCointype(addrs ,cointype string)string{
-	result:=GetBlance(addrs)
+func QOSGetBlanceByCointype(addrs ,cointype string)string{
+	result:=QOSGetBlance(addrs)
     var qsc slim.QSCs
 	json.Unmarshal([]byte(result),&qsc)
 	for _,v:=range qsc{
@@ -262,62 +267,55 @@ func GetBlanceByCointype(addrs ,cointype string)string{
 //coinsType              //竞拍币种
 //coinAmount             //竞拍数量
 //qscchainid             //chainid
-func AcutionAd( articleHash, privatekey,  coinsType, coinAmount,qscchainid string) string {
+func QOSAcutionAd( articleHash, privatekey,  coinsType, coinAmount,qscchainid string) string {
 	output := slim.AcutionAd( articleHash, privatekey,  coinsType, coinAmount,qscchainid)
 	return output
 }
 
 
 //for Extract
-func Extract( privatekey,  coinsType, coinAmount,qscchainid string) string {
+func QOSExtract( privatekey,  coinsType, coinAmount,qscchainid string) string {
 	output := slim.Extract( privatekey,  coinsType, coinAmount,qscchainid )
 	return output
 }
 
 // 提交到联盟链上
-func BroadcastTransferTxToQSC(txstring,broadcastModes string) string {
+func QOSBroadcastTransferTxToQSC(txstring,broadcastModes string) string {
 	return slim.BroadcastTransferTxToQSC(txstring,broadcastModes)
 }
 
-//WalletAddressCheck for different chains
-func WalletAddressCheck(addr string) string {
-	output := sdksource.WalletAddressCheck(addr)
-	return output
-}
-
-
-func CommHandler(funcName, privatekey, args,qscchainid string) string {
+func QOSCommHandler(funcName, privatekey, args,qscchainid string) string {
 	output:= slim.CommHandler(funcName, privatekey, args,qscchainid)
 	return output
 }
 
 //From here, Eth wallet part start
-func CreateETHAccount(rootDir, name, password, seed string) string {
+func EthCreateAccount(rootDir, name, password, seed string) string {
 	output := eth.CreateAccount(rootDir,name, password, seed)
 	return output
 }
 
-func RecoverETHAccount(rootDir, name, password, seed string) string {
+func EthRecoverAccount(rootDir, name, password, seed string) string {
 	output := eth.RecoverAccount(rootDir,name, password, seed)
 	return output
 }
 
-func GetETHAccount(node,addr string) string {
+func EthGetAccount(node,addr string) string {
 	output := eth.GetAccount(node,addr)
 	return output
 }
 
-func GetErc20Account(node, addr, tokenAddr string) string {
+func EthGetErc20Account(node, addr, tokenAddr string) string {
 	output := eth.GetAccountERC20(node, addr, tokenAddr)
 	return output
 }
 
-func TransferETH(rootDir, node, name, password, toAddr string, amount int64, gasLimit uint64) string {
+func EthTransferETH(rootDir, node, name, password, toAddr string, amount int64, gasLimit uint64) string {
 	output := eth.TransferETH(rootDir,node,name,password,toAddr,amount,gasLimit)
 	return output
 }
 
-func TransferErc20(rootDir, node, name, password, toAddr, tokenAddr string, gasLimit uint64) string {
+func EthTransferErc20(rootDir, node, name, password, toAddr, tokenAddr string, gasLimit uint64) string {
 	output := eth.TransferERC20(rootDir,node,name,password,toAddr,tokenAddr,gasLimit)
 	return output
 }

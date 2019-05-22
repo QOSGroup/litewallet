@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f35422d8-84b1-4df0-ad00-23595e7d376f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/litewallet/slim/aes.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/slim/aes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/litewallet/slim/basic.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/slim/basic.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/litewallet/slim/gobuild/origin.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/litewallet/slim/interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/slim/interface.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/litewallet/slim/qscclientsdk.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/slim/qscclientsdk.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/litewallet/slim/starsdkapp/starsdkapp.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/litewallet/slim/wire.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/slim/wire.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/litewallet/cshare.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/cshare.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -58,12 +52,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="go" value="10" />
+          <entry key="go" value="70" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Go" value="10" />
+          <entry key="Go" value="70" />
         </counts>
       </usages-collector>
     </session>
@@ -73,8 +67,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/litewallet/cshare.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="4" column="19" lean-forward="true" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+            <state relative-caret-position="-8527">
+              <caret line="44" column="8" lean-forward="true" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="8" />
+              <folding>
+                <element signature="e#23#222#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -166,13 +163,13 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/litewallet/eth/getAccount.go" />
-        <option value="$PROJECT_DIR$/litewallet/cshare.go" />
         <option value="$PROJECT_DIR$/litewallet/slim/starsdkapp/starsdkapp.go" />
         <option value="$PROJECT_DIR$/litewallet/slim/aes.go" />
         <option value="$PROJECT_DIR$/litewallet/slim/basic.go" />
         <option value="$PROJECT_DIR$/litewallet/slim/interface.go" />
         <option value="$PROJECT_DIR$/litewallet/slim/qscclientsdk.go" />
         <option value="$PROJECT_DIR$/litewallet/slim/wire.go" />
+        <option value="$PROJECT_DIR$/litewallet/cshare.go" />
       </list>
     </option>
   </component>
@@ -276,6 +273,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19667739" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -434,8 +432,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/litewallet/cshare.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="4" column="19" lean-forward="true" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+        <state relative-caret-position="-8527">
+          <caret line="44" column="8" lean-forward="true" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="8" />
+          <folding>
+            <element signature="e#23#222#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
