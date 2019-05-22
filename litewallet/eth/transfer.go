@@ -11,9 +11,10 @@ import (
 	"golang.org/x/crypto/sha3"
 	"log"
 	"math/big"
+	"strconv"
 )
 
-func TransferETH(rootDir, node, fromName, password, toAddr string, amount int64, gasLimit uint64) string {
+func TransferETH(rootDir, node, fromName, password, toAddr string, amount, GasLimit int64) string {
 	//fromName generated from keyspace locally
 	if fromName == "" {
 		fmt.Println("no fromName input!")
@@ -55,7 +56,7 @@ func TransferETH(rootDir, node, fromName, password, toAddr string, amount int64,
 	//concert the to Address to byte format
 	toAddress := common.HexToAddress(toAddr)
 
-
+	gasLimit := uint64(GasLimit)
 	//Generate the Tx body, the data field is nil for just sending ETH
 	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, nil)
 
@@ -81,7 +82,7 @@ func TransferETH(rootDir, node, fromName, password, toAddr string, amount int64,
 }
 
 //Transfer with ERC20 token
-func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr string, gasLimit uint64) string {
+func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenValue string, GasLimit int64) string {
 	//setup the client, here use the infura own project "eth_wallet" node="https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
 	client, err := ethclient.Dial(node)
 	if err != nil {
@@ -126,9 +127,17 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr string, 
 	methodID := hash.Sum(nil)[:4]
 	paddedAddress := common.LeftPadBytes(toAddress.Bytes(), 32)
 
+	//convert the tokenValue to wei in ERC20
+	vamount, err := strconv.ParseFloat(tokenValue,32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	vwei := vamount*1000000000000000000
+	vstring := strconv.FormatFloat(vwei, 'E', -1, 32)
+
 	Tamount := new(big.Int)
 	//1000 token to transfer
-	Tamount.SetString("1000000000000000000000",10)
+	Tamount.SetString(vstring,10)
 
 	paddedAmount := common.LeftPadBytes(Tamount.Bytes(), 32)
 
@@ -146,6 +155,7 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr string, 
 	//}
 
 	//create a transaction
+	gasLimit := uint64(GasLimit)
 	tx := types.NewTransaction(nonce, tokenAddress, value, gasLimit, gasPrice, data)
 	chainID, err := client.NetworkID(context.Background())
 	if err != nil {
