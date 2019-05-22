@@ -3,8 +3,8 @@ package slim
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/bech32local"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/ed25519local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
 	"log"
 
 )

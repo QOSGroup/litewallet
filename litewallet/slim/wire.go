@@ -1,7 +1,7 @@
 package slim
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/ed25519local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
 	"github.com/tendermint/go-amino"
 )
 

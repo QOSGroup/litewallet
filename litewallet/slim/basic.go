@@ -2,10 +2,10 @@ package slim
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/bech32local"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/bip39local"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/ed25519local"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/respwrap"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bip39local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/respwrap"
 	"github.com/pkg/errors"
 	"log"
 )

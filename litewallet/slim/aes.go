@@ -6,7 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/respwrap"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/respwrap"
 	"github.com/pkg/errors"
 	"io"
 )
