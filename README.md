@@ -82,9 +82,9 @@ It could be git cloned and downloaded to your local repo at first via:
  ```
  git clone https://github.com/QOSGroup/litewallet.git
  ```
-The source code is under the folder `qstars/stub/ios/` with name of `starsdk.go`
+The source code is under the folder `litewallet/` with name of `cshare.go`
 
-Note: It is importtant to fetch the repository and corresponding packages this project, i.e. `qstars` depends. Otherwise, the gomobile would encounter buid failure.
+Note: It is important to fetch the repository and corresponding packages this project, i.e. `litewallet` depends. Otherwise, the gomobile would encounter buid failure.
 
 
 ## Building and import to Java/Objective-C/Swift
