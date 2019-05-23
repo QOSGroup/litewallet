@@ -77,7 +77,7 @@ panic: unsupported basic seqType: uint64
 It’s obvious that the set of supported types is very limited, but this is enough for the SDK implementation.
 
 ## Fetch the source Go code from Github repository
-The source code is based on Golang and the repository for the project is <https://github.com/QOSGroup/qstars>. 
+The source code is based on Golang and the repository for the project is <https://github.com/QOSGroup/litewallet.git>. 
 It could be git cloned and downloaded to your local repo at first via:
  ```
  git clone https://github.com/QOSGroup/litewallet.git
