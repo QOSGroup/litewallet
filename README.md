@@ -80,7 +80,7 @@ It’s obvious that the set of supported types is very limited, but this is enou
 The source code is based on Golang and the repository for the project is <https://github.com/QOSGroup/qstars>. 
 It could be git cloned and downloaded to your local repo at first via:
  ```
- git clone https://github.com/QOSGroup/qstars.git
+ git clone https://github.com/QOSGroup/litewallet.git
  ```
 The source code is under the folder `qstars/stub/ios/` with name of `starsdk.go`
 
