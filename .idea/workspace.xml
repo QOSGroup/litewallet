@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f35422d8-84b1-4df0-ad00-23595e7d376f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/litewallet/eth/rpc_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/eth/rpc_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/litewallet/eth/transfer.go" beforeDir="false" afterPath="$PROJECT_DIR$/litewallet/eth/transfer.go" afterDir="false" />
-    </list>
+    <list default="true" id="f35422d8-84b1-4df0-ad00-23595e7d376f" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="FUSProjectUsageTrigger">
     <session id="1032364763">
@@ -43,22 +54,22 @@
     <session id="1234263852">
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="go" value="24" />
+          <entry key="go" value="25" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Go" value="24" />
+          <entry key="Go" value="25" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="go" value="222" />
+          <entry key="go" value="224" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Go" value="222" />
+          <entry key="Go" value="224" />
         </counts>
       </usages-collector>
     </session>
@@ -80,8 +91,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/litewallet/cshare.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="313" column="27" selection-start-line="313" selection-start-column="18" selection-end-line="313" selection-end-column="29" />
+            <state relative-caret-position="1883">
+              <caret line="320" column="1" selection-start-line="320" selection-start-column="1" selection-end-line="320" selection-end-column="1" />
               <folding>
                 <element signature="e#23#222#0" expanded="true" />
               </folding>
@@ -92,8 +103,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/litewallet/eth/transfer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="693">
-              <caret line="84" column="83" selection-start-line="84" selection-start-column="73" selection-end-line="84" selection-end-column="83" />
+            <state relative-caret-position="2805">
+              <caret line="85" column="45" selection-start-line="85" selection-start-column="45" selection-end-line="85" selection-end-column="45" />
+              <folding>
+                <element signature="e#13#279#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/litewallet/sdksource/remote.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="232">
+              <caret line="862" column="76" selection-start-line="862" selection-start-column="60" selection-end-line="862" selection-end-column="76" />
             </state>
           </provider>
         </entry>
@@ -116,11 +139,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/litewallet/eth/rpc_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="45" column="24" lean-forward="true" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
+            <state relative-caret-position="218">
+              <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -141,7 +164,7 @@
         <entry file="file://$PROJECT_DIR$/litewallet/slim/onlyhttp.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="330">
-              <caret line="10" column="15" lean-forward="true" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
+              <caret line="10" column="15" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
             </state>
           </provider>
         </entry>
@@ -162,9 +185,9 @@
         <option value="$PROJECT_DIR$/litewallet/slim/interface.go" />
         <option value="$PROJECT_DIR$/litewallet/slim/qscclientsdk.go" />
         <option value="$PROJECT_DIR$/litewallet/slim/wire.go" />
-        <option value="$PROJECT_DIR$/litewallet/cshare.go" />
         <option value="$PROJECT_DIR$/litewallet/eth/transfer.go" />
         <option value="$PROJECT_DIR$/litewallet/eth/rpc_test.go" />
+        <option value="$PROJECT_DIR$/litewallet/cshare.go" />
       </list>
     </option>
   </component>
@@ -174,7 +197,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="260" />
     <option name="y" value="48" />
     <option name="width" value="1400" />
@@ -202,7 +225,7 @@
               <item name="litewallet" type="b2602c69:ProjectViewProjectNode" />
               <item name="litewallet" type="462c0819:PsiDirectoryNode" />
               <item name="litewallet" type="462c0819:PsiDirectoryNode" />
-              <item name="eth" type="462c0819:PsiDirectoryNode" />
+              <item name="sdksource" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -336,15 +359,15 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1050" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11039657" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49941522" visible="true" weight="0.15273312" />
+      <window_info id="Database" order="1" sideWeight="0.5005848" side_tool="true" visible="true" weight="0.15273312" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32982457" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32982457" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -356,7 +379,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="right" id="Structure" order="3" weight="0.24973205" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -477,7 +500,7 @@
     <entry file="file://$PROJECT_DIR$/litewallet/slim/onlyhttp.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
-          <caret line="10" column="15" lean-forward="true" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
+          <caret line="10" column="15" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -487,16 +510,6 @@
           <caret line="848" column="5" selection-start-line="848" selection-start-column="5" selection-end-line="848" selection-end-column="5" />
           <folding>
             <element signature="e#14#422#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/litewallet/cshare.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="313" column="27" selection-start-line="313" selection-start-column="18" selection-end-line="313" selection-end-column="29" />
-          <folding>
-            <element signature="e#23#222#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -539,17 +552,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/litewallet/eth/transfer.go">
+    <entry file="file://$PROJECT_DIR$/litewallet/eth/rpc_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="693">
-          <caret line="84" column="83" selection-start-line="84" selection-start-column="73" selection-end-line="84" selection-end-column="83" />
+        <state relative-caret-position="218">
+          <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/litewallet/eth/rpc_test.go">
+    <entry file="file://$PROJECT_DIR$/litewallet/cshare.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="45" column="24" lean-forward="true" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
+        <state relative-caret-position="1883">
+          <caret line="320" column="1" selection-start-line="320" selection-start-column="1" selection-end-line="320" selection-end-column="1" />
+          <folding>
+            <element signature="e#23#222#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/litewallet/eth/transfer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2805">
+          <caret line="85" column="45" selection-start-line="85" selection-start-column="45" selection-end-line="85" selection-end-column="45" />
+          <folding>
+            <element signature="e#13#279#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/litewallet/sdksource/remote.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="862" column="76" selection-start-line="862" selection-start-column="60" selection-end-line="862" selection-end-column="76" />
         </state>
       </provider>
     </entry>
