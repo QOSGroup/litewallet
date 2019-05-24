@@ -1,16 +1,21 @@
 # Introduction 
 The litewallet is a lite protocal based client SDK for mobile clients such as android and iOS, now it can get access into various blockchains, e.g. ethereum, cosmos, and qos. It is under developping to support more mainstream block-chains in the future! 
 
+简乾（Easyzone）is the DAPP empowered with litewallet, to provide the mobile products on Android and iOS.
+
 ## [🔴简乾(Easyzone)最新版下载在这里🔴]
 
 **If you're looking for mobile sdk installers, you can find all of them at the following links:**
 - [Android](http://easyzone.tokenxy.cn/apk/wallet_Aligned.apk)
-- [iOS](https://itunes.apple.com/hk/app/easyzone/id1458080998?mt=8)
+- [iOS*](https://itunes.apple.com/hk/app/easyzone/id1458080998?mt=8)
 
-**If you would like to give the latest but more UNSTABLE BETA versions a try, you can find all of them at the following links:**
+`*` iOS link is supported the ***mobile Safari*** client access only, other web explorers e.g. Chrome, Firefox, IE, .etc are not supported currently. 
+
+**If you would like to give the latest but more ***UNSTABLE BETA*** versions a try, you can find all of them at the following links:**
 - [Android](http://easyzone.tokenxy.cn/apk/wallet_Aligned.apk)
-- [iOS](https://itunes.apple.com/hk/app/easyzone/id1458080998?mt=8)
+- [iOS*](https://itunes.apple.com/hk/app/easyzone/id1458080998?mt=8)
 
+`*` iOS link is supported the ***mobile Safari*** client access only, other web explorers e.g. Chrome, Firefox, IE, .etc are not supported currently. 
 
 ## Building litewallet
 
