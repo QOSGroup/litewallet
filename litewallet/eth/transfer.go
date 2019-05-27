@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-func TransferETH(rootDir, node, fromName, password, toAddr string, amount, GasLimit int64) string {
+func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice string, amount, GasLimit int64) string {
 	//fromName generated from keyspace locally
 	if fromName == "" {
 		fmt.Println("no fromName input!")
@@ -48,17 +48,25 @@ func TransferETH(rootDir, node, fromName, password, toAddr string, amount, GasLi
 	//gasLimit := uint64(21000)
 
 	//get the estimated gasprice with SuggestGasPrice func
-	gasPrice, err := client.SuggestGasPrice(context.Background())
+	//gasPrice, err := client.SuggestGasPrice(context.Background())
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
+	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
+	gasAmount, err := strconv.ParseFloat(gasPrice,32)
 	if err != nil {
 		log.Fatal(err)
 	}
+	gasgwei := gasAmount*1000000000
+	bigGas := big.NewInt(int64(gasgwei))
 
 	//concert the to Address to byte format
 	toAddress := common.HexToAddress(toAddr)
 
 	gasLimit := uint64(GasLimit)
 	//Generate the Tx body, the data field is nil for just sending ETH
-	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, nil)
+	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, bigGas, nil)
 
 	chainID, err := client.NetworkID(context.Background())
 	if err != nil {
@@ -82,7 +90,7 @@ func TransferETH(rootDir, node, fromName, password, toAddr string, amount, GasLi
 }
 
 //Transfer with ERC20 token
-func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenValue string, GasLimit int64) string {
+func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenValue, gasPrice string, GasLimit int64) string {
 	//setup the client, here use the infura own project "eth_wallet" node="https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
 	client, err := ethclient.Dial(node)
 	if err != nil {
@@ -109,12 +117,20 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 		log.Fatal(err)
 	}
 
-	//set the amount and gasPrice for this Tx
+	//value is zero here for ERC20 tx
 	value := big.NewInt(0) // in wei (0 eth)
-	gasPrice, err := client.SuggestGasPrice(context.Background())
+	//set the amount and gasPrice for this Tx
+	//gasPrice, err := client.SuggestGasPrice(context.Background())
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
+	gasAmount, err := strconv.ParseFloat(gasPrice,32)
 	if err != nil {
 		log.Fatal(err)
 	}
+	gasgwei := gasAmount*1000000000
+	bigGas := big.NewInt(int64(gasgwei))
 
 	//the receiptant address
 	toAddress := common.HexToAddress(toAddr)
@@ -156,7 +172,7 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 
 	//create a transaction
 	gasLimit := uint64(GasLimit)
-	tx := types.NewTransaction(nonce, tokenAddress, value, gasLimit, gasPrice, data)
+	tx := types.NewTransaction(nonce, tokenAddress, value, gasLimit, bigGas, data)
 	chainID, err := client.NetworkID(context.Background())
 	if err != nil {
 		log.Fatal(err)

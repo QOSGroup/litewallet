@@ -29,7 +29,8 @@ func TestTransferETH(t *testing.T) {
 	toAddr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
 	amount := int64(200000000000000000)
 	gasLimit := int64(21000)
-	output := TransferETH(rootDir,node,name,password,toAddr,amount,gasLimit)
+	gasPrice := "3"
+	output := TransferETH(rootDir,node,name,password,toAddr,gasPrice,amount,gasLimit)
 	t.Log(output)
 }
 
@@ -44,6 +45,7 @@ func TestTransferERC20(t *testing.T) {
 	//amount := int64(200000000000000000)
 	gasLimit := int64(210000)
 	tokenValue := "0.34"
-	output := TransferERC20(rootDir,node,name,password,toAddr,tokenAddr,tokenValue,gasLimit)
+	gasPrice := "3"
+	output := TransferERC20(rootDir,node,name,password,toAddr,tokenAddr,tokenValue,gasPrice,gasLimit)
 	t.Log(output)
 }

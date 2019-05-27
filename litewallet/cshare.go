@@ -310,12 +310,12 @@ func EthGetErc20Account(node, addr, tokenAddr string) string {
 	return output
 }
 
-func EthTransferETH(rootDir, node, name, password, toAddr string, amount int64, gasLimit int64) string {
-	output := eth.TransferETH(rootDir,node,name,password,toAddr,amount,gasLimit)
+func EthTransferETH(rootDir, node, name, password, toAddr, gasPrice string, amount int64, gasLimit int64) string {
+	output := eth.TransferETH(rootDir,node,name,password,toAddr, gasPrice, amount, gasLimit)
 	return output
 }
 
-func EthTransferErc20(rootDir, node, name, password, toAddr, tokenAddr,tokenValue string, gasLimit int64) string {
-	output := eth.TransferERC20(rootDir,node,name,password,toAddr,tokenAddr,tokenValue,gasLimit)
+func EthTransferErc20(rootDir, node, name, password, toAddr, tokenAddr,tokenValue, gasPrice string, gasLimit int64) string {
+	output := eth.TransferERC20(rootDir,node,name,password,toAddr,tokenAddr,tokenValue,gasPrice, gasLimit)
 	return output
 }
