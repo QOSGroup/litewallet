@@ -18,6 +18,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
 )
 //the MaxGas under configing
 
@@ -34,6 +35,11 @@ const (
 func NewInt(n int64) Int {
 	return Int{big.NewInt(n)}
 }
+
+// NewInt constructs BigInt from int64
+//func NewInt(n int64) BigInt {
+//	return BigInt{big.NewInt(n)}
+//}
 
 func (i BigInt) Int64() int64 {
 	if !i.i.IsInt64() {
@@ -300,6 +306,7 @@ func (add *Address) UnmarshalJSON(bech32Addr []byte) error {
 
 type BaseCoins []*BaseCoin
 type QSCs = BaseCoins
+type QSC = BaseCoin
 
 func (coins BaseCoins) String() string {
 	if len(coins) == 0 {
@@ -323,10 +330,17 @@ type TransItem struct {
 	QSCs    QSCs    `json:"qscs"` // QSCs
 }
 
+type TransItems []TransItem
+
 type TxTransfer struct {
-	Senders   []TransItem `json:"senders"`   // 发送集合
-	Receivers []TransItem `json:"receivers"` // 接收集合
+	Senders   TransItems `json:"senders"`   // 发送集合
+	Receivers TransItems `json:"receivers"` // 接收集合
 }
+
+//type TxTransfer struct {
+//	Senders   []TransItem `json:"senders"`   // 发送集合
+//	Receivers []TransItem `json:"receivers"` // 接收集合
+//}
 
 // 签名字节
 func (tx TxTransfer) GetSignData() (ret []byte) {
@@ -360,15 +374,15 @@ func warpperTransItem(addr Address, coins []BaseCoin) TransItem {
 	return ti
 }
 
-// NewTransfer ...
-func NewTransfer(sender Address, receiver Address, coin []BaseCoin) ITx {
-	var sendTx TxTransfer
-
-	sendTx.Senders = append(sendTx.Senders, warpperTransItem(sender, coin))
-	sendTx.Receivers = append(sendTx.Receivers, warpperTransItem(receiver, coin))
-
-	return sendTx
-}
+// NewTransfer ... Deprecated!
+//func NewTransfer(sender Address, receiver Address, coin []BaseCoin) ITx {
+//	var sendTx TxTransfer
+//
+//	sendTx.Senders = append(sendTx.Senders, warpperTransItem(sender, coin))
+//	sendTx.Receivers = append(sendTx.Receivers, warpperTransItem(receiver, coin))
+//
+//	return sendTx
+//}
 
 func (coins Coins) Len() int           { return len(coins) }
 func (coins Coins) Less(i, j int) bool { return coins[i].Denom < coins[j].Denom }
@@ -439,6 +453,46 @@ func ParseCoins(coinsStr string) (coins Coins, err error) {
 
 	return coins, nil
 }
+// Parse QOS and QSCs from string
+// str example : 100qos,100qstar
+func NewParseCoins(str string) (BigInt, QSCs, error) {
+	if len(str) == 0 {
+		return ZeroInt(), QSCs{}, nil
+	}
+	reDnm := `[[:alpha:]][[:alnum:]]{2,15}`
+	reAmt := `[[:digit:]]+`
+	reSpc := `[[:space:]]*`
+	reCoin := regexp.MustCompile(fmt.Sprintf(`^(%s)%s(%s)$`, reAmt, reSpc, reDnm))
+
+	arr := strings.Split(str, ",")
+	qos := ZeroInt()
+	qscs := QSCs{}
+	for _, q := range arr {
+		coin := reCoin.FindStringSubmatch(q)
+		if len(coin) != 3 {
+			return ZeroInt(), nil, fmt.Errorf("coins str: %s parse faild", q)
+		}
+		coin[2] = strings.TrimSpace(coin[2])
+		amount, err := strconv.ParseInt(strings.TrimSpace(coin[1]), 10, 64)
+		if err != nil {
+			return ZeroInt(), nil, err
+		}
+		if strings.ToLower(coin[2]) == "qos" {
+			qos = NewBigInt(amount)
+		} else {
+			qscs = append(qscs, &QSC{
+				coin[2],
+				NewBigInt(amount),
+			})
+		}
+
+	}
+
+	return qos, qscs, nil
+}
+
+
+
 
 type Int struct {
 	i *big.Int
@@ -508,11 +562,6 @@ type QOSAccount struct {
 
 //only need the following arguments, it`s enough!
 func QSCtransferSendStr(addrto, coinstr, privkey, chainid string) string {
-	//generate the receiver address, i.e. "addrto" with the following format
-	to, err1 := getAddrFromBech32(addrto)
-	if err1 != nil {
-		fmt.Println(err1)
-	}
 	var key ed25519local.PrivKeyEd25519
 	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
 	err := Cdc.UnmarshalJSON([]byte(ts), &key)
@@ -525,19 +574,6 @@ func QSCtransferSendStr(addrto, coinstr, privkey, chainid string) string {
 	if err2 != nil {
 		fmt.Println(err2)
 	}
-	//coins generate from input
-	var ccs []BaseCoin
-	coins, err := ParseCoins(coinstr)
-	if err != nil {
-		fmt.Println(err)
-	}
-	for _, coin := range coins {
-		ccs = append(ccs, BaseCoin{
-			Name:   coin.Denom,
-			Amount: NewBigInt(coin.Amount.Int64()),
-		})
-	}
-
 	//Get "nonce" from the func RpcQueryAccount
 	acc,_ := RpcQueryAccount(from)
 	var qscnonce int64
@@ -546,21 +582,24 @@ func QSCtransferSendStr(addrto, coinstr, privkey, chainid string) string {
 	}
 	qscnonce++
 
-	//coins check to further improvement
-	/*	var qcoins types.Coins
-		for _, qsc := range acc.QSCs {
-			amount := qsc.Amount
-			qcoins = append(qcoins, types.NewCoin(qsc.Name, types.NewInt(amount.Int64())))
-		}
-		qcoins = append(qcoins, types.NewCoin("qos", types.NewInt(acc.QOS.Int64())))
+	sendersStr := addrben32 + `,` + coinstr
+	senders, err := ParseTransItem(sendersStr)
+	if err != nil {
+		return err.Error()
+	}
 
-		if !qcoins.IsGTE(coins) {
-			fmt.Println("Address %s doesn't have enough coins to pay for this transaction.", from)
-		}
-	*/
-	//New transfer for QOS transaction
-	t := NewTransfer(from, to, ccs)
-	msg := genStdSendTx(t, priv, chainid, qscnonce)
+	receiversStr := addrto + `,` + coinstr
+	receivers, err := ParseTransItem(receiversStr)
+	if err != nil {
+		return err.Error()
+	}
+	tn := TxTransfer{
+		Senders:   senders,
+		Receivers: receivers,
+	}
+
+
+	msg := genStdSendTx(tn, priv, chainid, qscnonce)
 	jasonpayload, err := Cdc.MarshalJSON(msg)
 	if err != nil {
 		fmt.Println(err)
@@ -995,4 +1034,36 @@ func extract( coins, privatekey, cointype,qscchainid string) (*TxStd, string) {
 		Nonce:     qscnonce,
 	}}
 	return tx2, ""
+}
+
+// Parse flags from string, Senders, eg: Arya,10qos,100qstar. multiple users separated by ';'
+func ParseTransItem(str string) (TransItems, error) {
+	items := make(TransItems, 0)
+	tis := strings.Split(str, ";")
+	for _, ti := range tis {
+		if ti == "" {
+			continue
+		}
+
+		addrAndCoins := strings.Split(ti, ",")
+		if len(addrAndCoins) < 2 {
+			return nil, fmt.Errorf("`%s` not match rules", ti)
+		}
+
+		addr, err := getAddrFromBech32(addrAndCoins[0])
+		if err != nil {
+			return nil, err
+		}
+		qos, qscs, err := NewParseCoins(strings.Join(addrAndCoins[1:], ","))
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, TransItem{
+			Address: addr,
+			QOS:     qos,
+			QSCs:    qscs,
+		})
+	}
+
+	return items, nil
 }

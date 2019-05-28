@@ -2,8 +2,8 @@ package slim
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/bech32local"
-	"github.com/cosmos/cosmos-sdk/client/lcd/cosmoswallet/slim/funcInlocal/ed25519local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
 	"testing"
 )
 
@@ -105,5 +105,59 @@ func TestCommHandler(t *testing.T) {
 
 	result:=BroadcastTransferTxToQSC(Tout,"sync")
 	t.Log(result)
+
+}
+
+func TestLocalTxGen(t *testing.T) {
+	fromStr := "address1l7d3dc26adk9gwzp777s3a9p5tprn7m43p99cg"
+
+	toStr := "address12as5uhdpf2y9zjkurx2l6dz8g98qkgryc4x355"
+
+	coinstr := "2qos,1aoe,5qstars"
+	sendersStr := fromStr + `,` + coinstr
+	senders, err := ParseTransItem(sendersStr)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	receiversStr := toStr + `,` + coinstr
+	receivers, err := ParseTransItem(receiversStr)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	tn := TxTransfer{
+		Senders:   senders,
+		Receivers: receivers,
+	}
+
+	//generate singed Tx
+	chainid := "capricorn-2000"
+	nonce := int64(1)
+	gas := NewBigInt(int64(0))
+	stx := NewTxStd(tn, chainid, gas)
+
+	//PrivKey output
+	privkey := "maD8NeYMqx6fHWHCiJdkV4/B+tDXFIpY4LX4vhrdmAYIKC67z/lpRje4NAN6FpaMBWuIjhWcYeI5HxMh2nTOQg=="
+	var key ed25519local.PrivKeyEd25519
+	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
+	err1 := Cdc.UnmarshalJSON([]byte(ts), &key)
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+	priv := ed25519local.PrivKey(key)
+
+	signature, _ := stx.SignTx(priv, nonce, chainid)
+	stx.Signature = []Signature{Signature{
+		Pubkey:    priv.PubKey(),
+		Signature: signature,
+		Nonce:     nonce,
+	}}
+	msg := stx
+	jasonpayload, err := Cdc.MarshalJSON(msg)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	t.Log("msg\n", string(jasonpayload))
 
 }
