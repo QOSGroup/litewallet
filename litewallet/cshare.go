@@ -124,6 +124,11 @@ func CosmosGetDelegtorRewardsShares(rootDir,node,chainId,delegatorAddr string) s
 	return output
 }
 
+func CosmosWithdrawDelegatorAllRewards(rootDir, node, chainID, delegatorName, password, delegatorAddr, feeStr, broadcastMode string) string {
+	output := sdksource.WithdrawDelegatorAllRewards(rootDir, node, chainID, delegatorName, password, delegatorAddr, feeStr, broadcastMode)
+	return output
+}
+
 //QOS wallet part begin from here
 func QOSAccountCreate(password string) string {
 	output := slim.AccountCreateStr(password)

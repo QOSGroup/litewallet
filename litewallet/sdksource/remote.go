@@ -860,6 +860,79 @@ func GetDelegtorRewardsShares(rootDir, node, chainID, delegatorAddr string) stri
 
 }
 
+func WithdrawDelegatorAllRewards(rootDir, node, chainID, delegatorName, password, delegatorAddr, feeStr, broadcastMode string) string {
+	//convert the delegator string address to sdk form
+	DelAddr, err := sdk.AccAddressFromBech32(delegatorAddr)
+	if err != nil {
+		return err.Error()
+	}
+
+	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
+	cliCtx := newCLIContext(rootDir,node,chainID).
+		WithCodec(cdc).
+		WithAccountDecoder(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
+	if err := cliCtx.EnsureAccountExistsFromAddr(DelAddr); err != nil {
+		return err.Error()
+	}
+
+	//get all the validators with delegation of the specific delegator
+	ValAddrs, err := cliCtx.QueryWithData("custom/distr/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
+	if err != nil {
+		return err.Error()
+	}
+	var validators []sdk.ValAddress
+	if err := cdc.UnmarshalJSON(ValAddrs, &validators); err != nil {
+		return err.Error()
+	}
+
+	// build multi-message transaction
+	var msgs []sdk.Msg
+	for _, valAddr := range validators {
+		msg := distr.NewMsgWithdrawDelegatorReward(DelAddr, valAddr)
+		if err := msg.ValidateBasic(); err != nil {
+			return err.Error()
+		}
+		msgs = append(msgs, msg)
+	}
+
+	//build-->sign-->broadcast
+	//sign the stake message
+	//init the txbldr
+	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
+
+	//accNum added to txBldr
+	accNum, err := cliCtx.GetAccountNumber(DelAddr)
+	if err != nil {
+		return err.Error()
+	}
+	txBldr = txBldr.WithAccountNumber(accNum)
+
+	//accSequence added
+	accSeq, err := cliCtx.GetAccountSequence(DelAddr)
+	if err != nil {
+		return err.Error()
+	}
+	txBldr = txBldr.WithSequence(accSeq)
+
+	// build and sign the transaction
+	txBytes, err := txBldr.BuildAndSign(delegatorName, password, msgs)
+	if err != nil {
+		return err.Error()
+	}
+	// broadcast to a Tendermint node
+	resb, err := cliCtx.BroadcastTx(txBytes)
+	if err != nil {
+		return err.Error()
+	}
+	resbyte, err := cdc.MarshalJSON(resb)
+	if err != nil {
+		return err.Error()
+	}
+	return string(resbyte)
+
+
+}
+
 //Only partial process with following sequence {Send coins (build -> sign -> Not send)}
 func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr string) string {
 	//get the Keybase
