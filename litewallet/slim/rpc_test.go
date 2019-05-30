@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
+	"github.com/tendermint/tendermint/rpc/client"
 	"testing"
 )
 
@@ -109,55 +110,55 @@ func TestCommHandler(t *testing.T) {
 }
 
 func TestLocalTxGen(t *testing.T) {
-	fromStr := "address1l7d3dc26adk9gwzp777s3a9p5tprn7m43p99cg"
+	fromStr := "address1vpszt2jp2j8m5l3mutvqserzuu9uylmzydqaj9"
 
-	toStr := "address12as5uhdpf2y9zjkurx2l6dz8g98qkgryc4x355"
+	toStr := "address1eep59h9ez4thymept8nxl0padlrc6r78fsjmp3"
 
-	coinstr := "2qos,1aoe,5qstars"
-	sendersStr := fromStr + `,` + coinstr
-	senders, err := ParseTransItem(sendersStr)
-	if err != nil {
-		t.Error(err.Error())
-	}
-
-	receiversStr := toStr + `,` + coinstr
-	receivers, err := ParseTransItem(receiversStr)
-	if err != nil {
-		t.Error(err.Error())
-	}
-	tn := TxTransfer{
-		Senders:   senders,
-		Receivers: receivers,
-	}
-
+	coinstr := "2qos"
 	//generate singed Tx
 	chainid := "capricorn-2000"
 	nonce := int64(1)
-	gas := NewBigInt(int64(0))
-	stx := NewTxStd(tn, chainid, gas)
+	//gas := NewBigInt(int64(0))
 
 	//PrivKey output
-	privkey := "maD8NeYMqx6fHWHCiJdkV4/B+tDXFIpY4LX4vhrdmAYIKC67z/lpRje4NAN6FpaMBWuIjhWcYeI5HxMh2nTOQg=="
-	var key ed25519local.PrivKeyEd25519
-	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
-	err1 := Cdc.UnmarshalJSON([]byte(ts), &key)
-	if err1 != nil {
-		fmt.Println(err1)
-	}
-	priv := ed25519local.PrivKey(key)
+	privkey := "sV5sRbwnR8DddL5e4UC1ntKPiOtGEaOFAqvePTfhJFI9GcC28zmPURSUI6C1oBlnk2ykBcAtIbYUazuCexWyqg=="
 
-	signature, _ := stx.SignTx(priv, nonce, chainid)
-	stx.Signature = []Signature{Signature{
-		Pubkey:    priv.PubKey(),
-		Signature: signature,
-		Nonce:     nonce,
-	}}
-	msg := stx
-	jasonpayload, err := Cdc.MarshalJSON(msg)
+	jasonpayload := LocalTxGen(fromStr, toStr, coinstr, chainid, privkey, nonce)
+
+	t.Log("msg\n", string(jasonpayload))
+
+}
+
+//HTTP POST to QOS chain
+func TestHttpBrToChain(t *testing.T) {
+	fromStr := "address1vpszt2jp2j8m5l3mutvqserzuu9uylmzydqaj9"
+	toStr := "address1eep59h9ez4thymept8nxl0padlrc6r78fsjmp3"
+	coinstr := "2qos"
+	//generate singed Tx
+	chainid := "capricorn-2000"
+	nonce := int64(1)
+	//gas := NewBigInt(int64(0))
+	//PrivKey output
+	privkey := "sV5sRbwnR8DddL5e4UC1ntKPiOtGEaOFAqvePTfhJFI9GcC28zmPURSUI6C1oBlnk2ykBcAtIbYUazuCexWyqg=="
+
+	jasonpayload := LocalTxGen(fromStr, toStr, coinstr, chainid, privkey, nonce)
+
+	//tbt := new(types.Tx)
+	//err := Cdc.UnmarshalJSON(jasonpayload, tbt)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//
+	//txBytes, err := Cdc.MarshalBinaryBare(jasonpayload)
+	//if err != nil {
+	//	panic("use cdc encode object fail")
+	//}
+
+	client := client.NewHTTP("tcp://192.168.1.183:26657", "/websocket")
+	result, err := client.BroadcastTxCommit(jasonpayload)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	t.Log("msg\n", string(jasonpayload))
-
+	t.Log(result)
 }

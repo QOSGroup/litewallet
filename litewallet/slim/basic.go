@@ -236,3 +236,48 @@ func AccountCreateFromSeed(mncode string) string {
 	return out
 
 }
+
+//Local Tx generation
+func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) []byte {
+	sendersStr := fromStr + `,` + coinstr
+	senders, err := ParseTransItem(sendersStr)
+	if err != nil {
+		err.Error()
+	}
+
+	receiversStr := toStr + `,` + coinstr
+	receivers, err := ParseTransItem(receiversStr)
+	if err != nil {
+		err.Error()
+	}
+
+	tn := TxTransfer{
+		Senders:   senders,
+		Receivers: receivers,
+	}
+
+	gas := NewBigInt(int64(0))
+	stx := NewTxStd(tn, chainid, gas)
+
+	var key ed25519local.PrivKeyEd25519
+	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
+	err1 := Cdc.UnmarshalJSON([]byte(ts), &key)
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+	priv := ed25519local.PrivKey(key)
+
+	signature, _ := stx.SignTx(priv, nonce, chainid)
+	stx.Signature = []Signature{Signature{
+		Pubkey:    priv.PubKey(),
+		Signature: signature,
+		Nonce:     nonce,
+	}}
+	msg := stx
+	jasonpayload, err := Cdc.MarshalBinaryBare(msg)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return jasonpayload
+}
