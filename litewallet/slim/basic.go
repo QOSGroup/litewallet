@@ -256,7 +256,7 @@ func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) [
 		Receivers: receivers,
 	}
 
-	gas := NewBigInt(int64(0))
+	gas := NewBigInt(int64(20000))
 	stx := NewTxStd(tn, chainid, gas)
 
 	var key ed25519local.PrivKeyEd25519
