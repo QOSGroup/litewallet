@@ -49,3 +49,18 @@ func TestTransferERC20(t *testing.T) {
 	output := TransferERC20(rootDir,node,name,password,toAddr,tokenAddr,tokenValue,gasPrice,gasLimit)
 	t.Log(output)
 }
+
+//func TestFormatFloat(t *testing.T) {
+//	tokenValue := "0.32"
+//	vamount, err := strconv.ParseFloat(tokenValue,32)
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//	vwei := vamount*1000000000000000000
+//	vstring := strconv.FormatFloat(vwei, 'f', -1, 32)
+//	//t.Log(vstring)
+//	Tamount := new(big.Int)
+//	//1000 token to transfer
+//	Tamount.SetString(vstring,10)
+//	t.Log(Tamount)
+//}

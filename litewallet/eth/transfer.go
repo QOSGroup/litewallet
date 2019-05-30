@@ -149,7 +149,7 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 		log.Fatal(err)
 	}
 	vwei := vamount*1000000000000000000
-	vstring := strconv.FormatFloat(vwei, 'E', -1, 32)
+	vstring := strconv.FormatFloat(vwei, 'f', -1, 32)
 
 	Tamount := new(big.Int)
 	//1000 token to transfer
