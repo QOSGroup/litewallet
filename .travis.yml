@@ -1,20 +1,23 @@
 language: go
 sudo: false
 dist: trusty
+env:
+- GO111MODULE=on
 go:
-  - 1.11
+- 1.11
 
 before_install:
-  - go mod download
+- go mod download
 
 script:
-  - go test ./... -race -coverprofile=coverage.txt -covermode=atomic
+- go test ./... -race -coverprofile=coverage.txt -covermode=atomic
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
-notifications:
-  email:
-    recipients:
-      - zzgigi2003@163.com
-    on_success: always
+email: false
+  after_success:
+  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
+  after_failure:
+  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
