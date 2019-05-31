@@ -861,10 +861,29 @@ func GetDelegtorRewardsShares(rootDir, node, chainID, delegatorAddr string) stri
 }
 
 func WithdrawDelegatorAllRewards(rootDir, node, chainID, delegatorName, password, delegatorAddr, feeStr, broadcastMode string) string {
-	//convert the delegator string address to sdk form
+	//build procedure
+	//get the Keybase
+	viper.Set(cli.HomeFlag, rootDir)
+	kb, err1 := keys.NewKeyBaseFromHomeFlag()
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+
+	//delegatorName generated from keyspace locally
+	if delegatorName == "" {
+		fmt.Println("no delegatorName input!")
+	}
+	info, err := kb.Get(delegatorName)
+	if err != nil {
+		return err.Error()
+	}
+	//checkout with rule of own deligation
 	DelAddr, err := sdk.AccAddressFromBech32(delegatorAddr)
 	if err != nil {
 		return err.Error()
+	}
+	if !bytes.Equal(info.GetPubKey().Address(), DelAddr) {
+		return fmt.Sprintf("Must use own delegator address")
 	}
 
 	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
