@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice string, amount, GasLimit int64) string {
+func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount string, GasLimit int64) string {
 	//fromName generated from keyspace locally
 	if fromName == "" {
 		fmt.Println("no fromName input!")
@@ -42,16 +42,14 @@ func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice string, amo
 	}
 
 	//amount convertion to wei
-	value := big.NewInt(amount)
+	Amount, err := strconv.ParseFloat(amount,32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	Amountwei := Amount*1000000000000000000
+	value := big.NewInt(int64(Amountwei))
 
-	//gaslimit
-	//gasLimit := uint64(21000)
-
-	//get the estimated gasprice with SuggestGasPrice func
-	//gasPrice, err := client.SuggestGasPrice(context.Background())
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	//value := big.NewInt(amount)
 
 	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
 	gasAmount, err := strconv.ParseFloat(gasPrice,32)

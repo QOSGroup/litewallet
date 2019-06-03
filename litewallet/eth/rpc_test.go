@@ -6,8 +6,8 @@ import (
 )
 
 func TestGetAccount(t *testing.T) {
-	node := "https://mainnet.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
-	addr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
+	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
+	addr := "0x189f91780c97ed13c242ce3f1568f97a446cab88"
 	output := GetAccount(node,addr)
 	t.Log(output)
 }
@@ -27,7 +27,7 @@ func TestTransferETH(t *testing.T) {
 	name := "easyzone"
 	password := "wm131421"
 	toAddr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
-	amount := int64(200000000000000000)
+	amount := "200000000000000000"
 	gasLimit := int64(21000)
 	gasPrice := "3"
 	output := TransferETH(rootDir,node,name,password,toAddr,gasPrice,amount,gasLimit)

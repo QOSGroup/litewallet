@@ -315,7 +315,7 @@ func EthGetErc20Account(node, addr, tokenAddr string) string {
 	return output
 }
 
-func EthTransferETH(rootDir, node, name, password, toAddr, gasPrice string, amount int64, gasLimit int64) string {
+func EthTransferETH(rootDir, node, name, password, toAddr, gasPrice ,amount string, gasLimit int64) string {
 	output := eth.TransferETH(rootDir,node,name,password,toAddr, gasPrice, amount, gasLimit)
 	return output
 }
