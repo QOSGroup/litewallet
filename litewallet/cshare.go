@@ -324,3 +324,8 @@ func EthTransferErc20(rootDir, node, name, password, toAddr, tokenAddr,tokenValu
 	output := eth.TransferERC20(rootDir,node,name,password,toAddr,tokenAddr,tokenValue,gasPrice, gasLimit)
 	return output
 }
+
+func EthGetPendingNonceAt(rootDir, node, fromName, password string) string {
+	output := eth.GetPendingNonceAt(rootDir, node, fromName, password)
+	return output
+}

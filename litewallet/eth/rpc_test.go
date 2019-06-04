@@ -64,3 +64,13 @@ func TestTransferERC20(t *testing.T) {
 //	Tamount.SetString(vstring,10)
 //	t.Log(Tamount)
 //}
+
+func TestGetPendingNonceAt(t *testing.T) {
+	usr, _ := user.Current()
+	rootDir := usr.HomeDir
+	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
+	name := "easyzone"
+	password := "wm131421"
+	output := GetPendingNonceAt(rootDir,node,name,password)
+	t.Log(output)
+}
