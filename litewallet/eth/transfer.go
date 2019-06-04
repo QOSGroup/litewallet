@@ -186,3 +186,35 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 
 	return signedTx.Hash().Hex()
 }
+
+// PendingNonceAt returns the account nonce of the given account in the pending state.
+// This is the nonce that should be used for the next transaction.
+func GetPendingNonceAt(rootDir, node, fromName, password string) string {
+	//fromName generated from keyspace locally
+	if fromName == "" {
+		fmt.Println("no fromName input!")
+	}
+	//Fetch the privateKey to sign
+	privateKey, err := FetchtoSign(rootDir, fromName, password)
+
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Fatal("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
+	}
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+
+	//setup the client, here use the infura own project "eth_wallet" node="https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
+	client, err := ethclient.Dial(node)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//get the nonce from the fromAddress to be dumped into tx
+	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	noncestr := strconv.FormatUint(nonce,10)
+	return noncestr
+}
