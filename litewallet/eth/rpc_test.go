@@ -27,9 +27,9 @@ func TestTransferETH(t *testing.T) {
 	name := "easyzone"
 	password := "wm131421"
 	toAddr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
-	amount := "200000000000000000"
+	amount := "0.000001"
 	gasLimit := int64(21000)
-	gasPrice := "3"
+	gasPrice := "10"
 	output := TransferETH(rootDir,node,name,password,toAddr,gasPrice,amount,gasLimit)
 	t.Log(output)
 }

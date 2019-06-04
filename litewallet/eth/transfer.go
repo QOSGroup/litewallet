@@ -42,7 +42,7 @@ func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount str
 	}
 
 	//amount convertion to wei
-	Amount, err := strconv.ParseFloat(amount,32)
+	Amount, err := strconv.ParseFloat(amount,64)
 	if err != nil {
 		log.Fatal(err)
 	}
