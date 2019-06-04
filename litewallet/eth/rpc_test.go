@@ -27,9 +27,9 @@ func TestTransferETH(t *testing.T) {
 	name := "easyzone"
 	password := "wm131421"
 	toAddr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
-	amount := "0.000001"
+	amount := "0.00002"
 	gasLimit := int64(21000)
-	gasPrice := "10"
+	gasPrice := "20"
 	output := TransferETH(rootDir,node,name,password,toAddr,gasPrice,amount,gasLimit)
 	t.Log(output)
 }
@@ -74,3 +74,19 @@ func TestGetPendingNonceAt(t *testing.T) {
 	output := GetPendingNonceAt(rootDir,node,name,password)
 	t.Log(output)
 }
+
+func TestSpeedTransferETH(t *testing.T) {
+	usr, _ := user.Current()
+	rootDir := usr.HomeDir
+	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
+	name := "easyzone"
+	password := "wm131421"
+	toAddr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
+	amount := "0.000001"
+	gasLimit := int64(23000)
+	gasPrice := "200"
+	pendingNonce := int64(10)
+	output := SpeedTransferETH(rootDir, node, name, password,toAddr, gasPrice, amount, gasLimit, pendingNonce)
+	t.Log(output)
+}
+
