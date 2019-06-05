@@ -187,6 +187,7 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 	return signedTx.Hash().Hex()
 }
 
+//Deprecated in cshare for mobile!
 // PendingNonceAt returns the account nonce of the given account in the pending state.
 // This is the nonce that should be used for the next transaction.
 func GetPendingNonceAt(rootDir, node, fromName, password string) int64 {
