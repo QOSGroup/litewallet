@@ -325,10 +325,11 @@ func EthTransferErc20(rootDir, node, name, password, toAddr, tokenAddr,tokenValu
 	return output
 }
 
-func EthGetPendingNonceAt(rootDir, node, fromName, password string) int64 {
-	output := eth.GetPendingNonceAt(rootDir, node, fromName, password)
-	return output
-}
+//Deprecated!
+//func EthGetPendingNonceAt(rootDir, node, fromName, password string) int64 {
+//	output := eth.GetPendingNonceAt(rootDir, node, fromName, password)
+//	return output
+//}
 
 func EthSpeedTransferETH(rootDir, node, fromName, password,toAddr, gasPrice, amount string, GasLimit, pendingNonce int64) string {
 	output := eth.SpeedTransferETH(rootDir, node, fromName, password,toAddr, gasPrice, amount, GasLimit, pendingNonce)
