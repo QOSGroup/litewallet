@@ -283,6 +283,8 @@ func FetchtoSign(rootDir, name, password string) (privKey *ecdsa.PrivateKey, err
 	if len(bs) == 0 {
 		return nil, keyerror.NewErrKeyNotFound(name)
 	}
+	//Close the db to release the lock
+	db.Close()
 	//get the LocalInfo by key
 	Li, err := readInfo(bs)
 	if err != nil {
