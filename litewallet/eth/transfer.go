@@ -4,14 +4,18 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"golang.org/x/crypto/sha3"
 	"log"
+	"math"
 	"math/big"
 	"strconv"
+	"github.com/QOSGroup/litewallet/litewallet/eth/contracts_erc20"
+
 )
 
 func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount string, GasLimit int64) string {
@@ -141,17 +145,32 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 	methodID := hash.Sum(nil)[:4]
 	paddedAddress := common.LeftPadBytes(toAddress.Bytes(), 32)
 
-	//convert the tokenValue to wei in ERC20
-	vamount, err := strconv.ParseFloat(tokenValue,64)
+	//fetch the decimals from the tokenAddress in smart contract
+	instance, err := contracts_erc20.NewContractsErc20(tokenAddress, client)
 	if err != nil {
 		log.Fatal(err)
 	}
-	vwei := vamount*1000000000000000000
-	vstring := strconv.FormatFloat(vwei, 'f', -1, 32)
+	decimals, err := instance.Decimals(&bind.CallOpts{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	digit := int(decimals)
 
+	//convert the tokenValue to decimals on corresponding ERC20
+	//vamount, err := strconv.ParseFloat(tokenValue,64)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//vwei := vamount*1000000000000000000
+	//vstring := strconv.FormatFloat(vdigit.String(), 'f', -1, 32)
+
+	vbalance := new(big.Float)
+	vbalance.SetString(tokenValue)
+
+	vdigit := new(big.Float).Mul(vbalance, big.NewFloat(math.Pow10(digit)))
 	Tamount := new(big.Int)
-	//1000 token to transfer
-	Tamount.SetString(vstring,10)
+	Tamount.SetString(vdigit.String(),10)
 
 	paddedAmount := common.LeftPadBytes(Tamount.Bytes(), 32)
 
