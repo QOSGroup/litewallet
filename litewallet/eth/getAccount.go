@@ -74,7 +74,7 @@ func GetAccountERC20(node, addr, tokenAddr string) string {
 	}
 	digit := int(decimals)
 
-	//format the output in wei
+	//format the output in digit
 	fbalance := new(big.Float)
 	fbalance.SetString(balance.String())
 	ethValue := new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(digit)))
