@@ -18,7 +18,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/spf13/viper"
-	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/bech32"
 	"github.com/tendermint/tendermint/libs/cli"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -1030,7 +1029,6 @@ func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, 
 	if err != nil {
 		return err.Error()
 	}
-	fmt.Println(txBytes)
 	return string(hex.EncodeToString(txBytes))
 }
 
@@ -1054,13 +1052,6 @@ func BroadcastTransferTx(rootDir, node, chainID, txString, broadcastMode string)
 		return err.Error()
 	}
 	return string(resbyte)
-}
-
-type app2Tx struct {
-	sdk.Msg
-
-	PubKey    crypto.PubKey
-	Signature []byte
 }
 
 func LocalGenTx(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr string) string {
