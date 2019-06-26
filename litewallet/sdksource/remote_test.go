@@ -6,9 +6,9 @@ import (
 )
 
 func TestGetAccount(t *testing.T) {
-	addr := "cosmos1x0fmd0xyqdh7j57vadywjjcljlk00dwqf2mqfp"
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
+	addr := "cosmos1xwz2req975fqnvrrx9me7vwyz25paxflnjw6d2"
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
 	acout := GetAccount(rootDir,node,chainId,addr)
@@ -18,13 +18,13 @@ func TestGetAccount(t *testing.T) {
 func TestTransfer(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
-	fromName := "cm"
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
+	fromName := "c34banker"
 	password := "wm131421"
-	toStr := "cosmos1j24sm42u8jypdyacj88wvjmz7a4duxfg6mn39x"
-	coinStr := "200uatom"
-	feeStr := "80uatom"
+	toStr := "cosmos1nelm60csnn6204tav8s5ypkvevm6k2xsch8x5r"
+	coinStr := "10000000stake"
+	feeStr := "20stake"
 	broadcastMode := "async"
 	transout := Transfer(rootDir,node,chainId,fromName,password,toStr,coinStr,feeStr, broadcastMode)
 	t.Log(transout)
@@ -33,15 +33,15 @@ func TestTransfer(t *testing.T) {
 func TestDelegate(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
-	delegatorName := "cm"
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
+	delegatorName := "c34banker"
 	password := "wm131421"
-	delegatorAddr := "cosmos1x0fmd0xyqdh7j57vadywjjcljlk00dwqf2mqfp"
-	validatorAddr := "cosmosvaloper1ff0dw8kawsnxkrgj7p65kvw7jxxakyf8n583gx"
-	delegationCoinStr := "10000uatom"
-	feeStr := "100uatom"
-	broadcastMode := "async"
+	delegatorAddr := "cosmos1xwz2req975fqnvrrx9me7vwyz25paxflnjw6d2"
+	validatorAddr := "cosmosvaloper13zaglnf494jd5550mm74rlmknfk8tntrfectk9"
+	delegationCoinStr := "1000000000stake"
+	feeStr := "10stake"
+	broadcastMode := "block"
 	delout := Delegate(rootDir, node, chainId, delegatorName, password, delegatorAddr, validatorAddr, delegationCoinStr, feeStr, broadcastMode)
 	t.Log(delout)
 }
@@ -89,7 +89,7 @@ func TestGetBondValidators(t *testing.T) {
 	rootDir := usr.HomeDir
 	node := "tcp://192.168.1.184:26657"
 	chainId := "cosmosv34"
-	delegatorAddr := "cosmos1ne8hnx92k8x7cvluvhkphtk5kpvzenvns7g48g"
+	delegatorAddr := "cosmos1xwz2req975fqnvrrx9me7vwyz25paxflnjw6d2"
 	getBd := GetBondValidators(rootDir,node,chainId,delegatorAddr)
 	t.Log(getBd)
 }
@@ -97,8 +97,8 @@ func TestGetBondValidators(t *testing.T) {
 func TestGetAllValidators(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
 	getVals := GetAllValidators(rootDir,node,chainId)
 	t.Log(getVals)
 }
@@ -106,9 +106,9 @@ func TestGetAllValidators(t *testing.T) {
 func TestGetAllDelegations(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
-	delegatorAddr := "cosmos1x0fmd0xyqdh7j57vadywjjcljlk00dwqf2mqfp"
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
+	delegatorAddr := "cosmos1xwz2req975fqnvrrx9me7vwyz25paxflnjw6d2"
 	getDels := GetAllDelegations(rootDir,node,chainId,delegatorAddr)
 	t.Log(getDels)
 }
@@ -142,9 +142,9 @@ func TestGetDelegationRewards(t *testing.T) {
 func TestQueryTx(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
-	txHash := "4F01BD0930E9126E91045CE0FC2B79302C51D4ABBD8CF9AD8F1A450A7FC1C347"
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
+	txHash := "1730528BCDD06039C82C27C87E6D19C8CA2D4540BD2DB34A3BD67EF04230B1FB"
 	qTx := QueryTx(rootDir,node,chainId,txHash)
 	t.Log(qTx)
 }
@@ -174,7 +174,7 @@ func TestTransferB4send(t *testing.T) {
 	rootDir := usr.HomeDir
 	node := "tcp://192.168.1.184:26657"
 	chainId := "cosmosv34"
-	fromName := "cosmos341"
+	fromName := "c34banker"
 	password := "wm131421"
 	toStr := "cosmos1kklk4eqye6pla97dzmc03pw5lst7x0n4zt8syw"
 	coinStr := "100stake"
@@ -198,4 +198,33 @@ func TestBroadcastTransferTx(t *testing.T) {
 	txString := "c201f0625dee0a3ea8a3619a0a149e4f7998aab1cdec33fc65ec1baed4b0582ccd931214b5bf6ae404ce83fe97cd16f0f885d4fc17e33e751a0c0a057374616b65120331303012100a0a0a057374616b6512013110c09a0c1a6a0a26eb5ae9872102ae6ea19e838daa09b8e614dbb59636bae7007b86b85c165d8100ba50b365d4861240647008bcdc33854d7270045e18ad28e61f03d062ce7a63c60aca6026fb3b4d812bbc1898fd08f0b726b0299c87be74f4870aa0ee099db8778a6cfe038685eb8f"
 	Bt:= BroadcastTransferTx(rootDir, node, chainId, txString, broadcastMode)
 	t.Log(Bt)
+}
+
+func TestWithdrawDelegatorAllRewards(t *testing.T) {
+	usr, _ := user.Current()
+	rootDir := usr.HomeDir
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
+	delegatorName := "c34banker"
+	password := "wm131421"
+	delegatorAddr := "cosmos1xwz2req975fqnvrrx9me7vwyz25paxflnjw6d2"
+	feeStr := "10stake"
+	broadcastMode := "block"
+	wda := WithdrawDelegatorAllRewards(rootDir,node,chainId,delegatorName,password,delegatorAddr,feeStr,broadcastMode)
+	t.Log(wda)
+}
+
+func TestLocalGenTx(t *testing.T) {
+	usr, _ := user.Current()
+	rootDir := usr.HomeDir
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
+	fromName := "c34banker"
+	password := "wm131421"
+	toStr := "cosmos1kklk4eqye6pla97dzmc03pw5lst7x0n4zt8syw"
+	coinStr := "100stake"
+	feeStr := "1stake"
+	Txs := LocalGenTx(rootDir, node, chainId, fromName, password, toStr, coinStr, feeStr)
+	//txb := []byte(Txs)
+	t.Log(Txs)
 }

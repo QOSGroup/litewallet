@@ -18,6 +18,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/spf13/viper"
+	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/bech32"
 	"github.com/tendermint/tendermint/libs/cli"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -1029,7 +1030,7 @@ func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, 
 	if err != nil {
 		return err.Error()
 	}
-
+	fmt.Println(txBytes)
 	return string(hex.EncodeToString(txBytes))
 }
 
@@ -1053,4 +1054,104 @@ func BroadcastTransferTx(rootDir, node, chainID, txString, broadcastMode string)
 		return err.Error()
 	}
 	return string(resbyte)
+}
+
+type app2Tx struct {
+	sdk.Msg
+
+	PubKey    crypto.PubKey
+	Signature []byte
+}
+
+func LocalGenTx(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr string) string {
+	//get the Keybase
+	viper.Set(cli.HomeFlag, rootDir)
+	kb, err1 := keys.NewKeyBaseFromHomeFlag()
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+	//SetKeyBase(rootDir)
+	//fromName generated from keyspace locally
+	if fromName == "" {
+		fmt.Println("no fromName input!")
+	}
+	var info cskeys.Info
+	var err error
+	info, err = kb.Get(fromName)
+	if err != nil {
+		fmt.Printf("could not find key %s\n", fromName)
+		os.Exit(1)
+	}
+
+	fromAddr := info.GetAddress()
+	cliCtx := newCLIContext(rootDir,node,chainID).
+		WithCodec(cdc).
+		WithAccountDecoder(cdc).WithTrustNode(true)
+	if err := cliCtx.EnsureAccountExistsFromAddr(fromAddr); err != nil {
+		return err.Error()
+	}
+
+	to, err := sdk.AccAddressFromBech32(toStr)
+	if err != nil {
+		return err.Error()
+	}
+
+	// parse coins trying to be sent
+	coins, err := sdk.ParseCoins(coinStr)
+	if err != nil {
+		return err.Error()
+	}
+
+	account, err := cliCtx.GetAccount(fromAddr)
+	if err != nil {
+		return err.Error()
+	}
+
+	// ensure account has enough coins
+	if !account.GetCoins().IsAllGTE(coins) {
+		return fmt.Sprintf("Address %s doesn't have enough coins to pay for this transaction.", fromAddr)
+	}
+
+	// build and sign the transaction, then broadcast to Tendermint
+	msg := bank.NewMsgSend(fromAddr, to, coins)
+
+	//init a txBuilder for the transaction with fee
+	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
+	//txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithGasPrices(feeStr).WithChainID(chainID)
+
+	//accNum added to txBldr
+	accNum, err := cliCtx.GetAccountNumber(fromAddr)
+	if err != nil {
+		return err.Error()
+	}
+	txBldr = txBldr.WithAccountNumber(accNum)
+
+	//accSequence added
+	accSeq, err := cliCtx.GetAccountSequence(fromAddr)
+	if err != nil {
+		return err.Error()
+	}
+	txBldr = txBldr.WithSequence(accSeq)
+
+
+	//separate build and sign the transaction
+	signmsg, err := txBldr.BuildSignMsg([]sdk.Msg{msg})
+	if err != nil {
+		return err.Error()
+	}
+
+	//make signature
+	sigBytes, pubkey, err := kb.Sign(fromName, password, signmsg.Bytes())
+	if err != nil {
+		return err.Error()
+	}
+	signa := auth.StdSignature{
+		PubKey:    pubkey,
+		Signature: sigBytes,
+	}
+
+	txstd := auth.NewStdTx(signmsg.Msgs, signmsg.Fee, []auth.StdSignature{signa}, signmsg.Memo)
+	txb, _ := cdc.MarshalJSON(txstd)
+	fmt.Println(txb)
+	return string(txb)
 }
