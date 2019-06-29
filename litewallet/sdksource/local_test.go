@@ -3,7 +3,6 @@ package sdksource
 import (
 	"os/user"
 	"testing"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestCreateSeed(t *testing.T) {
@@ -19,7 +18,7 @@ func TestCreateAccount(t *testing.T) {
 	name := "cm"
 	password := "wm131421"
 	seed := "tomorrow room limit true galaxy dove chicken fine resemble tonight record yellow"
-	output := CreateAccount(rootDir,name,password,seed)
+	output := CreateAccount(rootDir, name, password, seed)
 	t.Log(output)
 }
 
@@ -29,7 +28,7 @@ func TestRecoverKey(t *testing.T) {
 	name := "easyzone2"
 	password := "wm131421"
 	seed := "style library milk jazz race dune disorder stay duck bunker garden favorite"
-	output := RecoverKey(rootDir,name,password,seed)
+	output := RecoverKey(rootDir, name, password, seed)
 	t.Log(output)
 }
 
@@ -43,11 +42,11 @@ func TestUpdateKey(t *testing.T) {
 	t.Log(output)
 }
 
-func TestToken2Power(t *testing.T) {
-	tokenInt := sdk.NewInt(int64(1000000))
-	power := sdk.TokensToTendermintPower(tokenInt)
-	t.Log(power)
-}
+// func TestToken2Power(t *testing.T) {
+// 	tokenInt := sdk.NewInt(int64(1000000))
+// 	power := sdk.TokensToTendermintPower(tokenInt)
+// 	t.Log(power)
+// }
 
 func TestWalletAddressCheck(t *testing.T) {
 	address := "0x1uyh63ddjrv944prku8sfn8vmmxluktl46dmy2e"

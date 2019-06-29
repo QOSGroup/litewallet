@@ -3,31 +3,26 @@ package sdksource
 import (
 	"bytes"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/keys"
-	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/cosmos/cosmos-sdk/client/utils"
-	"github.com/cosmos/cosmos-sdk/cmd/gaia/app"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cskeys "github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authtxb "github.com/cosmos/cosmos-sdk/x/auth/client/txbuilder"
-	"github.com/cosmos/cosmos-sdk/x/bank"
+	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	authtxb "github.com/cosmos/cosmos-sdk/x/auth/types"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	distritypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/cosmos/gaia/app"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/bech32"
 	"github.com/tendermint/tendermint/libs/cli"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 var cdc = app.MakeCodec()
@@ -47,16 +42,17 @@ func GetAccount(rootDir, node, chainID, addr string) string {
 
 	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true)
+		WithCodec(cdc).WithTrustNode(true)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+
 	//cliCtx := context.NewCLIContext().
 	//	WithCodec(cdc).WithAccountDecoder(cdc)
 
-	if err = cliCtx.EnsureAccountExistsFromAddr(key); err != nil {
+	if err = accGetter.EnsureExists(key); err != nil {
 		return err.Error()
 	}
 
-	acc, err := cliCtx.GetAccount(key)
+	acc, err := accGetter.GetAccount(key)
 	if err != nil {
 		return err.Error()
 	}
@@ -73,6 +69,56 @@ func GetAccount(rootDir, node, chainID, addr string) string {
 
 	return string(output)
 
+}
+
+// RouterKey is they name of the bank module
+const RouterKey = "bank"
+
+// MsgSend - high level transaction of the coin module
+type MsgSend struct {
+	FromAddress sdk.AccAddress `json:"from_address"`
+	ToAddress   sdk.AccAddress `json:"to_address"`
+	Amount      sdk.Coins      `json:"amount"`
+}
+
+var _ sdk.Msg = MsgSend{}
+
+// NewMsgSend - construct arbitrary multi-in, multi-out send msg.
+func NewMsgSend(fromAddr, toAddr sdk.AccAddress, amount sdk.Coins) MsgSend {
+	return MsgSend{FromAddress: fromAddr, ToAddress: toAddr, Amount: amount}
+}
+
+// Route Implements Msg.
+func (msg MsgSend) Route() string { return RouterKey }
+
+// Type Implements Msg.
+func (msg MsgSend) Type() string { return "send" }
+
+// ValidateBasic Implements Msg.
+func (msg MsgSend) ValidateBasic() sdk.Error {
+	if msg.FromAddress.Empty() {
+		return sdk.ErrInvalidAddress("missing sender address")
+	}
+	if msg.ToAddress.Empty() {
+		return sdk.ErrInvalidAddress("missing recipient address")
+	}
+	if !msg.Amount.IsValid() {
+		return sdk.ErrInvalidCoins("send amount is invalid: " + msg.Amount.String())
+	}
+	if !msg.Amount.IsAllPositive() {
+		return sdk.ErrInsufficientCoins("send amount must be positive")
+	}
+	return nil
+}
+
+// GetSignBytes Implements Msg.
+func (msg MsgSend) GetSignBytes() []byte {
+	return sdk.MustSortJSON(cdc.MustMarshalJSON(msg))
+}
+
+// GetSigners Implements Msg.
+func (msg MsgSend) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.FromAddress}
 }
 
 //complete the whole process with following sequence {Send coins (build -> sign -> send)}
@@ -98,9 +144,10 @@ func Transfer(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr
 
 	fromAddr := info.GetAddress()
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
-	if err := cliCtx.EnsureAccountExistsFromAddr(fromAddr); err != nil {
+		WithCodec(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+
+	if err := accGetter.EnsureExists(fromAddr); err != nil {
 		return err.Error()
 	}
 
@@ -115,7 +162,7 @@ func Transfer(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr
 		return err.Error()
 	}
 
-	account, err := cliCtx.GetAccount(fromAddr)
+	account, err := accGetter.GetAccount(fromAddr)
 	if err != nil {
 		return err.Error()
 	}
@@ -126,24 +173,20 @@ func Transfer(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr
 	}
 
 	// build and sign the transaction, then broadcast to Tendermint
-	msg := bank.NewMsgSend(fromAddr, to, coins)
+	msg := NewMsgSend(fromAddr, to, coins)
 
 	//init a txBuilder for the transaction with fee
 	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
 	//txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithGasPrices(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
-	accNum, err := cliCtx.GetAccountNumber(fromAddr)
+	accNum, accSeq, err := accGetter.GetAccountNumberSequence(fromAddr)
 	if err != nil {
 		return err.Error()
 	}
 	txBldr = txBldr.WithAccountNumber(accNum)
 
 	//accSequence added
-	accSeq, err := cliCtx.GetAccountSequence(fromAddr)
-	if err != nil {
-		return err.Error()
-	}
 	txBldr = txBldr.WithSequence(accSeq)
 
 	// build and sign the transaction
@@ -193,9 +236,10 @@ func Delegate(rootDir, node, chainID, delegatorName, password, delegatorAddr, va
 
 	//init a context for this delegate tx
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
-	if err := cliCtx.EnsureAccountExistsFromAddr(DelegatorAddr); err != nil {
+		WithCodec(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+
+	if err := accGetter.EnsureExists(DelegatorAddr); err != nil {
 		return err.Error()
 	}
 
@@ -212,7 +256,7 @@ func Delegate(rootDir, node, chainID, delegatorName, password, delegatorAddr, va
 	}
 
 	//check out the account enough money for the delegation
-	account, err := cliCtx.GetAccount(DelegatorAddr)
+	account, err := accGetter.GetAccount(DelegatorAddr)
 	if err != nil {
 		return err.Error()
 	}
@@ -223,7 +267,7 @@ func Delegate(rootDir, node, chainID, delegatorName, password, delegatorAddr, va
 	}
 
 	//build the stake message
-	msg := staking.NewMsgDelegate(DelegatorAddr, ValidatorAddr, Delegation)
+	msg := types.NewMsgDelegate(DelegatorAddr, ValidatorAddr, Delegation)
 	err = msg.ValidateBasic()
 	if err != nil {
 		return err.Error()
@@ -232,19 +276,22 @@ func Delegate(rootDir, node, chainID, delegatorName, password, delegatorAddr, va
 	//sign the stake message
 	//init the txbldr
 	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
-
-	//accNum added to txBldr
-	accNum, err := cliCtx.GetAccountNumber(DelegatorAddr)
+	accNum, accSeq, err := accGetter.GetAccountNumberSequence(DelegatorAddr)
 	if err != nil {
 		return err.Error()
 	}
+	//accNum added to txBldr
+	// accNum, err := accGetter.GetAccountNumber(DelegatorAddr)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 	txBldr = txBldr.WithAccountNumber(accNum)
 
 	//accSequence added
-	accSeq, err := cliCtx.GetAccountSequence(DelegatorAddr)
-	if err != nil {
-		return err.Error()
-	}
+	// accSeq, err := accGetter.GetAccountSequence(DelegatorAddr)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 	txBldr = txBldr.WithSequence(accSeq)
 
 	// build and sign the transaction
@@ -281,15 +328,19 @@ func GetDelegationShares(rootDir, node, chainID, delegatorAddr, validatorAddr st
 
 	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true)
-	if err := cliCtx.EnsureAccountExistsFromAddr(DelAddr); err != nil {
+		WithCodec(cdc).WithTrustNode(true)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+
+	if err := accGetter.EnsureExists(DelAddr); err != nil {
 		return err.Error()
 	}
 
 	// make a query to get the existing delegation shares
-	key := staking.GetDelegationKey(DelAddr, ValAddr)
-	res, err := cliCtx.QueryStore(key, storeStake)
+	bz, err := cdc.MarshalJSON(types.NewQueryBondsParams(DelAddr, ValAddr))
+	if err != nil {
+		return err.Error()
+	}
+	res, _, err := cliCtx.QueryWithData("custom/staking/delegation", bz)
 	if err != nil {
 		return err.Error()
 	}
@@ -339,9 +390,10 @@ func UnbondingDelegation(rootDir, node, chainID, delegatorName, password, delega
 
 	////to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
-	if err := cliCtx.EnsureAccountExistsFromAddr(DelegatorAddr); err != nil {
+		WithCodec(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+
+	if err := accGetter.EnsureExists(DelegatorAddr); err != nil {
 		return err.Error()
 	}
 
@@ -350,19 +402,6 @@ func UnbondingDelegation(rootDir, node, chainID, delegatorName, password, delega
 	if err != nil {
 		return err.Error()
 	}
-
-	// make a query to get the existing delegation shares
-	//key := staking.GetDelegationKey(DelegatorAddr, ValidatorAddr)
-	//res, err := cliCtx.QueryStore(key, storeStake)
-	//if err != nil {
-	//	return err.Error()
-	//}
-	//
-	//// parse out the delegation
-	//delegation, err := types.UnmarshalDelegation(cdc, res)
-	//if err != nil {
-	//	return err.Error()
-	//}
 
 	//create the unbond message
 	//sharesAmount := delegation.Shares
@@ -378,17 +417,17 @@ func UnbondingDelegation(rootDir, node, chainID, delegatorName, password, delega
 	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
-	accNum, err := cliCtx.GetAccountNumber(DelegatorAddr)
+	accNum, accSeq, err := accGetter.GetAccountNumberSequence(DelegatorAddr)
 	if err != nil {
 		return err.Error()
 	}
 	txBldr = txBldr.WithAccountNumber(accNum)
 
 	//accSequence added
-	accSeq, err := cliCtx.GetAccountSequence(DelegatorAddr)
-	if err != nil {
-		return err.Error()
-	}
+	// accSeq, err := cliCtx.GetAccountSequence(DelegatorAddr)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 	txBldr = txBldr.WithSequence(accSeq)
 
 	// build and sign the transaction
@@ -420,17 +459,27 @@ func GetAllUnbondingDelegations(rootDir, node, chainID, delegatorAddr string) st
 	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
 		WithCodec(cdc).WithTrustNode(true)
-
-	resKVs, err := cliCtx.QuerySubspace(staking.GetUBDsKey(DelAddr), storeStake)
+	bz, err := cdc.MarshalJSON(types.NewQueryDelegatorParams(DelAddr))
 	if err != nil {
 		return err.Error()
 	}
-
-	var ubds staking.UnbondingDelegations
-	for _, kv := range resKVs {
-		ubds = append(ubds, types.MustUnmarshalUBD(cdc, kv.Value))
+	res, _, err := cliCtx.QueryWithData("custom/staking/unbonding-delegation", bz)
+	if err != nil {
+		return err.Error()
 	}
+	// resKVs, err := cliCtx.QuerySubspace(staking.GetUBDsKey(DelAddr), storeStake)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 
+	// var ubds staking.UnbondingDelegations
+	// for _, kv := range resKVs {
+	// 	ubds = append(ubds, types.MustUnmarshalUBD(cdc, kv.Value))
+	// }
+	var ubds types.UnbondingDelegations
+	if err = cdc.UnmarshalJSON(res, &ubds); err != nil {
+		return err.Error()
+	}
 	//json output the result
 	output, err := codec.MarshalJSONIndent(cdc, ubds)
 	if err != nil {
@@ -459,7 +508,7 @@ func GetBondValidators(rootDir, node, chainID, delegatorAddr string) string {
 		WithCodec(cdc).WithTrustNode(true)
 
 	//query with data
-	valids, err := cliCtx.QueryWithData("custom/staking/delegatorValidators", bz)
+	valids, _, err := cliCtx.QueryWithData("custom/staking/delegatorValidators", bz)
 	//return specific info if there is no delegation between them
 	//fmt.Println(valids)
 	if len(valids) <= 2 {
@@ -477,13 +526,15 @@ func GetBondValidators(rootDir, node, chainID, delegatorAddr string) string {
 	var validplus []ValidPlus
 	for _, valid := range validators {
 		valAddr := valid.GetOperator()
-		bz := valAddr.Bytes()
+		vbz := valAddr.Bytes()
 		//var accAddr sdk.AccAddress
-		accAddr := sdk.AccAddress(bz)
-		//cdc.MustUnmarshalJSON(bz,&accAddr)
+		accAddr := sdk.AccAddress(vbz)
 		// make a query to get the existing delegation shares
-		key := staking.GetDelegationKey(accAddr, valAddr)
-		res, err := cliCtx.QueryStore(key, storeStake)
+		bz, err := cdc.MarshalJSON(types.NewQueryBondsParams(accAddr, valAddr))
+		if err != nil {
+			return err.Error()
+		}
+		res, _, err := cliCtx.QueryWithData("custom/staking/delegation", bz)
 		if err != nil {
 			return err.Error()
 		}
@@ -515,19 +566,20 @@ func GetBondValidators(rootDir, node, chainID, delegatorAddr string) string {
 	return string(output)
 }
 
+//ValidPlus plus self delegation
 type ValidPlus struct {
 	Validator      staking.Validator `json:"validator"`
 	SelfBondShares string            `json:"selfbond_shares"`
 }
 
-//get all the validators
+//GetAllValidators get all the validators
 func GetAllValidators(rootDir, node, chainID string) string {
 	key := staking.ValidatorsKey
 	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
 		WithCodec(cdc).WithTrustNode(true)
 
-	resKVs, err := cliCtx.QuerySubspace(key, storeStake)
+	resKVs, _, err := cliCtx.QuerySubspace(key, storeStake)
 	if err != nil {
 		return err.Error()
 	}
@@ -540,13 +592,16 @@ func GetAllValidators(rootDir, node, chainID string) string {
 
 		valid := types.MustUnmarshalValidator(cdc, kv.Value)
 		valAddr := valid.OperatorAddress
-		bz := valAddr.Bytes()
+		vbz := valAddr.Bytes()
 		//var accAddr sdk.AccAddress
-		accAddr := sdk.AccAddress(bz)
+		accAddr := sdk.AccAddress(vbz)
 		//cdc.MustUnmarshalJSON(bz,&accAddr)
 		// make a query to get the existing delegation shares
-		key := staking.GetDelegationKey(accAddr, valAddr)
-		res, err := cliCtx.QueryStore(key, storeStake)
+		bz, err := cdc.MarshalJSON(types.NewQueryBondsParams(accAddr, valAddr))
+		if err != nil {
+			return err.Error()
+		}
+		res, _, err := cliCtx.QueryWithData("custom/staking/delegation", bz)
 		if err != nil {
 			return err.Error()
 		}
@@ -590,23 +645,29 @@ func GetAllDelegations(rootDir, node, chainID, delegatorAddr string) string {
 		return err.Error()
 	}
 
-	key := staking.GetDelegationsKey(DelAddr)
-	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
+	// key := staking.GetDelegationsKey(DelAddr)
+	// //to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
 		WithCodec(cdc).WithTrustNode(true)
 
-	resKVs, err := cliCtx.QuerySubspace(key, storeStake)
+	bz, err := cdc.MarshalJSON(types.NewQueryDelegatorParams(DelAddr))
+	if err != nil {
+		return err.Error()
+	}
+	//staking/delegatorDelegations
+	// route := fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryDelegatorDelegations)
+	res, _, err := cliCtx.QueryWithData("custom/staking/delegatorDelegations", bz)
 	if err != nil {
 		return err.Error()
 	}
 
 	// parse out the delegations
-	var delegations staking.Delegations
-	for _, kv := range resKVs {
-		delegations = append(delegations, types.MustUnmarshalDelegation(cdc, kv.Value))
+	var resp types.DelegationResponses
+	if err := cdc.UnmarshalJSON(res, &resp); err != nil {
+		return err.Error()
 	}
 
-	output, err := codec.MarshalJSONIndent(cdc, delegations)
+	output, err := codec.MarshalJSONIndent(cdc, resp)
 	if err != nil {
 		return err.Error()
 	}
@@ -643,9 +704,10 @@ func WithdrawDelegationReward(rootDir, node, chainID, delegatorName, password, d
 
 	////to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
-	if err := cliCtx.EnsureAccountExistsFromAddr(DelegatorAddr); err != nil {
+		WithCodec(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+
+	if err := accGetter.EnsureExists(DelegatorAddr); err != nil {
 		return err.Error()
 	}
 
@@ -664,17 +726,17 @@ func WithdrawDelegationReward(rootDir, node, chainID, delegatorName, password, d
 	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
-	accNum, err := cliCtx.GetAccountNumber(DelegatorAddr)
+	accNum, accSeq, err := accGetter.GetAccountNumberSequence(DelegatorAddr)
 	if err != nil {
 		return err.Error()
 	}
 	txBldr = txBldr.WithAccountNumber(accNum)
 
 	//accSequence added
-	accSeq, err := cliCtx.GetAccountSequence(DelegatorAddr)
-	if err != nil {
-		return err.Error()
-	}
+	// accSeq, err := cliCtx.GetAccountSequence(DelegatorAddr)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 	txBldr = txBldr.WithSequence(accSeq)
 
 	// build and sign the transaction
@@ -711,14 +773,15 @@ func GetDelegationRewards(rootDir, node, chainID, delegatorAddr, validatorAddr s
 
 	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true)
-	if err := cliCtx.EnsureAccountExistsFromAddr(DelAddr); err != nil {
-		return err.Error()
-	}
+		WithCodec(cdc).WithTrustNode(true)
+	// accGetter := authtxb.NewAccountRetriever(cliCtx)
+
+	// if err := accGetter.EnsureExists(DelAddr); err != nil {
+	// 	return err.Error()
+	// }
 
 	//query the delegation rewards
-	resp, err := cliCtx.QueryWithData("custom/distr/delegation_rewards", cdc.MustMarshalJSON(distr.NewQueryDelegationRewardsParams(DelAddr, ValAddr)))
+	resp, _, err := cliCtx.QueryWithData("custom/distr/delegation_rewards", cdc.MustMarshalJSON(distr.NewQueryDelegationRewardsParams(DelAddr, ValAddr)))
 	if err != nil {
 		return err.Error()
 	}
@@ -735,8 +798,7 @@ func GetDelegationRewards(rootDir, node, chainID, delegatorAddr, validatorAddr s
 
 func QueryTx(rootDir, Node, chainID, Txhash string) string {
 	cliCtx := newCLIContext(rootDir, Node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true)
+		WithCodec(cdc).WithTrustNode(true)
 	hash, err := hex.DecodeString(Txhash)
 	if err != nil {
 		return err.Error()
@@ -807,14 +869,10 @@ func GetDelegtorRewardsShares(rootDir, node, chainID, delegatorAddr string) stri
 
 	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true)
-	if err := cliCtx.EnsureAccountExistsFromAddr(DelAddr); err != nil {
-		return err.Error()
-	}
+		WithCodec(cdc).WithTrustNode(true)
 
 	//get all the validators with delegation of the specific delegator
-	ValAddrs, err := cliCtx.QueryWithData("custom/distr/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
+	ValAddrs, _, err := cliCtx.QueryWithData("custom/distr/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
 	if err != nil {
 		return err.Error()
 	}
@@ -826,7 +884,7 @@ func GetDelegtorRewardsShares(rootDir, node, chainID, delegatorAddr string) stri
 	var delrews []Delrewards
 	//query the delegation rewards
 	for _, valAddr := range validators {
-		rewards, err := cliCtx.QueryWithData("custom/distr/delegation_rewards", cdc.MustMarshalJSON(distr.NewQueryDelegationRewardsParams(DelAddr, valAddr)))
+		rewards, _, err := cliCtx.QueryWithData("custom/distr/delegation_rewards", cdc.MustMarshalJSON(distr.NewQueryDelegationRewardsParams(DelAddr, valAddr)))
 		if err != nil {
 			return err.Error()
 		}
@@ -834,8 +892,11 @@ func GetDelegtorRewardsShares(rootDir, node, chainID, delegatorAddr string) stri
 		cdc.MustUnmarshalJSON(rewards, &rewardsresult)
 
 		// make a query to get the existing delegation shares
-		key := staking.GetDelegationKey(DelAddr, valAddr)
-		res, err := cliCtx.QueryStore(key, storeStake)
+		bz, err := cdc.MarshalJSON(types.NewQueryBondsParams(DelAddr, valAddr))
+		if err != nil {
+			return err.Error()
+		}
+		res, _, err := cliCtx.QueryWithData("custom/staking/delegation", bz)
 		if err != nil {
 			return err.Error()
 		}
@@ -894,14 +955,14 @@ func WithdrawDelegatorAllRewards(rootDir, node, chainID, delegatorName, password
 
 	//to be fixed, the trust-node was set true to passby the verifier function, need improvement
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
-	if err := cliCtx.EnsureAccountExistsFromAddr(DelAddr); err != nil {
+		WithCodec(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+	if err := accGetter.EnsureExists(DelAddr); err != nil {
 		return err.Error()
 	}
 
 	//get all the validators with delegation of the specific delegator
-	ValAddrs, err := cliCtx.QueryWithData("custom/distr/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
+	ValAddrs, _, err := cliCtx.QueryWithData("custom/distr/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
 	if err != nil {
 		return err.Error()
 	}
@@ -926,17 +987,17 @@ func WithdrawDelegatorAllRewards(rootDir, node, chainID, delegatorName, password
 	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
-	accNum, err := cliCtx.GetAccountNumber(DelAddr)
+	accNum, accSeq, err := accGetter.GetAccountNumberSequence(DelAddr)
 	if err != nil {
 		return err.Error()
 	}
 	txBldr = txBldr.WithAccountNumber(accNum)
 
 	//accSequence added
-	accSeq, err := cliCtx.GetAccountSequence(DelAddr)
-	if err != nil {
-		return err.Error()
-	}
+	// accSeq, err := cliCtx.GetAccountSequence(DelAddr)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 	txBldr = txBldr.WithSequence(accSeq)
 
 	// build and sign the transaction
@@ -980,9 +1041,10 @@ func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, 
 
 	fromAddr := info.GetAddress()
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true)
-	if err := cliCtx.EnsureAccountExistsFromAddr(fromAddr); err != nil {
+		WithCodec(cdc).WithTrustNode(true)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+
+	if err := accGetter.EnsureExists(fromAddr); err != nil {
 		return err.Error()
 	}
 
@@ -997,7 +1059,7 @@ func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, 
 		return err.Error()
 	}
 
-	account, err := cliCtx.GetAccount(fromAddr)
+	account, err := accGetter.GetAccount(fromAddr)
 	if err != nil {
 		return err.Error()
 	}
@@ -1008,24 +1070,24 @@ func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, 
 	}
 
 	// build and sign the transaction, then broadcast to Tendermint
-	msg := bank.NewMsgSend(fromAddr, to, coins)
+	msg := NewMsgSend(fromAddr, to, coins)
 
 	//init a txBuilder for the transaction with fee
 	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
 	//txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithGasPrices(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
-	accNum, err := cliCtx.GetAccountNumber(fromAddr)
+	accNum, accSeq, err := accGetter.GetAccountNumberSequence(fromAddr)
 	if err != nil {
 		return err.Error()
 	}
 	txBldr = txBldr.WithAccountNumber(accNum)
 
 	//accSequence added
-	accSeq, err := cliCtx.GetAccountSequence(fromAddr)
-	if err != nil {
-		return err.Error()
-	}
+	// accSeq, err := cliCtx.GetAccountSequence(fromAddr)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 	txBldr = txBldr.WithSequence(accSeq)
 
 	// build and sign the transaction
@@ -1040,8 +1102,7 @@ func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, 
 func BroadcastTransferTx(rootDir, node, chainID, txString, broadcastMode string) string {
 	//initiate context
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
+		WithCodec(cdc).WithTrustNode(true).WithBroadcastMode(broadcastMode)
 	// broadcast to a Tendermint node
 	txBytes, err := hex.DecodeString(txString)
 	if err != nil {
@@ -1080,9 +1141,10 @@ func LocalGenTx(rootDir, node, chainID, fromName, password, toStr, coinStr, feeS
 
 	fromAddr := info.GetAddress()
 	cliCtx := newCLIContext(rootDir, node, chainID).
-		WithCodec(cdc).
-		WithAccountDecoder(cdc).WithTrustNode(true)
-	if err := cliCtx.EnsureAccountExistsFromAddr(fromAddr); err != nil {
+		WithCodec(cdc).WithTrustNode(true)
+	accGetter := authtxb.NewAccountRetriever(cliCtx)
+
+	if err := accGetter.EnsureExists(fromAddr); err != nil {
 		return err.Error()
 	}
 
@@ -1097,7 +1159,7 @@ func LocalGenTx(rootDir, node, chainID, fromName, password, toStr, coinStr, feeS
 		return err.Error()
 	}
 
-	account, err := cliCtx.GetAccount(fromAddr)
+	account, err := accGetter.GetAccount(fromAddr)
 	if err != nil {
 		return err.Error()
 	}
@@ -1108,24 +1170,24 @@ func LocalGenTx(rootDir, node, chainID, fromName, password, toStr, coinStr, feeS
 	}
 
 	// build and sign the transaction, then broadcast to Tendermint
-	msg := bank.NewMsgSend(fromAddr, to, coins)
+	msg := NewMsgSend(fromAddr, to, coins)
 
 	//init a txBuilder for the transaction with fee
 	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
 	//txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithGasPrices(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
-	accNum, err := cliCtx.GetAccountNumber(fromAddr)
+	accNum, accSeq, err := accGetter.GetAccountNumberSequence(fromAddr)
 	if err != nil {
 		return err.Error()
 	}
 	txBldr = txBldr.WithAccountNumber(accNum)
 
 	//accSequence added
-	accSeq, err := cliCtx.GetAccountSequence(fromAddr)
-	if err != nil {
-		return err.Error()
-	}
+	// accSeq, err := cliCtx.GetAccountSequence(fromAddr)
+	// if err != nil {
+	// 	return err.Error()
+	// }
 	txBldr = txBldr.WithSequence(accSeq)
 
 	//separate build and sign the transaction
@@ -1148,81 +1210,4 @@ func LocalGenTx(rootDir, node, chainID, fromName, password, toStr, coinStr, feeS
 	txb, _ := cdc.MarshalJSON(txstd)
 	fmt.Println(txb)
 	return string(txb)
-}
-
-//QueryTxsWithTags for query txs with tags for event parsing：Search for paginated transactions that match a set of tags
-func QueryTxsWithTags(rootDir, Node, chainID, addr string, page, limit int) string {
-	cliCtx := newCLIContext(rootDir, Node, chainID).
-		WithCodec(cdc).WithTrustNode(true)
-	if page <= 0 {
-		return errors.New("page must greater than 0").Error()
-	}
-
-	if limit <= 0 {
-		return errors.New("limit must greater than 0").Error()
-	}
-
-	//use the tags with specific tx.SearchTxs() method for querying
-	tgs := "sender:" + addr
-	tags_sender := []string{tgs}
-	tags_recipient := []string{"recipient:" + addr}
-	tags_delegator := []string{"delegator:" + addr}
-
-	sendTags := tagsRevert(tags_sender)
-	recvTgas := tagsRevert(tags_recipient)
-	deleTgas := tagsRevert(tags_delegator)
-
-	txs_s, err := tx.SearchTxs(cliCtx, cdc, sendTags, page, limit)
-	if err != nil {
-		return err.Error()
-	}
-
-	txs_r, err := tx.SearchTxs(cliCtx, cdc, deleTgas, page, limit)
-	if err != nil {
-		return err.Error()
-	}
-
-	txs_d, err := tx.SearchTxs(cliCtx, cdc, recvTgas, page, limit)
-	if err != nil {
-		return err.Error()
-	}
-	var txs []sdk.TxResponse
-	for i := 0; i < len(txs_s); i++ {
-		txs = append(txs, txs_s[i])
-	}
-	for j := 0; j < len(txs_r); j++ {
-		txs = append(txs, txs_r[j])
-	}
-	for k := 0; k < len(txs_d); k++ {
-		txs = append(txs, txs_d[k])
-	}
-
-	var output []byte
-	output, err = cdc.MarshalJSONIndent(txs, "", "  ")
-	if err != nil {
-		return err.Error()
-	}
-
-	return string(output)
-}
-
-func tagsRevert(tags []string) []string {
-	var tmTags []string
-	for _, tag := range tags {
-		// if !strings.Contains(tag, ":") {
-		// 	return fmt.Errorf("%s should be of the format <key>:<value>", tagsStr)
-		// } else if strings.Count(tag, ":") > 1 {
-		// 	return fmt.Errorf("%s should only contain one <key>:<value> pair", tagsStr)
-		// }
-
-		keyValue := strings.Split(tag, ":")
-		if keyValue[0] == tmtypes.TxHeightKey {
-			tag = fmt.Sprintf("%s=%s", keyValue[0], keyValue[1])
-		} else {
-			tag = fmt.Sprintf("%s='%s'", keyValue[0], keyValue[1])
-		}
-		tmTags = append(tmTags, tag)
-	}
-	return tmTags
-
 }

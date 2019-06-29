@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	rpcclient "github.com/tendermint/tendermint/rpc/client"
 )
 
@@ -46,10 +45,10 @@ func newCLIContext(rootDir, node, chainID string) context.CLIContext {
 	//}
 
 	CliContext := context.CLIContext{
-		Client:       rpc,
-		Output:       os.Stdout,
-		NodeURI:      nodeURI,
-		AccountStore: auth.StoreKey,
+		Client:  rpc,
+		Output:  os.Stdout,
+		NodeURI: nodeURI,
+		// AccountStore:  auth.StoreKey,
 		//Verifier:    verifier,
 		//BroadcastMode: broadcastMode,
 	}
