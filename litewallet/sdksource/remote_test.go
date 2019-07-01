@@ -6,9 +6,9 @@ import (
 )
 
 func TestGetAccount(t *testing.T) {
-	addr := "cosmos1ktecz4dr56j9tsfh7nwg8s9suvhfu70qpzrfcr"
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
+	addr := "cosmos1vk4ark02kc7ac9ctgegml66496a8nyz0wyfn33"
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
 	acout := GetAccount(rootDir, node, chainId, addr)
@@ -20,7 +20,7 @@ func TestTransfer(t *testing.T) {
 	rootDir := usr.HomeDir
 	node := "tcp://192.168.1.184:26657"
 	chainId := "cosmosv34"
-	fromName := "c34banker"
+	fromName := "cosmos"
 	password := "wm131421"
 	toStr := "cosmos1nelm60csnn6204tav8s5ypkvevm6k2xsch8x5r"
 	coinStr := "10000000stake"
@@ -35,10 +35,10 @@ func TestDelegate(t *testing.T) {
 	rootDir := usr.HomeDir
 	node := "tcp://192.168.1.184:26657"
 	chainId := "cosmosv34"
-	delegatorName := "c34banker"
+	delegatorName := "cosmos"
 	password := "wm131421"
-	delegatorAddr := "cosmos1xwz2req975fqnvrrx9me7vwyz25paxflnjw6d2"
-	validatorAddr := "cosmosvaloper13zaglnf494jd5550mm74rlmknfk8tntrfectk9"
+	delegatorAddr := "cosmos1vk4ark02kc7ac9ctgegml66496a8nyz0wyfn33"
+	validatorAddr := "cosmosvaloper1xwz2req975fqnvrrx9me7vwyz25paxflkx60pe"
 	delegationCoinStr := "1000000000stake"
 	feeStr := "10stake"
 	broadcastMode := "block"
@@ -142,9 +142,9 @@ func TestGetDelegationRewards(t *testing.T) {
 func TestQueryTx(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
-	txHash := "6C022D72749D0F11E80BE9F21969BA80DBBD7DA39D686F13C9A41A71CB038D96"
+	node := "tcp://192.168.1.184:26657"
+	chainId := "cosmosv34"
+	txHash := "1730528BCDD06039C82C27C87E6D19C8CA2D4540BD2DB34A3BD67EF04230B1FB"
 	qTx := QueryTx(rootDir, node, chainId, txHash)
 	t.Log(qTx)
 }
@@ -227,16 +227,4 @@ func TestLocalGenTx(t *testing.T) {
 	Txs := LocalGenTx(rootDir, node, chainId, fromName, password, toStr, coinStr, feeStr)
 	//txb := []byte(Txs)
 	t.Log(Txs)
-}
-
-func TestQueryTxsWithTags(t *testing.T) {
-	usr, _ := user.Current()
-	rootDir := usr.HomeDir
-	node := "tcp://47.105.52.237:36657"
-	chainId := "cosmoshub-2"
-	addr := "cosmos1ktecz4dr56j9tsfh7nwg8s9suvhfu70qpzrfcr"
-	page := 1
-	limit := 30
-	out := QueryTxsWithTags(rootDir, node, chainId, addr, page, limit)
-	t.Log(out)
 }
