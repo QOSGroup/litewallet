@@ -83,20 +83,6 @@ type MsgSend struct {
 
 var _ sdk.Msg = MsgSend{}
 
-// Register concrete types on codec codec
-func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgSend{}, "cosmos-sdk/MsgSend", nil)
-}
-
-// module codec
-var ModuleCdc *codec.Codec
-
-func init() {
-	ModuleCdc = codec.New()
-	RegisterCodec(ModuleCdc)
-	ModuleCdc.Seal()
-}
-
 // NewMsgSend - construct arbitrary multi-in, multi-out send msg.
 func NewMsgSend(fromAddr, toAddr sdk.AccAddress, amount sdk.Coins) MsgSend {
 	return MsgSend{FromAddress: fromAddr, ToAddress: toAddr, Amount: amount}
@@ -127,7 +113,7 @@ func (msg MsgSend) ValidateBasic() sdk.Error {
 
 // GetSignBytes Implements Msg.
 func (msg MsgSend) GetSignBytes() []byte {
-	return sdk.MustSortJSON(cdc.MustMarshalJSON(msg))
+	return sdk.MustSortJSON(BankCdc.MustMarshalJSON(msg))
 }
 
 // GetSigners Implements Msg.
@@ -190,7 +176,7 @@ func Transfer(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr
 	msg := NewMsgSend(fromAddr, to, coins)
 
 	//init a txBuilder for the transaction with fee
-	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
+	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(BankCdc)).WithFees(feeStr).WithChainID(chainID)
 	//txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithGasPrices(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
@@ -216,7 +202,7 @@ func Transfer(rootDir, node, chainID, fromName, password, toStr, coinStr, feeStr
 	if err != nil {
 		return err.Error()
 	}
-	resbyte, err := cdc.MarshalJSON(res)
+	resbyte, err := BankCdc.MarshalJSON(res)
 	if err != nil {
 		return err.Error()
 	}
@@ -1187,7 +1173,7 @@ func LocalGenTx(rootDir, node, chainID, fromName, password, toStr, coinStr, feeS
 	msg := NewMsgSend(fromAddr, to, coins)
 
 	//init a txBuilder for the transaction with fee
-	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
+	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(BankCdc)).WithFees(feeStr).WithChainID(chainID)
 	//txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithGasPrices(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
