@@ -1207,7 +1207,7 @@ func LocalGenTx(rootDir, node, chainID, fromName, password, toStr, coinStr, feeS
 	}
 
 	txstd := auth.NewStdTx(signmsg.Msgs, signmsg.Fee, []auth.StdSignature{signa}, signmsg.Memo)
-	txb, _ := cdc.MarshalJSON(txstd)
+	txb, _ := BankCdc.MarshalJSON(txstd)
 	fmt.Println(txb)
 	return string(txb)
 }
