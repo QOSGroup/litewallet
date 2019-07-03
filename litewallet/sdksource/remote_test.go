@@ -3,6 +3,9 @@ package sdksource
 import (
 	"os/user"
 	"testing"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetAccount(t *testing.T) {
@@ -22,10 +25,10 @@ func TestTransfer(t *testing.T) {
 	chainId := "cosmosv34"
 	fromName := "cosmos"
 	password := "wm131421"
-	toStr := "cosmos1nelm60csnn6204tav8s5ypkvevm6k2xsch8x5r"
-	coinStr := "10000000stake"
+	toStr := "cosmos1kklk4eqye6pla97dzmc03pw5lst7x0n4zt8syw"
+	coinStr := "1000000stake"
 	feeStr := "20stake"
-	broadcastMode := "async"
+	broadcastMode := "sync"
 	transout := Transfer(rootDir, node, chainId, fromName, password, toStr, coinStr, feeStr, broadcastMode)
 	t.Log(transout)
 }
@@ -219,7 +222,7 @@ func TestLocalGenTx(t *testing.T) {
 	rootDir := usr.HomeDir
 	node := "tcp://192.168.1.184:26657"
 	chainId := "cosmosv34"
-	fromName := "c34banker"
+	fromName := "cosmos"
 	password := "wm131421"
 	toStr := "cosmos1kklk4eqye6pla97dzmc03pw5lst7x0n4zt8syw"
 	coinStr := "100stake"
@@ -227,4 +230,16 @@ func TestLocalGenTx(t *testing.T) {
 	Txs := LocalGenTx(rootDir, node, chainId, fromName, password, toStr, coinStr, feeStr)
 	//txb := []byte(Txs)
 	t.Log(Txs)
+}
+
+func TestMsgSendGetSignBytes(t *testing.T) {
+	addr1 := sdk.AccAddress([]byte("input"))
+	addr2 := sdk.AccAddress([]byte("output"))
+	coins := sdk.NewCoins(sdk.NewInt64Coin("atom", 10))
+	var msg = NewMsgSend(addr1, addr2, coins)
+	res := msg.GetSignBytes()
+
+	expected := `{"type":"cosmos-sdk/MsgSend","value":{"amount":[{"amount":"10","denom":"atom"}],"from_address":"cosmos1d9h8qat57ljhcm","to_address":"cosmos1da6hgur4wsmpnjyg"}}`
+	require.Equal(t, expected, string(res))
+	t.Log(string(res))
 }
