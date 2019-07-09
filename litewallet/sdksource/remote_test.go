@@ -234,7 +234,7 @@ func TestQueryTxsWithTags(t *testing.T) {
 	rootDir := usr.HomeDir
 	node := "tcp://47.105.52.237:36657"
 	chainId := "cosmoshub-2"
-	addr := "cosmos1j24sm42u8jypdyacj88wvjmz7a4duxfg6mn39x"
+	addr := "cosmos1ktecz4dr56j9tsfh7nwg8s9suvhfu70qpzrfcr"
 	page := 1
 	limit := 30
 	out := QueryTxsWithTags(rootDir, node, chainId, addr, page, limit)
