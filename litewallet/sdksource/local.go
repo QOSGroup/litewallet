@@ -3,19 +3,21 @@ package sdksource
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
+
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	crkeys "github.com/cosmos/cosmos-sdk/crypto/keys"
+	bip39 "github.com/cosmos/go-bip39"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/cli"
-	bip39 "github.com/cosmos/go-bip39"
-	"regexp"
 )
+
 // keybase is used to make GetKeyBase a singleton
 //var keybase crkeys.Keybase
 const (
-	DenomName = "uatom"
+	DenomName        = "uatom"
 	defaultBIP39pass = ""
-	)
+)
 
 type KeyOutput struct {
 	Name    string `json:"name"`
@@ -23,7 +25,7 @@ type KeyOutput struct {
 	Address string `json:"address"`
 	PubKey  string `json:"pub_key"`
 	Seed    string `json:"seed,omitempty"`
-	Denom  string `json:"denom"`
+	Denom   string `json:"denom"`
 }
 
 type SeedOutput struct {
@@ -63,7 +65,7 @@ type SeedOutput struct {
 //}
 
 //create mnemonics with bip39 to output 12-word list
-func CreateSeed () string {
+func CreateSeed() string {
 	// default number of words (12):
 	// this generates a mnemonic directly from the number of words by reading system entropy.
 	defaultEntropySize := 128
@@ -82,7 +84,6 @@ func CreateSeed () string {
 	return string(respbyte)
 }
 
-
 //errors on account creation
 func errKeyNameConflict(name string) error {
 	return fmt.Errorf("acount with name %s already exists", name)
@@ -99,7 +100,6 @@ func errMissingPassword() error {
 func errMissingSeed() error {
 	return fmt.Errorf("you have to specify seed for key recover")
 }
-
 
 func CreateAccount(rootDir, name, password, seed string) string {
 	var (
@@ -141,8 +141,7 @@ func CreateAccount(rootDir, name, password, seed string) string {
 		seed = Seed
 	}
 
-
-	info, err1 := kb.CreateAccount(name, seed, defaultBIP39pass, password, 0,0)
+	info, err1 := kb.CreateAccount(name, seed, defaultBIP39pass, password, 0, 0)
 	if err1 != nil {
 		return err1.Error()
 	}
@@ -155,13 +154,13 @@ func CreateAccount(rootDir, name, password, seed string) string {
 	keyOutput.Mnemonic = seed
 	//add new field denom for the coin name
 	var Ko KeyOutput
-	Ko = KeyOutput{keyOutput.Name, keyOutput.Type, keyOutput.Address,keyOutput.PubKey,keyOutput.Mnemonic,DenomName}
+	Ko = KeyOutput{keyOutput.Name, keyOutput.Type, keyOutput.Address, keyOutput.PubKey, keyOutput.Mnemonic, DenomName}
 	respbyte, _ := json.Marshal(Ko)
 	return string(respbyte)
 }
 
 //for recover key with name, password and seed input
-func RecoverKey(rootDir,name,password,seed string) string {
+func RecoverKey(rootDir, name, password, seed string) string {
 	var (
 		err  error
 		info crkeys.Info
@@ -189,7 +188,7 @@ func RecoverKey(rootDir,name,password,seed string) string {
 	if err != nil {
 		return err.Error()
 	}
-	info, err1 := kb.CreateAccount(name, seed, defaultBIP39pass, password, 0,0)
+	info, err1 := kb.CreateAccount(name, seed, defaultBIP39pass, password, 0, 0)
 	if err1 != nil {
 		return err1.Error()
 	}
@@ -202,14 +201,13 @@ func RecoverKey(rootDir,name,password,seed string) string {
 	keyOutput.Mnemonic = seed
 	//add new field denom for the coin name
 	var Ko KeyOutput
-	Ko = KeyOutput{keyOutput.Name, keyOutput.Type, keyOutput.Address,keyOutput.PubKey,keyOutput.Mnemonic,DenomName}
+	Ko = KeyOutput{keyOutput.Name, keyOutput.Type, keyOutput.Address, keyOutput.PubKey, keyOutput.Mnemonic, DenomName}
 	respbyte, _ := json.Marshal(Ko)
 	return string(respbyte)
 }
 
 type UpdateKeyOutput struct {
 	PasswordUpdate string `json:"pass_update"`
-
 }
 
 //for update the password of the name key stored in level db
@@ -237,6 +235,7 @@ func UpdateKey(rootDir, name, oldpass, newpass string) string {
 	return string(respbyte)
 
 }
+
 //To differentiate the addresses from various wallets, e.g. cosmos,ETH,qos, .etc
 func WalletAddressCheck(addr string) string {
 	//split the address with prefix, e.g. "0x", "cosmos", "address" for ETH, cosmos, qos respectively
