@@ -340,3 +340,9 @@ func EthSpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr,
 	output := eth.SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenValue, gasPrice, GasLimit, pendingNonce)
 	return output
 }
+
+//EthGetNonceAt provide the nonce at the latest block
+func EthGetNonceAt(rootDir, node, fromName, password string) int64 {
+	output := eth.GetNonceAt(rootDir, node, fromName, password)
+	return output
+}

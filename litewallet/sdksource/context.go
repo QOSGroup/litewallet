@@ -2,20 +2,19 @@ package sdksource
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	rpcclient "github.com/tendermint/tendermint/rpc/client"
-	"os"
 )
-
 
 const ctxAccStoreName = "acc"
 
 //NewCLIContext is used to init the config context without using Viper, the argues are all from the input of the func
-func newCLIContext(rootDir,node,chainID string) context.CLIContext {
+func newCLIContext(rootDir, node, chainID string) context.CLIContext {
 	var (
 		rpc rpcclient.Client
-
 	)
 
 	//init the rpc instance
@@ -40,7 +39,6 @@ func newCLIContext(rootDir,node,chainID string) context.CLIContext {
 	//	rpc, log.NewNopLogger(), cacheSize,
 	//)
 
-
 	//if err != nil {
 	//	fmt.Printf("Create verifier failed: %s\n", err.Error())
 	//	fmt.Printf("Please check network connection and verify the address of the node to connect to\n")
@@ -48,10 +46,10 @@ func newCLIContext(rootDir,node,chainID string) context.CLIContext {
 	//}
 
 	CliContext := context.CLIContext{
-		Client:        rpc,
-		Output:        os.Stdout,
-		NodeURI:       nodeURI,
-		AccountStore:  auth.StoreKey,
+		Client:       rpc,
+		Output:       os.Stdout,
+		NodeURI:      nodeURI,
+		AccountStore: auth.StoreKey,
 		//Verifier:    verifier,
 		//BroadcastMode: broadcastMode,
 	}
