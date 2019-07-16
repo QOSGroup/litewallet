@@ -2,16 +2,17 @@ package eth
 
 import (
 	"context"
+	"log"
+	"math"
+	"math/big"
+
 	"github.com/QOSGroup/litewallet/litewallet/eth/contracts_erc20"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"log"
-	"math"
-	"math/big"
 )
 
-func GetAccount(node, addr string) string{
+func GetAccount(node, addr string) string {
 	//setup the client, here use the infura own project "eth_wallet" node="https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
 	client, err := ethclient.Dial(node)
 	if err != nil {
@@ -65,7 +66,7 @@ func GetAccountERC20(node, addr, tokenAddr string) string {
 	//details of the token in ERC20 standards: including symbol and decimals
 	symbol, err := instance.Symbol(&bind.CallOpts{})
 	if err != nil {
-		log.Fatal(err)
+		symbol = ""
 	}
 
 	decimals, err := instance.Decimals(&bind.CallOpts{})

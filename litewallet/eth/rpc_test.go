@@ -8,15 +8,15 @@ import (
 func TestGetAccount(t *testing.T) {
 	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
 	addr := "0x189f91780c97ed13c242ce3f1568f97a446cab88"
-	output := GetAccount(node,addr)
+	output := GetAccount(node, addr)
 	t.Log(output)
 }
 
 func TestGetAccountERC20(t *testing.T) {
 	node := "https://mainnet.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
 	addr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
-	tokenAddr := "0x7b188A8b3A2113621895Fb35fC67a779CAFFA92D"
-	output := GetAccountERC20(node,addr,tokenAddr)
+	tokenAddr := "0x86Fa049857E0209aa7D9e616F7eb3b3B78ECfdb0"
+	output := GetAccountERC20(node, addr, tokenAddr)
 	t.Log(output)
 }
 
@@ -30,7 +30,7 @@ func TestTransferETH(t *testing.T) {
 	amount := "0.00002"
 	gasLimit := int64(21000)
 	gasPrice := "20"
-	output := TransferETH(rootDir,node,name,password,toAddr,gasPrice,amount,gasLimit)
+	output := TransferETH(rootDir, node, name, password, toAddr, gasPrice, amount, gasLimit)
 	t.Log(output)
 }
 
@@ -46,7 +46,7 @@ func TestTransferERC20(t *testing.T) {
 	gasLimit := int64(210000)
 	tokenValue := "0.34"
 	gasPrice := "3"
-	output := TransferERC20(rootDir,node,name,password,toAddr,tokenAddr,tokenValue,gasPrice,gasLimit)
+	output := TransferERC20(rootDir, node, name, password, toAddr, tokenAddr, tokenValue, gasPrice, gasLimit)
 	t.Log(output)
 }
 
@@ -71,7 +71,7 @@ func TestGetPendingNonceAt(t *testing.T) {
 	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
 	name := "easyzone"
 	password := "wm131421"
-	output := GetPendingNonceAt(rootDir,node,name,password)
+	output := GetPendingNonceAt(rootDir, node, name, password)
 	t.Log(output)
 }
 
@@ -86,7 +86,6 @@ func TestSpeedTransferETH(t *testing.T) {
 	gasLimit := int64(23000)
 	gasPrice := "200"
 	pendingNonce := int64(10)
-	output := SpeedTransferETH(rootDir, node, name, password,toAddr, gasPrice, amount, gasLimit, pendingNonce)
+	output := SpeedTransferETH(rootDir, node, name, password, toAddr, gasPrice, amount, gasLimit, pendingNonce)
 	t.Log(output)
 }
-
