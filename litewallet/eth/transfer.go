@@ -170,7 +170,9 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 
 	vdigit := new(big.Float).Mul(vbalance, big.NewFloat(math.Pow10(digit)))
 	Tamount := new(big.Int)
-	Tamount.SetString(vdigit.String(), 10)
+	//Tamount.SetString(vdigit.String(), 10)
+	f, _ := vdigit.Uint64()
+	Tamount.SetUint64(f)
 
 	paddedAmount := common.LeftPadBytes(Tamount.Bytes(), 32)
 
