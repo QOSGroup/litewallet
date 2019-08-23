@@ -46,6 +46,12 @@ func CosmosGetAccount(rootDir, node, chainID, addr string) string {
 	return output
 }
 
+//for QOSCreateSignedTransfer
+func QOSCreateSignedTransfer(addrto, coinstr, privkey, chainid string) string {
+	output, _ := slim.QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid)
+	return output
+}
+
 //transfer
 func CosmosTransfer(rootDir, node, chainId, fromName, password, toStr, coinStr, feeStr, broadcastMode string) string {
 	output := sdksource.Transfer(rootDir, node, chainId, fromName, password, toStr, coinStr, feeStr, broadcastMode)
