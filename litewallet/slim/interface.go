@@ -562,6 +562,58 @@ type QOSAccount struct {
 
 //only need the following arguments, it`s enough!
 func QSCtransferSendStr(addrto, coinstr, privkey, chainid string) string {
+	//var key ed25519local.PrivKeyEd25519
+	//ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
+	//err := Cdc.UnmarshalJSON([]byte(ts), &key)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//priv := key
+	//addrben32, _ := bech32local.ConvertAndEncode(PREF_ADD, key.PubKey().Address().Bytes())
+	//from, err2 := getAddrFromBech32(addrben32)
+	//if err2 != nil {
+	//	fmt.Println(err2)
+	//}
+	////Get "nonce" from the func RpcQueryAccount
+	//acc,_ := RpcQueryAccount(from)
+	//var qscnonce int64
+	//if acc!=nil{
+	//	qscnonce = int64(acc.Nonce)
+	//}
+	//qscnonce++
+	//
+	//sendersStr := addrben32 + `,` + coinstr
+	//senders, err := ParseTransItem(sendersStr)
+	//if err != nil {
+	//	return err.Error()
+	//}
+	//
+	//receiversStr := addrto + `,` + coinstr
+	//receivers, err := ParseTransItem(receiversStr)
+	//if err != nil {
+	//	return err.Error()
+	//}
+	//tn := TxTransfer{
+	//	Senders:   senders,
+	//	Receivers: receivers,
+	//}
+	jasonpayload, err := QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid)
+	if err != nil {
+		fmt.Println(err)
+	}
+	datas := bytes.NewBuffer([]byte(jasonpayload))
+	aurl := Accounturl + "txSend"
+	req, _ := http.NewRequest("POST", aurl, datas)
+	req.Header.Set("Content-Type", "application/json")
+	clt := http.Client{}
+	resp, _ := clt.Do(req)
+	body, err := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	output := string(body)
+	return output
+}
+
+func QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid string) (string, error) {
 	var key ed25519local.PrivKeyEd25519
 	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
 	err := Cdc.UnmarshalJSON([]byte(ts), &key)
@@ -575,9 +627,9 @@ func QSCtransferSendStr(addrto, coinstr, privkey, chainid string) string {
 		fmt.Println(err2)
 	}
 	//Get "nonce" from the func RpcQueryAccount
-	acc,_ := RpcQueryAccount(from)
+	acc, _ := RpcQueryAccount(from)
 	var qscnonce int64
-	if acc!=nil{
+	if acc != nil {
 		qscnonce = int64(acc.Nonce)
 	}
 	qscnonce++
@@ -585,37 +637,26 @@ func QSCtransferSendStr(addrto, coinstr, privkey, chainid string) string {
 	sendersStr := addrben32 + `,` + coinstr
 	senders, err := ParseTransItem(sendersStr)
 	if err != nil {
-		return err.Error()
+		return "", err
 	}
 
 	receiversStr := addrto + `,` + coinstr
 	receivers, err := ParseTransItem(receiversStr)
 	if err != nil {
-		return err.Error()
+		return "", err
 	}
 	tn := TxTransfer{
 		Senders:   senders,
 		Receivers: receivers,
 	}
 
-
 	msg := genStdSendTx(tn, priv, chainid, qscnonce)
 	jasonpayload, err := Cdc.MarshalJSON(msg)
-	if err != nil {
-		fmt.Println(err)
+	if (err != nil) {
+		return "", err
 	}
-	datas := bytes.NewBuffer(jasonpayload)
-	aurl := Accounturl + "txSend"
-	req, _ := http.NewRequest("POST", aurl, datas)
-	req.Header.Set("Content-Type", "application/json")
-	clt := http.Client{}
-	resp, _ := clt.Do(req)
-	body, err := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	output := string(body)
-	return output
+	return string(jasonpayload), nil
 }
-
 //type InvestTx struct {
 //	Std         *TxStd
 //	ArticleHash []byte `json:"articleHash"` // 文章hash
