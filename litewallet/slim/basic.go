@@ -2,14 +2,16 @@ package slim
 
 import (
 	"fmt"
+	btxs "github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
+	"github.com/QOSGroup/litewallet/litewallet/slim/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bip39local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/respwrap"
+	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	"github.com/pkg/errors"
 	"log"
 )
-
 
 type ResultCreateAccount struct {
 	PubKey   string `json:"pubKey"`
@@ -17,7 +19,7 @@ type ResultCreateAccount struct {
 	Addr     string `json:"addr"`
 	Mnemonic string `json:"mnemonic"`
 	Type     string `json:"type"`
-	Denom    string	`json:"denom"`
+	Denom    string `json:"denom"`
 }
 
 type PrivkeyAmino struct {
@@ -34,8 +36,8 @@ const (
 	// Bech32 prefixes
 	//Bech32PrefixAccPub = "cosmosaccpub"
 	AccountResultType = "local"
-	DenomQOS         = "qos"
-	PREF_ADD = "address"
+	DenomQOS          = "qos"
+	PREF_ADD          = "address"
 )
 
 func AccountCreate(password string) *ResultCreateAccount {
@@ -49,9 +51,9 @@ func AccountCreate(password string) *ResultCreateAccount {
 	key := ed25519local.GenPrivKeyFromSecret(seedo)
 	//pub := key.PubKey().Bytes()
 	pub := key.PubKey()
-	pubkeyAmino, _ := Cdc.MarshalJSON(pub)
+	pubkeyAmino, _ := txs.Cdc.MarshalJSON(pub)
 	var pubkeyAminoStc PubkeyAmino
-	err := Cdc.UnmarshalJSON(pubkeyAmino, &pubkeyAminoStc)
+	err := txs.Cdc.UnmarshalJSON(pubkeyAmino, &pubkeyAminoStc)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -61,9 +63,9 @@ func AccountCreate(password string) *ResultCreateAccount {
 	//bech32Pub, _ := bech32local.ConvertAndEncode(Bech32PrefixAccPub, pub)
 	bech32Addr, _ := bech32local.ConvertAndEncode(PREF_ADD, addr.Bytes())
 
-	privkeyAmino, _ := Cdc.MarshalJSON(key)
+	privkeyAmino, _ := txs.Cdc.MarshalJSON(key)
 	var privkeyAminoStc PrivkeyAmino
-	err1 := Cdc.UnmarshalJSON(privkeyAmino, &privkeyAminoStc)
+	err1 := txs.Cdc.UnmarshalJSON(privkeyAmino, &privkeyAminoStc)
 	if err1 != nil {
 		log.Fatalln(err1.Error())
 	}
@@ -85,7 +87,7 @@ func AccountCreate(password string) *ResultCreateAccount {
 //convert the output to json string format
 func AccountCreateStr(password string) string {
 	acc := AccountCreate(password)
-	result, _ := respwrap.ResponseWrapper(Cdc, acc, nil)
+	result, _ := respwrap.ResponseWrapper(txs.Cdc, acc, nil)
 	out := string(result)
 
 	return out
@@ -98,7 +100,7 @@ func AccountRecoverStr(mncode, password string) string {
 	// add mnemonics validation
 	if bip39local.IsMnemonicValid(mncode) == false {
 		err := errors.Errorf("Invalid mnemonic!")
-		resp, _ := respwrap.ResponseWrapper(Cdc, nil, err)
+		resp, _ := respwrap.ResponseWrapper(txs.Cdc, nil, err)
 		return string(resp)
 
 	}
@@ -106,9 +108,9 @@ func AccountRecoverStr(mncode, password string) string {
 	seed := bip39local.NewSeed(mncode, password)
 	key := ed25519local.GenPrivKeyFromSecret(seed)
 	pub := key.PubKey()
-	pubkeyAmino, _ := Cdc.MarshalJSON(pub)
+	pubkeyAmino, _ := txs.Cdc.MarshalJSON(pub)
 	var pubkeyAminoStc PubkeyAmino
-	err := Cdc.UnmarshalJSON(pubkeyAmino, &pubkeyAminoStc)
+	err := txs.Cdc.UnmarshalJSON(pubkeyAmino, &pubkeyAminoStc)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -118,9 +120,9 @@ func AccountRecoverStr(mncode, password string) string {
 	//bech32Pub, _ := bech32local.ConvertAndEncode("cosmosaccpub", pub)
 	bech32Addr, _ := bech32local.ConvertAndEncode(PREF_ADD, addr.Bytes())
 
-	privkeyAmino, _ := Cdc.MarshalJSON(key)
+	privkeyAmino, _ := txs.Cdc.MarshalJSON(key)
 	var privkeyAminoStc PrivkeyAmino
-	err1 := Cdc.UnmarshalJSON(privkeyAmino, &privkeyAminoStc)
+	err1 := txs.Cdc.UnmarshalJSON(privkeyAmino, &privkeyAminoStc)
 	if err1 != nil {
 		log.Fatalln(err1.Error())
 	}
@@ -135,7 +137,7 @@ func AccountRecoverStr(mncode, password string) string {
 	result.Type = Type
 	result.Denom = DenomQOS
 
-	resp, _ := respwrap.ResponseWrapper(Cdc, result, nil)
+	resp, _ := respwrap.ResponseWrapper(txs.Cdc, result, nil)
 	out := string(resp)
 	return out
 }
@@ -150,14 +152,14 @@ func PubAddrRetrievalStr(s string) string {
 	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + s + "\"}"
 	var key ed25519local.PrivKeyEd25519
 
-	err := Cdc.UnmarshalJSON([]byte(ts), &key)
+	err := txs.Cdc.UnmarshalJSON([]byte(ts), &key)
 	if err != nil {
 		fmt.Println(err)
 	}
 	pub := key.PubKey()
-	pubkeyAmino, _ := Cdc.MarshalJSON(pub)
+	pubkeyAmino, _ := txs.Cdc.MarshalJSON(pub)
 	var pubkeyAminoStc PubkeyAmino
-	err1 := Cdc.UnmarshalJSON(pubkeyAmino, &pubkeyAminoStc)
+	err1 := txs.Cdc.UnmarshalJSON(pubkeyAmino, &pubkeyAminoStc)
 	if err1 != nil {
 		log.Fatalln(err1.Error())
 	}
@@ -171,7 +173,7 @@ func PubAddrRetrievalStr(s string) string {
 	result.PubKey = pubkeyAminoStr
 	result.Addr = bech32Addr
 
-	resp, _ := respwrap.ResponseWrapper(Cdc, result, nil)
+	resp, _ := respwrap.ResponseWrapper(txs.Cdc, result, nil)
 	out := string(resp)
 	return out
 }
@@ -191,7 +193,7 @@ func AccountCreateFromSeed(mncode string) string {
 	// add mnemonics validation
 	if bip39local.IsMnemonicValid(mncode) == false {
 		err := errors.Errorf("Invalid mnemonic!")
-		resp, _ := respwrap.ResponseWrapper(Cdc, nil, err)
+		resp, _ := respwrap.ResponseWrapper(txs.Cdc, nil, err)
 		return string(resp)
 
 	}
@@ -200,9 +202,9 @@ func AccountCreateFromSeed(mncode string) string {
 	seed := bip39local.NewSeed(mncode, defaultBIP39Passphrase)
 	key := ed25519local.GenPrivKeyFromSecret(seed)
 	pub := key.PubKey()
-	pubkeyAmino, _ := Cdc.MarshalJSON(pub)
+	pubkeyAmino, _ := txs.Cdc.MarshalJSON(pub)
 	var pubkeyAminoStc PubkeyAmino
-	err := Cdc.UnmarshalJSON(pubkeyAmino, &pubkeyAminoStc)
+	err := txs.Cdc.UnmarshalJSON(pubkeyAmino, &pubkeyAminoStc)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -212,9 +214,9 @@ func AccountCreateFromSeed(mncode string) string {
 	//bech32Pub, _ := bech32local.ConvertAndEncode("cosmosaccpub", pub)
 	bech32Addr, _ := bech32local.ConvertAndEncode(PREF_ADD, addr.Bytes())
 
-	privkeyAmino, _ := Cdc.MarshalJSON(key)
+	privkeyAmino, _ := txs.Cdc.MarshalJSON(key)
 	var privkeyAminoStc PrivkeyAmino
-	err1 := Cdc.UnmarshalJSON(privkeyAmino, &privkeyAminoStc)
+	err1 := txs.Cdc.UnmarshalJSON(privkeyAmino, &privkeyAminoStc)
 	if err1 != nil {
 		log.Fatalln(err1.Error())
 	}
@@ -231,7 +233,7 @@ func AccountCreateFromSeed(mncode string) string {
 	result.Type = Type
 	result.Denom = Denom
 
-	resp, _ := respwrap.ResponseWrapper(Cdc, result, nil)
+	resp, _ := respwrap.ResponseWrapper(txs.Cdc, result, nil)
 	out := string(resp)
 	return out
 
@@ -240,41 +242,41 @@ func AccountCreateFromSeed(mncode string) string {
 //Local Tx generation
 func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) []byte {
 	sendersStr := fromStr + `,` + coinstr
-	senders, err := ParseTransItem(sendersStr)
+	senders, err := client.ParseTransItem(sendersStr)
 	if err != nil {
 		err.Error()
 	}
 
 	receiversStr := toStr + `,` + coinstr
-	receivers, err := ParseTransItem(receiversStr)
+	receivers, err := client.ParseTransItem(receiversStr)
 	if err != nil {
 		err.Error()
 	}
 
-	tn := TxTransfer{
+	tn := txs.TxTransfer{
 		Senders:   senders,
 		Receivers: receivers,
 	}
 
 	gas := NewBigInt(int64(20000))
-	stx := NewTxStd(tn, chainid, gas)
+	txStd := btxs.NewTxStd(tn, chainid, gas)
 
 	var key ed25519local.PrivKeyEd25519
 	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
-	err1 := Cdc.UnmarshalJSON([]byte(ts), &key)
+	err1 := txs.Cdc.UnmarshalJSON([]byte(ts), &key)
 	if err1 != nil {
 		fmt.Println(err1)
 	}
 	priv := ed25519local.PrivKey(key)
 
-	signature, _ := stx.SignTx(priv, nonce, chainid)
-	stx.Signature = []Signature{Signature{
+	signature, _ := txStd.SignTx(priv, nonce, chainid)
+	txStd.Signature = []btxs.Signature{btxs.Signature{
 		Pubkey:    priv.PubKey(),
 		Signature: signature,
 		Nonce:     nonce,
 	}}
-	msg := stx
-	jasonpayload, err := Cdc.MarshalBinaryBare(msg)
+	msg := txStd
+	jasonpayload, err := txs.Cdc.MarshalBinaryBare(msg)
 	if err != nil {
 		fmt.Println(err)
 	}

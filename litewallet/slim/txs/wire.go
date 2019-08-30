@@ -1,6 +1,7 @@
-package slim
+package txs
 
 import (
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
 	"github.com/tendermint/go-amino"
 )
@@ -48,19 +49,20 @@ func RegisterAmino(cdc *amino.Codec) {
 }
 
 func RegisterCodec(cdc *amino.Codec) {
-	cdc.RegisterConcrete(&Signature{}, "qbase/txs/signature", nil)
-	cdc.RegisterConcrete(&TxStd{}, "qbase/txs/stdtx", nil)
-	cdc.RegisterInterface((*ITx)(nil), nil)
-	cdc.RegisterConcrete(&TxTransfer{}, "qos/txs/TxTransfer", nil)
+	cdc.RegisterConcrete(&txs.Signature{}, "qbase/txs/signature", nil)
+	cdc.RegisterConcrete(&txs.TxStd{}, "qbase/txs/stdtx", nil)
+	cdc.RegisterInterface((*txs.ITx)(nil), nil)
+	cdc.RegisterConcrete(&TxTransfer{}, "transfer/txs/TxTransfer", nil)
+	cdc.RegisterConcrete(&TxCreateDelegation{}, "stake/txs/TxCreateDelegation", nil)
+	cdc.RegisterConcrete(&TxUnbondDelegation{}, "stake/txs/TxUnbondDelegation", nil)
 
 	cdc.RegisterConcrete(&QOSAccount{}, "qos/types/QOSAccount", nil)
 	cdc.RegisterConcrete(&BaseAccount{}, "qbase/account/BaseAccount", nil)
-	cdc.RegisterConcrete(&InvestTx{}, "qstars/InvestTx", nil)
-	cdc.RegisterConcrete(&AdvertisersTx{}, "jianqian/AdvertisersTx", nil)
-	cdc.RegisterConcrete(&AuctionTx{}, "jianqian/AuctionTx", nil)
-	cdc.RegisterConcrete(&ExtractTx{}, "jianqian/ExtractTx", nil)
-	cdc.RegisterConcrete(&JianQianTx{}, "jianqian/JianQianTx", nil)
-
+	//cdc.RegisterConcrete(&slim.InvestTx{}, "qstars/InvestTx", nil)
+	//cdc.RegisterConcrete(&slim.AdvertisersTx{}, "jianqian/AdvertisersTx", nil)
+	//cdc.RegisterConcrete(&slim.AuctionTx{}, "jianqian/AuctionTx", nil)
+	//cdc.RegisterConcrete(&slim.ExtractTx{}, "jianqian/ExtractTx", nil)
+	//cdc.RegisterConcrete(&slim.JianQianTx{}, "jianqian/JianQianTx", nil)
 }
 
 // amino codec to marshal/unmarshal

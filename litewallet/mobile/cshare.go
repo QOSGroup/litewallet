@@ -3,6 +3,9 @@ package litewallet
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
+	"github.com/QOSGroup/litewallet/litewallet/slim/transfer"
+	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	"strings"
 
 	"github.com/QOSGroup/litewallet/litewallet/eth"
@@ -43,12 +46,6 @@ func CosmosUpdateKey(rootDir, name, oldpass, newpass string) string {
 //get account info
 func CosmosGetAccount(rootDir, node, chainID, addr string) string {
 	output := sdksource.GetAccount(rootDir, node, chainID, addr)
-	return output
-}
-
-//for QOSCreateSignedTransfer
-func QOSCreateSignedTransfer(addrto, coinstr, privkey, chainid string) string {
-	output, _ := slim.QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid)
 	return output
 }
 
@@ -151,25 +148,25 @@ func QOSAccountCreateFromSeed(mncode string) string {
 
 //for QSCKVStoreset
 func QSCKVStoreSet(k, v, privkey, chain string) string {
-	output := slim.QSCKVStoreSetPost(k, v, privkey, chain)
+	output := txs.QSCKVStoreSetPost(k, v, privkey, chain)
 	return output
 }
 
 //for QSCKVStoreGet
 func QSCKVStoreGet(k string) string {
-	output := slim.QSCKVStoreGetQuery(k)
+	output := txs.QSCKVStoreGetQuery(k)
 	return output
 }
 
 //for QSCQueryAccount
 func QSCQueryAccount(addr string) string {
-	output := slim.QSCQueryAccountGet(addr)
+	output := txs.QSCQueryAccountGet(addr)
 	return output
 }
 
 //for QOSQueryAccount
 func QOSQueryAccount(addr string) string {
-	output := slim.QOSQueryAccountGet(addr)
+	output := txs.QOSQueryAccountGet(addr)
 	return output
 }
 
@@ -181,7 +178,7 @@ func QOSAccountRecover(mncode, password string) string {
 
 //for IP input
 func QOSSetBlockchainEntrance(sh, mh string) {
-	slim.SetBlockchainEntrance(sh, mh)
+	txs.SetBlockchainEntrance(sh, mh)
 }
 
 //for PubAddrRetrieval
@@ -191,15 +188,21 @@ func QOSPubAddrRetrieval(priv string) string {
 	return output
 }
 
+//for QOSCreateSignedTransfer
+func QOSCreateSignedTransfer(addrto, coinstr, privkey, chainid string) string {
+	output, _ := transfer.QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid)
+	return output
+}
+
 //for QSCtransferSend
 func QSCtransferSend(addrto, coinstr, privkey, chainid string) string {
-	output := slim.QSCtransferSendStr(addrto, coinstr, privkey, chainid)
+	output := transfer.QSCtransferSendStr(addrto, coinstr, privkey, chainid)
 	return output
 }
 
 //for QOSCommitResultCheck
 func QOSCommitResultCheck(txhash, height string) string {
-	output := slim.QOSCommitResultCheck(txhash, height)
+	output := txs.QOSCommitResultCheck(txhash, height)
 	return output
 }
 
@@ -219,7 +222,7 @@ func QOSAesDecrypt(key, cipherText string) string {
 }
 
 func QOSTransferRecordsQuery(chainid, addr, cointype, offset, limit string) string {
-	output := slim.TransferRecordsQuery(chainid, addr, cointype, offset, limit)
+	output := txs.TransferRecordsQuery(chainid, addr, cointype, offset, limit)
 	return output
 }
 
@@ -253,17 +256,17 @@ func QOSGetTx(tx string) string {
 
 func QOSGetBlance(addrs string) string {
 	path := fmt.Sprintf("/store/%s/%s", "aoeaccount", "key")
-	output, _ := slim.Query(path, []byte(addrs))
-	var basecoin *slim.BaseCoins
+	output, _ := txs.Query(path, []byte(addrs))
+	var basecoin *types.BaseCoins
 	//err=json.Unmarshal(resp.Value,&basecoin)
-	slim.Cdc.UnmarshalBinaryBare(output, &basecoin)
+	txs.Cdc.UnmarshalBinaryBare(output, &basecoin)
 	result, _ := json.Marshal(basecoin)
 	return string(result)
 }
 
 func QOSGetBlanceByCointype(addrs, cointype string) string {
 	result := QOSGetBlance(addrs)
-	var qsc slim.QSCs
+	var qsc types.QSCs
 	json.Unmarshal([]byte(result), &qsc)
 	for _, v := range qsc {
 		if strings.ToUpper(v.Name) == strings.ToUpper(cointype) {
@@ -292,7 +295,7 @@ func QOSExtract(privatekey, coinsType, coinAmount, qscchainid string) string {
 
 // 提交到联盟链上
 func QOSBroadcastTransferTxToQSC(txstring, broadcastModes string) string {
-	return slim.BroadcastTransferTxToQSC(txstring, broadcastModes)
+	return txs.BroadcastTransferTxToQSC(txstring, broadcastModes)
 }
 
 func QOSCommHandler(funcName, privatekey, args, qscchainid string) string {

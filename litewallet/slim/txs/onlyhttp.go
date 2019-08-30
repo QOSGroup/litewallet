@@ -1,9 +1,10 @@
-package slim
+package txs
 
 import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/tendermint/tendermint/libs/common"
 	rpcclient "github.com/tendermint/tendermint/rpc/client"
@@ -13,6 +14,10 @@ import (
 	"net/http"
 
 	"errors"
+)
+
+const (
+	accountStoreKey = "account:" // 便于获取全部账户的通用存储键名，继承BaseAccount时，可根据不同业务设置存储前缀
 )
 
 type sendKVReq struct {
@@ -32,7 +37,7 @@ var (
 	KVurl         string
 	QResulturl    string
 	TRurl         string
-	RPC rpcclient.Client
+	RPC           rpcclient.Client
 )
 
 //set Block Chain entrance hosts for both Qstars and Qmoon
@@ -47,7 +52,6 @@ func SetBlockchainEntrance(qstarshost, qmoonhost string) {
 	TRurl = "http://" + Mhost + "/nodes/"
 
 	RPC = rpcclient.NewHTTP(Shost, "/websocket")
-
 
 }
 
@@ -118,8 +122,6 @@ func QSCQueryAccountGet(addr string) string {
 	return output
 }
 
-
-
 func RPCCQSCQueryAccountGet(addr string) string {
 	aurl := QSCAccounturl + addr
 	resp, _ := http.Get(aurl)
@@ -136,7 +138,6 @@ func RPCCQSCQueryAccountGet(addr string) string {
 	output := string(body)
 	return output
 }
-
 
 //for QOS account query function
 func QOSQueryAccountGet(addr string) string {
@@ -193,8 +194,6 @@ func TransferRecordsQuery(chainid, addr, cointype, offset, limit string) string 
 	return output
 }
 
-
-
 func Query(path string, key common.HexBytes) (res []byte, err error) {
 	opts := rpcclient.ABCIQueryOptions{
 		Height: 0,
@@ -212,9 +211,8 @@ func Query(path string, key common.HexBytes) (res []byte, err error) {
 	return resp.Value, nil
 }
 
-
 // 提交到联盟链上
-func BroadcastTransferTxToQSC(txb string,broadcastModes string) string {
+func BroadcastTransferTxToQSC(txb string, broadcastModes string) string {
 	txBytes, err := hex.DecodeString(txb)
 	if err != nil {
 		return err.Error()
@@ -237,10 +235,8 @@ func BroadcastTransferTxToQSC(txb string,broadcastModes string) string {
 	return string(resbyte)
 }
 
-
-
-func RpcQueryAccount(addr Address) (*QOSAccount, error) {
-	key:=AddressStoreKey(addr)
+func RpcQueryAccount(addr types.Address) (*QOSAccount, error) {
+	key := AddressStoreKey(addr)
 	opts := rpcclient.ABCIQueryOptions{
 		Height: 0,
 		Prove:  true,
@@ -259,4 +255,9 @@ func RpcQueryAccount(addr Address) (*QOSAccount, error) {
 		return nil, err
 	}
 	return acc, nil
+}
+
+// 将地址转换成存储通用的key
+func AddressStoreKey(addr types.Address) []byte {
+	return append([]byte(accountStoreKey), addr.Bytes()...)
 }
