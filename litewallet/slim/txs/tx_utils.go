@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	PREF_ADD = "address"
-	MaxGas   = 20000
+	MaxGas = 20000
 )
 
 type ITxBuilder func() (txs.ITx, error)
@@ -55,7 +54,7 @@ func BuildAndSignTxStd(tx txs.ITx, privkey, chainid string) *txs.TxStd {
 	if err != nil {
 		fmt.Println(err)
 	}
-	addrben32, _ := bech32local.ConvertAndEncode(PREF_ADD, key.PubKey().Address().Bytes())
+	addrben32, _ := bech32local.ConvertAndEncode(types.PREF_ADD, key.PubKey().Address().Bytes())
 	from, err2 := types.GetAddrFromBech32(addrben32)
 	if err2 != nil {
 		fmt.Println(err2)

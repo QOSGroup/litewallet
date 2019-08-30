@@ -40,12 +40,10 @@ func init() {
 // RegisterAmino registers all crypto related types in the given (amino) codec.
 func RegisterAmino(cdc *amino.Codec) {
 	cdc.RegisterInterface((*ed25519local.PubKey)(nil), nil)
-	cdc.RegisterConcrete(ed25519local.PubKeyEd25519{},
-		ed25519local.Ed25519PubKeyAminoRoute, nil)
+	cdc.RegisterConcrete(ed25519local.PubKeyEd25519{}, ed25519local.Ed25519PubKeyAminoRoute, nil)
 
 	cdc.RegisterInterface((*ed25519local.PrivKey)(nil), nil)
-	cdc.RegisterConcrete(ed25519local.PrivKeyEd25519{},
-		ed25519local.Ed25519PrivKeyAminoRoute, nil)
+	cdc.RegisterConcrete(ed25519local.PrivKeyEd25519{}, ed25519local.Ed25519PrivKeyAminoRoute, nil)
 }
 
 func RegisterCodec(cdc *amino.Codec) {
@@ -58,11 +56,11 @@ func RegisterCodec(cdc *amino.Codec) {
 
 	cdc.RegisterConcrete(&QOSAccount{}, "qos/types/QOSAccount", nil)
 	cdc.RegisterConcrete(&BaseAccount{}, "qbase/account/BaseAccount", nil)
-	//cdc.RegisterConcrete(&slim.InvestTx{}, "qstars/InvestTx", nil)
-	//cdc.RegisterConcrete(&slim.AdvertisersTx{}, "jianqian/AdvertisersTx", nil)
-	//cdc.RegisterConcrete(&slim.AuctionTx{}, "jianqian/AuctionTx", nil)
-	//cdc.RegisterConcrete(&slim.ExtractTx{}, "jianqian/ExtractTx", nil)
-	//cdc.RegisterConcrete(&slim.JianQianTx{}, "jianqian/JianQianTx", nil)
+	cdc.RegisterConcrete(&InvestTx{}, "qstars/InvestTx", nil)
+	cdc.RegisterConcrete(&AdvertisersTx{}, "jianqian/AdvertisersTx", nil)
+	cdc.RegisterConcrete(&AuctionTx{}, "jianqian/AuctionTx", nil)
+	cdc.RegisterConcrete(&ExtractTx{}, "jianqian/ExtractTx", nil)
+	cdc.RegisterConcrete(&JianQianTx{}, "jianqian/JianQianTx", nil)
 }
 
 // amino codec to marshal/unmarshal

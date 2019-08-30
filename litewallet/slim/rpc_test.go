@@ -6,7 +6,6 @@ import (
 	"github.com/QOSGroup/litewallet/litewallet/slim/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
-	"github.com/QOSGroup/litewallet/litewallet/slim/http"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	rpc_client "github.com/tendermint/tendermint/rpc/client"
 	"testing"
@@ -32,7 +31,7 @@ func TestQSCtransferSendStr(t *testing.T) {
 	coinstr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "qos-test"
-	Tout := http.QSCtransferSendStr(addrto, coinstr, privkey, chainid)
+	Tout := QSCTransferSendStr(addrto, coinstr, privkey, chainid)
 	t.Log(Tout)
 }
 
@@ -42,7 +41,7 @@ func TestQSCCreateSignedTransfer(t *testing.T) {
 	coinstr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "qos-test"
-	Tout, _ := client.QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid)
+	Tout, _ := client.CreateSignedTransfer(addrto, coinstr, privkey, chainid)
 	t.Log(Tout)
 }
 
@@ -64,7 +63,7 @@ func TestTransferTxToQSC(t *testing.T) {
 
 	privkey := "wnEmxnWFgT93M5a9l7aPTdkxM8MLoenyMe60sD/8rqzslA7MvfoHydXqL4QGbplLhIlEbLAZ/0ue9G1rjBFMfQ=="
 	chainid := "test-chain-xHEkEv"
-	Tout := AdvertisersTrue(privkey, "ATOM", "100000", chainid)
+	Tout := client.AdvertisersTrue(privkey, "ATOM", "100000", chainid)
 	t.Log(Tout)
 
 	result := txs.BroadcastTransferTxToQSC(Tout, "sync")
@@ -111,7 +110,7 @@ func TestCommHandler(t *testing.T) {
 
 	args := "[\"address1y9r4pjjnvkmpvw46de8tmwunw4nx4qnz2ax5ux\",\"0\",\"abcde\",\"20\",\"20\",\"10\",\"50\",\"20\",\"3\",\"ATOM\"]"
 
-	Tout := CommHandler("ArticleTx", privkey, args, chainid)
+	Tout := client.CommHandler("ArticleTx", privkey, args, chainid)
 	t.Log(Tout)
 
 	result := txs.BroadcastTransferTxToQSC(Tout, "sync")
@@ -135,7 +134,6 @@ func TestLocalTxGen(t *testing.T) {
 	jasonpayload := LocalTxGen(fromStr, toStr, coinstr, chainid, privkey, nonce)
 
 	t.Log("msg\n", string(jasonpayload))
-
 }
 
 //HTTP POST to QOS chain

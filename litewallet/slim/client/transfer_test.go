@@ -11,7 +11,7 @@ func TestQSCCreateSignedTransfer(t *testing.T) {
 	coinstr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "qos-test"
-	Tout, err := QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid)
+	Tout, err := CreateSignedTransfer(addrto, coinstr, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 	}

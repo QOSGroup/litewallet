@@ -3,6 +3,7 @@ package slim
 import (
 	"fmt"
 	btxs "github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bip39local"
@@ -258,7 +259,7 @@ func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) [
 		Receivers: receivers,
 	}
 
-	gas := NewBigInt(int64(20000))
+	gas := types.NewInt(int64(20000))
 	txStd := btxs.NewTxStd(tn, chainid, gas)
 
 	var key ed25519local.PrivKeyEd25519

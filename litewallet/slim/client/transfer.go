@@ -21,7 +21,7 @@ func CreateSignedTransfer(addrto, coinstr, privkey, chainid string) (string, err
 		if err != nil {
 			fmt.Println(err)
 		}
-		addrben32, _ := bech32local.ConvertAndEncode("address", key.PubKey().Address().Bytes())
+		addrben32, _ := bech32local.ConvertAndEncode(types.PREF_ADD, key.PubKey().Address().Bytes())
 
 		sendersStr := addrben32 + `,` + coinstr
 		senders, err := ParseTransItem(sendersStr)

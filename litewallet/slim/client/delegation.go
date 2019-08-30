@@ -18,7 +18,7 @@ func CreateSignedDelegation(validatorAddress string, coins int64, privkey, chain
 		if err != nil {
 			fmt.Println(err)
 		}
-		addrben32, _ := bech32local.ConvertAndEncode(ctxs.PREF_ADD, key.PubKey().Address().Bytes())
+		addrben32, _ := bech32local.ConvertAndEncode(types.PREF_ADD, key.PubKey().Address().Bytes())
 		owner, err := types.GetAddrFromBech32(addrben32)
 		if err != nil {
 			return nil, err
@@ -51,7 +51,7 @@ func CreateSignedUnbondDelegation(validatorAddress string, coins int64, privkey,
 		if err != nil {
 			fmt.Println(err)
 		}
-		addrben32, _ := bech32local.ConvertAndEncode(ctxs.PREF_ADD, key.PubKey().Address().Bytes())
+		addrben32, _ := bech32local.ConvertAndEncode(types.PREF_ADD, key.PubKey().Address().Bytes())
 		owner, err := types.GetAddrFromBech32(addrben32)
 		if err != nil {
 			return nil, err

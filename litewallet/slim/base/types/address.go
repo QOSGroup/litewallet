@@ -6,6 +6,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	PREF_ADD = "address"
+)
+
 type Address []byte
 
 func (add Address) Bytes() []byte {
@@ -13,7 +17,7 @@ func (add Address) Bytes() []byte {
 }
 
 func (add Address) String() string {
-	bech32Addr, err := bech32local.ConvertAndEncode("address", add.Bytes())
+	bech32Addr, err := bech32local.ConvertAndEncode(PREF_ADD, add.Bytes())
 	if err != nil {
 		panic(err)
 	}

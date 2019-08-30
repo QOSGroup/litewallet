@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
+	"github.com/QOSGroup/litewallet/litewallet/slim/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/transfer"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	"strings"
@@ -299,7 +300,7 @@ func QOSBroadcastTransferTxToQSC(txstring, broadcastModes string) string {
 }
 
 func QOSCommHandler(funcName, privatekey, args, qscchainid string) string {
-	output := slim.CommHandler(funcName, privatekey, args, qscchainid)
+	output := client.CommHandler(funcName, privatekey, args, qscchainid)
 	return output
 }
 
