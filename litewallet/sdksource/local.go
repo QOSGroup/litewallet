@@ -32,38 +32,6 @@ type SeedOutput struct {
 	Seed string `json:"seed"`
 }
 
-// To be depreacted! SetKeyBase initialized the LCD keybase. It also requires rootDir as input for the directory for key storing.
-//func SetKeyBase(rootDir string) crkeys.Keybase {
-//	var err error
-//	keybase = nil
-//	keybase, err = keys.NewKeyBaseFromDir(rootDir)
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//	return keybase
-//}
-
-//Deprecated!
-//func CreateSeed(rootDir string) string {
-//	//get the Keybase
-//	viper.Set(cli.HomeFlag, rootDir)
-//	kb, err1 := keys.NewKeyBaseFromHomeFlag()
-//	if err1 != nil {
-//		fmt.Println(err1)
-//	}
-//	// algo type defaults to secp256k1
-//	algo := crkeys.SigningAlgo("secp256k1")
-//	pass := defaultBIP39pass
-//	name := "inmemorykey"
-//	_, seed, _ := kb.CreateMnemonic(name, crkeys.English, pass, algo)
-//	//json output the seed
-//	var So SeedOutput
-//	So.Seed = seed
-//	respbyte, _ := json.Marshal(So)
-//	return string(respbyte)
-//
-//}
-
 //create mnemonics with bip39 to output 12-word list
 func CreateSeed() string {
 	// default number of words (12):
