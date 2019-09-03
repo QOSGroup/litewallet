@@ -80,7 +80,7 @@ func investAd(QOSchainId, QSCchainId, articleHash, coins, privatekey string) (*t
 		})
 	}
 	//qos nonce fetched from the qosaccount query
-	acc, _ := ctxs.RpcQueryAccount(investor)
+	acc, _ := ctxs.QueryAccount(investor)
 	var qscnonce int64
 	if acc != nil {
 		qscnonce = int64(acc.Nonce)

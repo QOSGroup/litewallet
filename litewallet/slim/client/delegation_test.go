@@ -24,11 +24,10 @@ func TestCreateSignedUnbondDelegation(t *testing.T) {
 	validatorAddress := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
 	//coinstr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	chainid := "qos-test"
+	chainid := "aquarius-1000"
 	Tout, err := CreateSignedUnbondDelegation(validatorAddress, 1000, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 	}
 	t.Log(Tout)
 }
-

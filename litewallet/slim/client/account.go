@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
-	"github.com/pkg/errors"
 )
 
 //const (
@@ -12,19 +11,16 @@ import (
 //	accountStoreKey   = "account:" // 便于获取全部账户的通用存储键名，继承BaseAccount时，可根据不同业务设置存储前缀
 //)
 
-var (
-	ErrAccountNotExsits = errors.New("account not exists")
-)
+//var (
+//	ErrAccountNotExsits = errors.New("account not exists")
+//)
 
 func GetAccountFromBech32Addr(bech32Addr string) (*txs.QOSAccount, error) {
 	addrBytes, err := types.GetAddrFromBech32(bech32Addr)
-
 	if err != nil {
 		return nil, fmt.Errorf("%s is not a valid bech32Addr", bech32Addr)
 	}
-
-	//return queryAccount(addrBytes)
-	return txs.RpcQueryAccount(addrBytes)
+	return txs.QueryAccount(addrBytes)
 }
 
 //func queryAccount(addr []byte) (*txs.QOSAccount, error) {
