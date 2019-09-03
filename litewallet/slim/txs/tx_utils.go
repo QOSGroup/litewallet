@@ -41,8 +41,6 @@ func BuildAndSignTx(privkey, chainid string, txBuilder ITxBuilder) (signedTx []b
 	fmt.Println(string(jmsg))
 
 	jsonPayload, err := Cdc.MarshalBinaryBare(msg)
-	str := string(jsonPayload)
-	fmt.Println(str)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +63,7 @@ func BuildAndSignTxStd(tx txs.ITx, privkey, chainid string) *txs.TxStd {
 		fmt.Println(err2)
 	}
 	//Get "nonce" from the func RpcQueryAccount
-	acc, _ := RpcQueryAccount(from)
+	acc, _ := QueryAccount(from)
 	var qscnonce int64
 	if acc != nil {
 		qscnonce = int64(acc.Nonce)

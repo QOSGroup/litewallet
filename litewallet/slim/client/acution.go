@@ -56,7 +56,7 @@ func acutionAd(articleHash, privatekey, coinsType string, coinAmount int, qsccha
 	gas := types.NewInt(int64(ctxs.MaxGas))
 	addrben32, _ := bech32local.ConvertAndEncode(types.PREF_ADD, key.PubKey().Address().Bytes())
 	sendAddress, _ := types.GetAddrFromBech32(addrben32)
-	acc, _ := ctxs.RpcQueryAccount(sendAddress)
+	acc, _ := ctxs.QueryAccount(sendAddress)
 	var qscnonce int64
 	if acc != nil {
 		qscnonce = int64(acc.Nonce)

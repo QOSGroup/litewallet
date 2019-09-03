@@ -69,7 +69,7 @@ func advertisers(coins, privatekey, cointype, isDeposit, qscchainid string) (*tx
 	addrben32, _ := bech32local.ConvertAndEncode(types.PREF_ADD, key.PubKey().Address().Bytes())
 	investor, _ := types.GetAddrFromBech32(addrben32)
 
-	acc, _ := ctxs.RpcQueryAccount(investor)
+	acc, _ := ctxs.QueryAccount(investor)
 	var qscnonce int64
 	if acc != nil {
 		qscnonce = int64(acc.Nonce)

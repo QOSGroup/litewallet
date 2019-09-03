@@ -67,6 +67,7 @@ func TestDelegationSend(t *testing.T) {
 	}
 	t.Log(Tout)
 }
+
 func TestUnbondDelegationSend(t *testing.T) {
 	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
 	//validatorAddress := "address13l90zvt26szkrquutwpgj7kef58mgyntfs46l2"
@@ -83,20 +84,103 @@ func TestUnbondDelegationSend(t *testing.T) {
 	t.Log(Tout)
 }
 
-func TestTransferTxToQSC(t *testing.T) {
-	t.Log("1111111111111111")
-
-	txs.SetBlockchainEntrance("47.105.52.237:26657", "forQmoonAddr")
-	t.Log("2222222222222222")
-
-	privkey := "wnEmxnWFgT93M5a9l7aPTdkxM8MLoenyMe60sD/8rqzslA7MvfoHydXqL4QGbplLhIlEbLAZ/0ue9G1rjBFMfQ=="
-	chainid := "test-chain-xHEkEv"
-	Tout := client.AdvertisersTrue(privkey, "ATOM", "100000", chainid)
-	t.Log(Tout)
-
-	result := txs.BroadcastTransferTxToQSC(Tout, "sync")
-	t.Log(result)
+func TestQueryApproveSend(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
+	//coinstr := "10000qos"
+	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	Tout, err := QueryApproveSend(toAddr, privkey)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
 }
+
+func TestCreateApproveSend(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
+	coinsStr := "10000qos"
+	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	chainid := "aquarius-1000"
+	Tout, err := CreateApproveSend(toAddr, coinsStr, privkey, chainid)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(Tout)
+}
+
+func TestIncreaseApprove(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
+	coinsStr := "10000qos"
+	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	chainid := "aquarius-1000"
+	Tout, err := IncreaseApprove(toAddr, coinsStr, privkey, chainid)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(Tout)
+}
+
+func TestDecreaseApproveSend(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
+	coinsStr := "10000qos"
+	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	chainid := "aquarius-1000"
+	Tout, err := DecreaseApproveSend(toAddr, coinsStr, privkey, chainid)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(Tout)
+}
+
+func TestUseApproveSend(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
+	coinsStr := "10000qos"
+	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	chainid := "aquarius-1000"
+	Tout, err := UseApproveSend(toAddr, coinsStr, privkey, chainid)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(Tout)
+}
+
+func TestCancelApproveSend(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
+	coinsStr := "10000qos"
+	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	chainid := "aquarius-1000"
+	Tout, err := CancelApproveSend(toAddr, coinsStr, privkey, chainid)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(Tout)
+}
+
+//func TestTransferTxToQSC(t *testing.T) {
+//	t.Log("1111111111111111")
+//
+//	txs.SetBlockchainEntrance("47.105.52.237:26657", "forQmoonAddr")
+//	t.Log("2222222222222222")
+//
+//	privkey := "wnEmxnWFgT93M5a9l7aPTdkxM8MLoenyMe60sD/8rqzslA7MvfoHydXqL4QGbplLhIlEbLAZ/0ue9G1rjBFMfQ=="
+//	chainid := "test-chain-xHEkEv"
+//	Tout := client.AdvertisersTrue(privkey, "ATOM", "100000", chainid)
+//	t.Log(Tout)
+//
+//	result := txs.BroadcastTransferTxToQSC(Tout, "sync")
+//	t.Log(result)
+//}
 
 //func TestQueryAccount(t *testing.T) {
 //	t.Log("1111111111111111")

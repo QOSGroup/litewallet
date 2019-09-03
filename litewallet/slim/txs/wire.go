@@ -59,6 +59,13 @@ func RegisterCodec(cdc *amino.Codec) {
 
 	cdc.RegisterConcrete(&QOSAccount{}, "qos/types/QOSAccount", nil)
 	cdc.RegisterConcrete(&BaseAccount{}, "qbase/account/BaseAccount", nil)
+
+	cdc.RegisterConcrete(&TxCreateApprove{}, "approve/txs/TxCreateApprove", nil)
+	cdc.RegisterConcrete(&TxIncreaseApprove{}, "approve/txs/TxIncreaseApprove", nil)
+	cdc.RegisterConcrete(&TxDecreaseApprove{}, "approve/txs/TxDecreaseApprove", nil)
+	cdc.RegisterConcrete(&TxUseApprove{}, "approve/txs/TxUseApprove", nil)
+	cdc.RegisterConcrete(&TxCancelApprove{}, "approve/txs/TxCancelApprove", nil)
+
 	cdc.RegisterConcrete(&InvestTx{}, "qstars/InvestTx", nil)
 	cdc.RegisterConcrete(&AdvertisersTx{}, "jianqian/AdvertisersTx", nil)
 	cdc.RegisterConcrete(&AuctionTx{}, "jianqian/AuctionTx", nil)

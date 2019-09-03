@@ -51,6 +51,54 @@ func UnbondDelegationSend(addrto string, coins int64, privkey, chainid string) (
 	return txs.BroadcastTx(tx)
 }
 
+func QueryApproveSend(addrto, privkey string) ([]byte, error) {
+	approve, err := client.QueryApprove(addrto, privkey)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(approve)
+}
+
+func CreateApproveSend(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+	tx, err := client.CreateApprove(addrto, coinsStr, privkey, chainid)
+	if err != nil {
+		return "", err
+	}
+	return txs.BroadcastTx(tx)
+}
+
+func IncreaseApprove(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+	tx, err := client.IncreaseApprove(addrto, coinsStr, privkey, chainid)
+	if err != nil {
+		return "", err
+	}
+	return txs.BroadcastTx(tx)
+}
+
+func DecreaseApproveSend(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+	tx, err := client.DecreaseApprove(addrto, coinsStr, privkey, chainid)
+	if err != nil {
+		return "", err
+	}
+	return txs.BroadcastTx(tx)
+}
+
+func UseApproveSend(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+	tx, err := client.DecreaseApprove(addrto, coinsStr, privkey, chainid)
+	if err != nil {
+		return "", err
+	}
+	return txs.BroadcastTx(tx)
+}
+
+func CancelApproveSend(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+	tx, err := client.DecreaseApprove(addrto, coinsStr, privkey, chainid)
+	if err != nil {
+		return "", err
+	}
+	return txs.BroadcastTx(tx)
+}
+
 func GetTx(tx string) string {
 	txBytes, err := hex.DecodeString(tx)
 	if err != nil {

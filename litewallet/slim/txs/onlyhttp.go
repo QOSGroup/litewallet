@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/tendermint/tendermint/libs/common"
 	rpcclient "github.com/tendermint/tendermint/rpc/client"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
@@ -188,39 +187,35 @@ func init() {
 //	return output
 //}
 
-func Query(path string, key common.HexBytes) (res []byte, err error) {
-	opts := rpcclient.ABCIQueryOptions{
-		Height: 0,
-		Prove:  false,
-	}
-	result, err := RPC.ABCIQueryWithOptions(path, key, opts)
-	if err != nil {
-		return res, err
-	}
-	resp := result.Response
-	if !resp.IsOK() {
-		return res, errors.New("error query")
-	}
+//func Query(path string, key common.HexBytes) (res []byte, err error) {
+//	opts := rpcclient.ABCIQueryOptions{
+//		Height: 0,
+//		Prove:  false,
+//	}
+//	result, err := RPC.ABCIQueryWithOptions(path, key, opts)
+//	if err != nil {
+//		return res, err
+//	}
+//	resp := result.Response
+//	if !resp.IsOK() {
+//		return res, errors.New("error query")
+//	}
+//
+//	return resp.Value, nil
+//}
 
-	return resp.Value, nil
-}
-
-func RpcQueryAccount(addr types.Address) (*QOSAccount, error) {
+func QueryAccount(addr types.Address) (*QOSAccount, error) {
 	key := AddressStoreKey(addr)
-	opts := rpcclient.ABCIQueryOptions{
-		Height: 0,
-		Prove:  true,
-	}
-	result, err := RPC.ABCIQueryWithOptions("/store/acc/key", key, opts)
+	res, err := Query("/store/acc/key", key)
 	if err != nil {
 		return nil, err
 	}
-	resp := result.Response
-	if !resp.IsOK() {
-		return nil, errors.New("query failed")
+
+	if len(res) == 0 {
+		return nil, errors.New("account not exists")
 	}
 	var acc *QOSAccount
-	err = Cdc.UnmarshalBinaryBare(resp.Value, &acc)
+	err = Cdc.UnmarshalBinaryBare(res, &acc)
 	if err != nil {
 		return nil, err
 	}
@@ -230,6 +225,28 @@ func RpcQueryAccount(addr types.Address) (*QOSAccount, error) {
 // 将地址转换成存储通用的key
 func AddressStoreKey(addr types.Address) []byte {
 	return append([]byte(accountStoreKey), addr.Bytes()...)
+}
+
+//func Query(addr types.Address) ([]byte, error) {
+func Query(path string, key []byte) ([]byte, error) {
+	opts := rpcclient.ABCIQueryOptions{
+		Height: 0,
+		Prove:  true,
+	}
+	result, err := RPC.ABCIQueryWithOptions(path, key, opts)
+	if err != nil {
+		return nil, err
+	}
+	resp := result.Response
+	if !resp.IsOK() {
+		return nil, errors.New("query failed")
+	}
+	//var acc *QOSAccount
+	//err = Cdc.UnmarshalBinaryBare(resp.Value, &acc)
+	//if err != nil {
+	//	return nil, err
+	//}
+	return resp.Value, nil
 }
 
 // 提交到联盟链上
