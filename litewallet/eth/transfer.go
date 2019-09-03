@@ -4,18 +4,18 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"log"
+	"math"
+	"math/big"
+	"strconv"
+
+	"github.com/QOSGroup/litewallet/litewallet/eth/contracts_erc20"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"golang.org/x/crypto/sha3"
-	"log"
-	"math"
-	"math/big"
-	"strconv"
-	"github.com/QOSGroup/litewallet/litewallet/eth/contracts_erc20"
-
 )
 
 func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount string, GasLimit int64) string {
@@ -46,21 +46,21 @@ func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount str
 	}
 
 	//amount convertion to wei
-	Amount, err := strconv.ParseFloat(amount,64)
+	Amount, err := strconv.ParseFloat(amount, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	Amountwei := Amount*1000000000000000000
+	Amountwei := Amount * 1000000000000000000
 	value := big.NewInt(int64(Amountwei))
 
 	//value := big.NewInt(amount)
 
 	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
-	gasAmount, err := strconv.ParseFloat(gasPrice,64)
+	gasAmount, err := strconv.ParseFloat(gasPrice, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	gasgwei := gasAmount*1000000000
+	gasgwei := gasAmount * 1000000000
 	bigGas := big.NewInt(int64(gasgwei))
 
 	//concert the to Address to byte format
@@ -127,11 +127,11 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 	//	log.Fatal(err)
 	//}
 	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
-	gasAmount, err := strconv.ParseFloat(gasPrice,64)
+	gasAmount, err := strconv.ParseFloat(gasPrice, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	gasgwei := gasAmount*1000000000
+	gasgwei := gasAmount * 1000000000
 	bigGas := big.NewInt(int64(gasgwei))
 
 	//the receiptant address
@@ -170,7 +170,9 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 
 	vdigit := new(big.Float).Mul(vbalance, big.NewFloat(math.Pow10(digit)))
 	Tamount := new(big.Int)
-	Tamount.SetString(vdigit.String(),10)
+	//Tamount.SetString(vdigit.String(), 10)
+	f, _ := vdigit.Uint64()
+	Tamount.SetUint64(f)
 
 	paddedAmount := common.LeftPadBytes(Tamount.Bytes(), 32)
 
@@ -241,7 +243,7 @@ func GetPendingNonceAt(rootDir, node, fromName, password string) int64 {
 }
 
 //Speedup Tnx with Pending nonce
-func SpeedTransferETH(rootDir, node, fromName, password,toAddr, gasPrice, amount string, GasLimit, pendingNonce int64) string {
+func SpeedTransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount string, GasLimit, pendingNonce int64) string {
 	//fromName generated from keyspace locally
 	if fromName == "" {
 		fmt.Println("no fromName input!")
@@ -254,21 +256,21 @@ func SpeedTransferETH(rootDir, node, fromName, password,toAddr, gasPrice, amount
 		log.Fatal(err)
 	}
 	//amount convertion to wei
-	Amount, err := strconv.ParseFloat(amount,64)
+	Amount, err := strconv.ParseFloat(amount, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	Amountwei := Amount*1000000000000000000
+	Amountwei := Amount * 1000000000000000000
 	value := big.NewInt(int64(Amountwei))
 
 	//value := big.NewInt(amount)
 
 	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
-	gasAmount, err := strconv.ParseFloat(gasPrice,64)
+	gasAmount, err := strconv.ParseFloat(gasPrice, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	gasgwei := gasAmount*1000000000
+	gasgwei := gasAmount * 1000000000
 	bigGas := big.NewInt(int64(gasgwei))
 
 	//concert the to Address to byte format
@@ -299,7 +301,6 @@ func SpeedTransferETH(rootDir, node, fromName, password,toAddr, gasPrice, amount
 
 	return signedTx.Hash().Hex()
 
-
 }
 
 func SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenValue, gasPrice string, GasLimit, pendingNonce int64) string {
@@ -324,11 +325,11 @@ func SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, to
 	//	log.Fatal(err)
 	//}
 	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
-	gasAmount, err := strconv.ParseFloat(gasPrice,64)
+	gasAmount, err := strconv.ParseFloat(gasPrice, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	gasgwei := gasAmount*1000000000
+	gasgwei := gasAmount * 1000000000
 	bigGas := big.NewInt(int64(gasgwei))
 
 	//the receiptant address
@@ -343,16 +344,16 @@ func SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, to
 	paddedAddress := common.LeftPadBytes(toAddress.Bytes(), 32)
 
 	//convert the tokenValue to wei in ERC20
-	vamount, err := strconv.ParseFloat(tokenValue,64)
+	vamount, err := strconv.ParseFloat(tokenValue, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	vwei := vamount*1000000000000000000
+	vwei := vamount * 1000000000000000000
 	vstring := strconv.FormatFloat(vwei, 'f', -1, 32)
 
 	Tamount := new(big.Int)
 	//1000 token to transfer
-	Tamount.SetString(vstring,10)
+	Tamount.SetString(vstring, 10)
 
 	paddedAmount := common.LeftPadBytes(Tamount.Bytes(), 32)
 
@@ -388,4 +389,36 @@ func SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, to
 
 	return signedTx.Hash().Hex()
 
+}
+
+//GetNonceAt return the nonce at latest block under the sepcific account.
+func GetNonceAt(rootDir, node, fromName, password string) int64 {
+	//fromName generated from keyspace locally
+	if fromName == "" {
+		fmt.Println("no fromName input!")
+	}
+	//Fetch the privateKey to sign
+	privateKey, err := FetchtoSign(rootDir, fromName, password)
+
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Fatal("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
+	}
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+
+	//setup the client, here use the infura own project "eth_wallet" node="https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
+	client, err := ethclient.Dial(node)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//get the nonce from the fromAddress to be dumped into tx
+	nonce, err := client.NonceAt(context.Background(), fromAddress, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	nonceInt := int64(nonce)
+	//noncestr := strconv.FormatUint(nonce,10)
+	return nonceInt
 }

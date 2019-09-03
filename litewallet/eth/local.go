@@ -6,8 +6,13 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcutil/hdkeychain"
+
+	"log"
+	"path/filepath"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/keyerror"
 	"github.com/ethereum/go-ethereum/accounts"
@@ -20,23 +25,20 @@ import (
 	cmn "github.com/tendermint/tendermint/libs/common"
 	dbm "github.com/tendermint/tendermint/libs/db"
 	"github.com/tyler-smith/go-bip39"
-	"log"
-	"path/filepath"
-	"strings"
 )
 
 const (
-	blockTypePrivKey =	"TENDERMINT PRIVATE KEY"
-	infoSuffix = "info"
+	blockTypePrivKey        = "TENDERMINT PRIVATE KEY"
+	infoSuffix              = "info"
 	BcryptSecurityParameter = 12
 )
 
 // localInfo is the public information about a locally stored key
 type LocalInfo struct {
-	Name         string         `json:"name"`
-	PubKey       string 		`json:"pubkey"`
-	PrivKeyArmor string         `json:"privkey"`
-	Address      string			`json:"address"`
+	Name         string `json:"name"`
+	PubKey       string `json:"pubkey"`
+	PrivKeyArmor string `json:"privkey"`
+	Address      string `json:"address"`
 }
 
 type dbKeybase struct {
@@ -44,12 +46,12 @@ type dbKeybase struct {
 }
 
 type KeyOutput struct {
-	Name      string                 `json:"name"`
-	Type      string                 `json:"type"`
-	Address   string                 `json:"address"`
-	PubKey    string                 `json:"pubkey"`
-	Mnemonic  string                 `json:"mnemonic,omitempty"`
-	Denom  	  string 				 `json:"denom"`
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Address  string `json:"address"`
+	PubKey   string `json:"pubkey"`
+	Mnemonic string `json:"mnemonic,omitempty"`
+	Denom    string `json:"denom"`
 }
 
 //follow the cosmos hd implementation
@@ -126,7 +128,7 @@ func CreateAccount(rootDir, name, password, mnemonic string) string {
 		Name:         name,
 		PubKey:       pubKeyHex,
 		PrivKeyArmor: priKeyAmor,
-		Address: 	  address,
+		Address:      address,
 	}
 
 	//write the local info by key
@@ -165,13 +167,14 @@ func CreateAccount(rootDir, name, password, mnemonic string) string {
 	//	}
 	//}
 
-	db.SetSync(key1,serializeInfo)
+	db.SetSync(key1, serializeInfo)
 	// store a pointer to the infokey by address for fast lookup
 	addrKey := []byte(fmt.Sprintf("%s.%s", address, "addr"))
 	db.SetSync(addrKey, key1)
-
+	//Close the db to release the lock
+	db.Close()
 	//fetch the result
-	Ko := KeyOutput{LInfo.Name, "local", LInfo.Address,LInfo.PubKey,mnemonic,"ETH"}
+	Ko := KeyOutput{LInfo.Name, "local", LInfo.Address, LInfo.PubKey, mnemonic, "ETH"}
 	respbyte, _ := json.Marshal(Ko)
 	return string(respbyte)
 
@@ -202,20 +205,18 @@ func ListLocalAccount(rootDir string) string {
 	// check if already exists
 	var KoG []KeyOutput
 	for _, info := range res {
-		Ko := KeyOutput{info.Name, "local", info.Address,info.PubKey,"","ETH"}
+		Ko := KeyOutput{info.Name, "local", info.Address, info.PubKey, "", "ETH"}
 		KoG = append(KoG, Ko)
 	}
-	Kos,_ := json.Marshal(KoG)
+	Kos, _ := json.Marshal(KoG)
 	return string(Kos)
 }
-
 
 // decoding info
 func readInfo(bz []byte) (info LocalInfo, err error) {
 	err = json.Unmarshal(bz, &info)
 	return
 }
-
 
 // encrypt the given privKey with the passphrase using a randomly
 // generated salt and the xsalsa20 cipher. returns the salt and the
@@ -230,7 +231,6 @@ func encryptPrivKey(privKey []byte, passphrase string) (saltBytes []byte, encByt
 	privKeyBytes := privKey
 	return saltBytes, xsalsa20symmetric.EncryptSymmetric(privKeyBytes, key)
 }
-
 
 // Unarmor and decrypt the private key.
 func UnarmorDecryptPrivKey(armorStr string, passphrase string) (*ecdsa.PrivateKey, error) {
@@ -292,7 +292,7 @@ func FetchtoSign(rootDir, name, password string) (privKey *ecdsa.PrivateKey, err
 	}
 	armorStr := Li.PrivKeyArmor
 	//fmt.Println("PrivateKeyArmor",armorStr)
-	return UnarmorDecryptPrivKey(armorStr,password)
+	return UnarmorDecryptPrivKey(armorStr, password)
 }
 
 func infoKey(name string) []byte {
@@ -312,9 +312,9 @@ func errKeyNameConflict(name string) error {
 }
 
 //verify the signature
-func SigVerify(rootDir,name,password string, data2sign []byte) {
+func SigVerify(rootDir, name, password string, data2sign []byte) {
 	//Fetch the privateKey
-	privateKey, err := FetchtoSign(rootDir,name,password)
+	privateKey, err := FetchtoSign(rootDir, name, password)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -343,7 +343,6 @@ func SigVerify(rootDir,name,password string, data2sign []byte) {
 	}
 	matches := bytes.Equal(sigPublicKey, publicKeyBytes)
 	fmt.Println("sigPublicKey vs publicKeyBytes", matches) // true
-
 
 	sigPublicKeyECDSA, err := crypto.SigToPub(hash.Bytes(), signature)
 	if err != nil {
