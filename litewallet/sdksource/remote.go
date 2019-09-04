@@ -345,14 +345,13 @@ func GetDelegationShares(rootDir, node, chainID, delegatorAddr, validatorAddr st
 		return err.Error()
 	}
 
-	// parse out the delegation
-	delegation, err := types.UnmarshalDelegation(cdc, res)
-	if err != nil {
+	var resp types.Delegation
+	if err := cdc.UnmarshalJSON(res, &resp); err != nil {
 		return err.Error()
 	}
 
 	//json output the result
-	output, err := codec.MarshalJSONIndent(cdc, delegation)
+	output, err := codec.MarshalJSONIndent(cdc, resp)
 	if err != nil {
 		return err.Error()
 	}
@@ -463,7 +462,7 @@ func GetAllUnbondingDelegations(rootDir, node, chainID, delegatorAddr string) st
 	if err != nil {
 		return err.Error()
 	}
-	res, _, err := cliCtx.QueryWithData("custom/staking/unbonding-delegation", bz)
+	res, _, err := cliCtx.QueryWithData("custom/staking/delegatorUnbondingDelegations", bz)
 	if err != nil {
 		return err.Error()
 	}
@@ -541,7 +540,11 @@ func GetBondValidators(rootDir, node, chainID, delegatorAddr string) string {
 
 		var validp ValidPlus
 		// parse out the delegation
-		delegation, err := types.UnmarshalDelegation(cdc, res)
+		var resp types.Delegation
+		if err := cdc.UnmarshalJSON(res, &resp); err != nil {
+			return err.Error()
+		}
+		// delegation, err := types.UnmarshalDelegation(cdc, res)
 		if err != nil {
 			sharesAmount := "0"
 			validp = ValidPlus{
@@ -549,7 +552,7 @@ func GetBondValidators(rootDir, node, chainID, delegatorAddr string) string {
 				sharesAmount,
 			}
 		} else {
-			sharesAmount := delegation.Shares.String()
+			sharesAmount := resp.Shares.String()
 			validp = ValidPlus{
 				valid,
 				sharesAmount,
@@ -608,7 +611,11 @@ func GetAllValidators(rootDir, node, chainID string) string {
 
 		var validp ValidPlus
 		// parse out the delegation
-		delegation, err := types.UnmarshalDelegation(cdc, res)
+		var resp types.Delegation
+		if err := cdc.UnmarshalJSON(res, &resp); err != nil {
+			return err.Error()
+		}
+		// delegation, err := types.UnmarshalDelegation(cdc, res)
 		if err != nil {
 			sharesAmount := "0"
 			validp = ValidPlus{
@@ -616,7 +623,7 @@ func GetAllValidators(rootDir, node, chainID string) string {
 				sharesAmount,
 			}
 		} else {
-			sharesAmount := delegation.Shares.String()
+			sharesAmount := resp.Shares.String()
 			validp = ValidPlus{
 				valid,
 				sharesAmount,
@@ -662,7 +669,7 @@ func GetAllDelegations(rootDir, node, chainID, delegatorAddr string) string {
 	}
 
 	// parse out the delegations
-	var resp types.DelegationResponses
+	var resp types.Delegations
 	if err := cdc.UnmarshalJSON(res, &resp); err != nil {
 		return err.Error()
 	}
@@ -781,7 +788,7 @@ func GetDelegationRewards(rootDir, node, chainID, delegatorAddr, validatorAddr s
 	// }
 
 	//query the delegation rewards
-	resp, _, err := cliCtx.QueryWithData("custom/distr/delegation_rewards", cdc.MustMarshalJSON(distr.NewQueryDelegationRewardsParams(DelAddr, ValAddr)))
+	resp, _, err := cliCtx.QueryWithData("custom/distribution/delegation_rewards", cdc.MustMarshalJSON(distr.NewQueryDelegationRewardsParams(DelAddr, ValAddr)))
 	if err != nil {
 		return err.Error()
 	}
@@ -872,7 +879,7 @@ func GetDelegtorRewardsShares(rootDir, node, chainID, delegatorAddr string) stri
 		WithCodec(cdc).WithTrustNode(true)
 
 	//get all the validators with delegation of the specific delegator
-	ValAddrs, _, err := cliCtx.QueryWithData("custom/distr/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
+	ValAddrs, _, err := cliCtx.QueryWithData("custom/distribution/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
 	if err != nil {
 		return err.Error()
 	}
@@ -884,7 +891,7 @@ func GetDelegtorRewardsShares(rootDir, node, chainID, delegatorAddr string) stri
 	var delrews []Delrewards
 	//query the delegation rewards
 	for _, valAddr := range validators {
-		rewards, _, err := cliCtx.QueryWithData("custom/distr/delegation_rewards", cdc.MustMarshalJSON(distr.NewQueryDelegationRewardsParams(DelAddr, valAddr)))
+		rewards, _, err := cliCtx.QueryWithData("custom/distribution/delegation_rewards", cdc.MustMarshalJSON(distr.NewQueryDelegationRewardsParams(DelAddr, valAddr)))
 		if err != nil {
 			return err.Error()
 		}
@@ -902,13 +909,17 @@ func GetDelegtorRewardsShares(rootDir, node, chainID, delegatorAddr string) stri
 		}
 
 		// parse out the delegation
-		delegation, err := types.UnmarshalDelegation(cdc, res)
-		if err != nil {
+		var resp types.Delegation
+		if err := cdc.UnmarshalJSON(res, &resp); err != nil {
 			return err.Error()
 		}
+		// delegation, err := types.UnmarshalDelegation(cdc, res)
+		// if err != nil {
+		// 	return err.Error()
+		// }
 
 		//create the unbond message
-		sharesAmount := delegation.Shares
+		sharesAmount := resp.Shares
 
 		delrew := Delrewards{
 			rewardsresult,
@@ -962,7 +973,7 @@ func WithdrawDelegatorAllRewards(rootDir, node, chainID, delegatorName, password
 	}
 
 	//get all the validators with delegation of the specific delegator
-	ValAddrs, _, err := cliCtx.QueryWithData("custom/distr/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
+	ValAddrs, _, err := cliCtx.QueryWithData("custom/distribution/delegator_validators", cdc.MustMarshalJSON(distr.NewQueryDelegatorParams(DelAddr)))
 	if err != nil {
 		return err.Error()
 	}
@@ -1073,7 +1084,7 @@ func TransferB4send(rootDir, node, chainID, fromName, password, toStr, coinStr, 
 	msg := NewMsgSend(fromAddr, to, coins)
 
 	//init a txBuilder for the transaction with fee
-	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithFees(feeStr).WithChainID(chainID)
+	txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(BankCdc)).WithFees(feeStr).WithChainID(chainID)
 	//txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc)).WithGasPrices(feeStr).WithChainID(chainID)
 
 	//accNum added to txBldr
