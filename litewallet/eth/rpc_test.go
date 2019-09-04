@@ -15,7 +15,7 @@ func TestGetAccount(t *testing.T) {
 func TestGetAccountERC20(t *testing.T) {
 	node := "https://mainnet.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
 	addr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
-	tokenAddr := "0x86Fa049857E0209aa7D9e616F7eb3b3B78ECfdb0"
+	tokenAddr := "0x7b188A8b3A2113621895Fb35fC67a779CAFFA92D"
 	output := GetAccountERC20(node, addr, tokenAddr)
 	t.Log(output)
 }
@@ -24,7 +24,7 @@ func TestTransferETH(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
 	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
-	name := "easyzone"
+	name := "mine"
 	password := "wm131421"
 	toAddr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
 	amount := "0.00002"
@@ -38,7 +38,7 @@ func TestTransferERC20(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
 	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
-	name := "eth"
+	name := "mine"
 	password := "wm131421"
 	toAddr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
 	tokenAddr := "0xc5d0ac103d253ca6fad4ec3170391ffab6fe5bb8"
@@ -69,7 +69,7 @@ func TestGetPendingNonceAt(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
 	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
-	name := "easyzone"
+	name := "mine"
 	password := "wm131421"
 	output := GetPendingNonceAt(rootDir, node, name, password)
 	t.Log(output)
@@ -79,13 +79,13 @@ func TestSpeedTransferETH(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
 	node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
-	name := "easyzone"
+	name := "mine"
 	password := "wm131421"
 	toAddr := "0x1B37AB8d737B1776d3cC082D246Ee89Ed9693cD2"
 	amount := "0.000001"
 	gasLimit := int64(23000)
 	gasPrice := "200"
-	pendingNonce := int64(10)
+	pendingNonce := int64(64)
 	output := SpeedTransferETH(rootDir, node, name, password, toAddr, gasPrice, amount, gasLimit, pendingNonce)
 	t.Log(output)
 }

@@ -3,12 +3,13 @@ package eth
 import (
 	"crypto/ecdsa"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
-	"golang.org/x/crypto/sha3"
 	"log"
 	"os/user"
 	"testing"
+
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
+	"golang.org/x/crypto/sha3"
 )
 
 func TestAddress(t *testing.T) {
@@ -36,10 +37,10 @@ func TestAddress(t *testing.T) {
 func TestCreateAccount(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
-	name := "cm1"
+	name := "ethtest"
 	password := "wm131421"
-	seed := "fence shell flame stove zebra occur hurry steel drip gather debate tuition crumble cigar hood swarm unaware plunge lake artist snack skate between police"
-	output := CreateAccount(rootDir,name,password,seed)
+	seed := "very online issue brain swarm deer thunder sustain pact jelly lift return"
+	output := CreateAccount(rootDir, name, password, seed)
 	t.Log(output)
 }
 
@@ -56,7 +57,7 @@ func TestRecoverAccount(t *testing.T) {
 	name := "eth5"
 	password := "wm131421"
 	seed := "monster soap pipe grief tourist marine turkey scatter because fade actual robust"
-	output := RecoverAccount(rootDir,name,password,seed)
+	output := RecoverAccount(rootDir, name, password, seed)
 	t.Log(output)
 }
 
@@ -65,13 +66,12 @@ func TestFetchtoSign(t *testing.T) {
 	rootDir := usr.HomeDir
 	name := "cm1"
 	password := "wm131421"
-	output, err := FetchtoSign(rootDir,name,password)
+	output, err := FetchtoSign(rootDir, name, password)
 	if err != nil {
 		return
 	}
 	t.Log(output)
 }
-
 
 func TestSigVerify(t *testing.T) {
 	usr, _ := user.Current()
@@ -79,5 +79,5 @@ func TestSigVerify(t *testing.T) {
 	name := "cm1"
 	password := "wm131421"
 	data2sign := []byte("hello")
-	SigVerify(rootDir,name,password,data2sign)
+	SigVerify(rootDir, name, password, data2sign)
 }
