@@ -133,10 +133,10 @@ func CosmosWithdrawDelegatorAllRewards(rootDir, node, chainID, delegatorName, pa
 	return output
 }
 
-func CosmosQueryQueryTxsWithTags(rootDir, node, chainID, addr string, page, limit int) string {
-	output := sdksource.QueryTxsWithTags(rootDir, node, chainID, addr, page, limit)
-	return output
-}
+// func CosmosQueryQueryTxsWithTags(rootDir, node, chainID, addr string, page, limit int) string {
+// 	output := sdksource.QueryTxsWithTags(rootDir, node, chainID, addr, page, limit)
+// 	return output
+// }
 
 //QOS wallet part begin from here
 func QOSAccountCreate(password string) string {
