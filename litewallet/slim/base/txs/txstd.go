@@ -17,12 +17,17 @@ type TxStd struct {
 	MaxGas    types.BigInt `json:"maxgas"`   //Gas消耗的最大值
 }
 
-//var _ txs.ITx = (*TransferTx)(nil)
+var _ types.Tx = (*TxStd)(nil)
 
 type Signature struct {
 	Pubkey    ed25519local.PubKey `json:"pubkey"`    //可选
 	Signature []byte              `json:"signature"` //签名内容
 	Nonce     int64               `json:"nonce"`     //nonce的值
+}
+
+// Type: just for implements types.Tx
+func (tx *TxStd) Type() string {
+	return "txstd"
 }
 
 func (tx *TxStd) GetSignData() []byte {

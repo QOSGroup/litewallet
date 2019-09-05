@@ -45,7 +45,6 @@ func SetBlockchainEntrance(qstarshost, qmoonhost string) {
 	TRurl = "http://" + Mhost + "/nodes/"
 
 	RPC = rpcclient.NewHTTP(Shost, "/websocket")
-
 }
 
 func init() {

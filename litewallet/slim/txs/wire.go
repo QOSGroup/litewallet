@@ -2,8 +2,10 @@ package txs
 
 import (
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
 	"github.com/tendermint/go-amino"
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 //
@@ -47,11 +49,14 @@ func RegisterAmino(cdc *amino.Codec) {
 }
 
 func RegisterCodec(cdc *amino.Codec) {
-	//cdc.RegisterConcrete(&txs.QcpTxResult{}, "qbase/txs/qcpresult", nil)
+	cdc.RegisterConcrete(&ctypes.ResultTx{}, "qbase/types/ResultTx", nil)
+
+	cdc.RegisterConcrete(&txs.QcpTxResult{}, "qbase/txs/qcpresult", nil)
 	cdc.RegisterConcrete(&txs.Signature{}, "qbase/txs/signature", nil)
 	cdc.RegisterConcrete(&txs.TxStd{}, "qbase/txs/stdtx", nil)
+	cdc.RegisterConcrete(&txs.TxQcp{}, "qbase/txs/qcptx", nil)
 	cdc.RegisterInterface((*txs.ITx)(nil), nil)
-	//cdc.RegisterInterface((*types.Tx)(nil), nil)
+	cdc.RegisterInterface((*types.Tx)(nil), nil)
 
 	cdc.RegisterConcrete(&TxTransfer{}, "transfer/txs/TxTransfer", nil)
 	cdc.RegisterConcrete(&TxCreateDelegation{}, "stake/txs/TxCreateDelegation", nil)
