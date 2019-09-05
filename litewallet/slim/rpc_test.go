@@ -10,7 +10,7 @@ import (
 
 func TestQueryAccount(t *testing.T) {
 	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	addr := "address13l90zvt26szkrquutwpgj7kef58mgyntfs46l2"
+	addr := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
 	bytes, err := QueryAccount(addr)
 	if err != nil {
 		t.Log(err)
@@ -28,11 +28,11 @@ func TestQueryAccount(t *testing.T) {
 
 func TestTransferSend(t *testing.T) {
 	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	addrto := "address13l90zvt26szkrquutwpgj7kef58mgyntfs46l2"
+	addrto := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
 	coinstr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	chainid := "aquarius-1000"
-	Tout, err := TransferSend(addrto, coinstr, privkey, chainid)
+	chainid := "aquarius-1001"
+	Tout, err := Transfer(addrto, coinstr, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 	}
@@ -60,7 +60,7 @@ func TestDelegationSend(t *testing.T) {
 	coins := int64(1000)
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "aquarius-1000"
-	Tout, err := DelegationSend(validatorAddress, coins, privkey, chainid)
+	Tout, err := Delegation(validatorAddress, coins, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 		return
@@ -76,7 +76,7 @@ func TestUnbondDelegationSend(t *testing.T) {
 	coins := int64(1000)
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "aquarius-1000"
-	Tout, err := UnbondDelegationSend(validatorAddress, coins, privkey, chainid)
+	Tout, err := UnbondDelegation(validatorAddress, coins, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 		return
@@ -84,12 +84,12 @@ func TestUnbondDelegationSend(t *testing.T) {
 	t.Log(Tout)
 }
 
-func TestQueryApproveSend(t *testing.T) {
+func TestQueryApprove(t *testing.T) {
 	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
 	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
 	//coinstr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	Tout, err := QueryApproveSend(toAddr, privkey)
+	Tout, err := QueryApprove(toAddr, privkey)
 	if err != nil {
 		t.Log(err)
 		return
@@ -103,7 +103,7 @@ func TestCreateApproveSend(t *testing.T) {
 	coinsStr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "aquarius-1000"
-	Tout, err := CreateApproveSend(toAddr, coinsStr, privkey, chainid)
+	Tout, err := CreateApprove(toAddr, coinsStr, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 		return
@@ -131,7 +131,7 @@ func TestDecreaseApproveSend(t *testing.T) {
 	coinsStr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "aquarius-1000"
-	Tout, err := DecreaseApproveSend(toAddr, coinsStr, privkey, chainid)
+	Tout, err := DecreaseApprove(toAddr, coinsStr, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 		return
@@ -145,7 +145,7 @@ func TestUseApproveSend(t *testing.T) {
 	coinsStr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "aquarius-1000"
-	Tout, err := UseApproveSend(toAddr, coinsStr, privkey, chainid)
+	Tout, err := UseApprove(toAddr, coinsStr, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 		return
@@ -159,12 +159,23 @@ func TestCancelApproveSend(t *testing.T) {
 	coinsStr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
 	chainid := "aquarius-1000"
-	Tout, err := CancelApproveSend(toAddr, coinsStr, privkey, chainid)
+	Tout, err := CancelApprove(toAddr, coinsStr, privkey, chainid)
 	if err != nil {
 		t.Log(err)
 		return
 	}
 	t.Log(Tout)
+}
+
+func TestQueryTx(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	hashHex := "36E28325F65F806EEE7DFB69241F4DF53C3361ADF780F163B065101701E54EB2"
+	Tout, err := QueryTx(hashHex)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
 }
 
 //func TestTransferTxToQSC(t *testing.T) {

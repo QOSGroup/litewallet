@@ -1,11 +1,9 @@
 package slim
 
 import (
-	"encoding/hex"
+	"fmt"
 	"github.com/QOSGroup/litewallet/litewallet/slim/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
-	"github.com/tendermint/tendermint/crypto/tmhash"
-	"strings"
 )
 
 //only need the following arguments, it`s enough!
@@ -18,7 +16,7 @@ func QueryAccount(addr string) ([]byte, error) {
 }
 
 //only need the following arguments, it`s enough!
-func TransferSend(addrto, coinstr, privkey, chainid string) (string, error) {
+func Transfer(addrto, coinstr, privkey, chainid string) (string, error) {
 	tx, err := client.CreateSignedTransfer(addrto, coinstr, privkey, chainid)
 	if err != nil {
 		return "", err
@@ -35,7 +33,7 @@ func TransferSend(addrto, coinstr, privkey, chainid string) (string, error) {
 	return txs.BroadcastTx(tx)
 }
 
-func DelegationSend(addrto string, coins int64, privkey, chainid string) (string, error) {
+func Delegation(addrto string, coins int64, privkey, chainid string) (string, error) {
 	tx, err := client.CreateSignedDelegation(addrto, coins, privkey, chainid)
 	if err != nil {
 		return "", err
@@ -43,7 +41,7 @@ func DelegationSend(addrto string, coins int64, privkey, chainid string) (string
 	return txs.BroadcastTx(tx)
 }
 
-func UnbondDelegationSend(addrto string, coins int64, privkey, chainid string) (string, error) {
+func UnbondDelegation(addrto string, coins int64, privkey, chainid string) (string, error) {
 	tx, err := client.CreateSignedUnbondDelegation(addrto, coins, privkey, chainid)
 	if err != nil {
 		return "", err
@@ -51,7 +49,7 @@ func UnbondDelegationSend(addrto string, coins int64, privkey, chainid string) (
 	return txs.BroadcastTx(tx)
 }
 
-func QueryApproveSend(addrto, privkey string) ([]byte, error) {
+func QueryApprove(addrto, privkey string) ([]byte, error) {
 	approve, err := client.QueryApprove(addrto, privkey)
 	if err != nil {
 		return nil, err
@@ -59,7 +57,7 @@ func QueryApproveSend(addrto, privkey string) ([]byte, error) {
 	return txs.Cdc.MarshalJSON(approve)
 }
 
-func CreateApproveSend(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+func CreateApprove(addrto string, coinsStr string, privkey, chainid string) (string, error) {
 	tx, err := client.CreateApprove(addrto, coinsStr, privkey, chainid)
 	if err != nil {
 		return "", err
@@ -75,7 +73,7 @@ func IncreaseApprove(addrto string, coinsStr string, privkey, chainid string) (s
 	return txs.BroadcastTx(tx)
 }
 
-func DecreaseApproveSend(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+func DecreaseApprove(addrto string, coinsStr string, privkey, chainid string) (string, error) {
 	tx, err := client.DecreaseApprove(addrto, coinsStr, privkey, chainid)
 	if err != nil {
 		return "", err
@@ -83,7 +81,7 @@ func DecreaseApproveSend(addrto string, coinsStr string, privkey, chainid string
 	return txs.BroadcastTx(tx)
 }
 
-func UseApproveSend(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+func UseApprove(addrto string, coinsStr string, privkey, chainid string) (string, error) {
 	tx, err := client.DecreaseApprove(addrto, coinsStr, privkey, chainid)
 	if err != nil {
 		return "", err
@@ -91,7 +89,7 @@ func UseApproveSend(addrto string, coinsStr string, privkey, chainid string) (st
 	return txs.BroadcastTx(tx)
 }
 
-func CancelApproveSend(addrto string, coinsStr string, privkey, chainid string) (string, error) {
+func CancelApprove(addrto string, coinsStr string, privkey, chainid string) (string, error) {
 	tx, err := client.DecreaseApprove(addrto, coinsStr, privkey, chainid)
 	if err != nil {
 		return "", err
@@ -99,11 +97,23 @@ func CancelApproveSend(addrto string, coinsStr string, privkey, chainid string) 
 	return txs.BroadcastTx(tx)
 }
 
-func GetTx(tx string) string {
-	txBytes, err := hex.DecodeString(tx)
+func QueryTx(hashHex string) ([]byte, error) {
+	txResponse, err := client.QueryTx(hashHex)
 	if err != nil {
-		return err.Error()
+		return nil, err
 	}
-	txhashs := strings.ToUpper(hex.EncodeToString(tmhash.Sum(txBytes)))
-	return string(txhashs)
+
+	if txResponse.Empty() {
+		return nil, fmt.Errorf("No transaction found with hash %s", hashHex)
+	}
+	return txs.Cdc.MarshalJSON(txResponse)
 }
+
+//func GetTx(tx string) string {
+//	txBytes, err := hex.DecodeString(tx)
+//	if err != nil {
+//		return err.Error()
+//	}
+//	txhashs := strings.ToUpper(hex.EncodeToString(tmhash.Sum(txBytes)))
+//	return string(txhashs)
+//}
