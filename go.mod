@@ -14,6 +14,8 @@ require (
 	github.com/edsrzf/mmap-go v1.0.0 // indirect
 	github.com/ethereum/go-ethereum v1.8.23
 	github.com/fjl/memsize v0.0.0-20180929194037-2a09253e352a // indirect
+	github.com/gogo/protobuf v1.2.1
+	github.com/golang/protobuf v1.3.1
 	github.com/hashicorp/golang-lru v0.5.1 // indirect
 	github.com/huin/goupnp v1.0.0 // indirect
 	github.com/jackpal/go-nat-pmp v1.0.1 // indirect

@@ -3,9 +3,10 @@ package txs
 import (
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
+	ctypes "github.com/QOSGroup/litewallet/litewallet/slim/tendermint/rpc/core/types"
 	"github.com/tendermint/go-amino"
-	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 //
@@ -41,24 +42,34 @@ func init() {
 
 // RegisterAmino registers all crypto related types in the given (amino) codec.
 func RegisterAmino(cdc *amino.Codec) {
-	cdc.RegisterInterface((*ed25519local.PubKey)(nil), nil)
+	//cdc.RegisterInterface((*crypto.PubKey)(nil), nil)
+	//cdc.RegisterConcrete(ed25519.PubKeyEd25519{}, ed25519.PubKeyAminoName, nil)
+	//cdc.RegisterConcrete(secp256k1.PubKeySecp256k1{}, secp256k1.PubKeyAminoName, nil)
+	//cdc.RegisterConcrete(multisig.PubKeyMultisigThreshold{}, multisig.PubKeyMultisigThresholdAminoRoute, nil)
+	//
+	//cdc.RegisterInterface((*crypto.PrivKey)(nil), nil)
+	//cdc.RegisterConcrete(ed25519.PrivKeyEd25519{}, ed25519.PrivKeyAminoName, nil)
+	//cdc.RegisterConcrete(secp256k1.PrivKeySecp256k1{}, secp256k1.PrivKeyAminoName, nil)
+
+	cdc.RegisterInterface((*crypto.PubKey)(nil), nil)
 	cdc.RegisterConcrete(ed25519local.PubKeyEd25519{}, ed25519local.Ed25519PubKeyAminoRoute, nil)
 
-	cdc.RegisterInterface((*ed25519local.PrivKey)(nil), nil)
+	cdc.RegisterInterface((*crypto.PrivKey)(nil), nil)
 	cdc.RegisterConcrete(ed25519local.PrivKeyEd25519{}, ed25519local.Ed25519PrivKeyAminoRoute, nil)
 }
 
 func RegisterCodec(cdc *amino.Codec) {
 	cdc.RegisterConcrete(&ctypes.ResultTx{}, "qbase/types/ResultTx", nil)
 
-	cdc.RegisterConcrete(&txs.QcpTxResult{}, "qbase/txs/qcpresult", nil)
+	//cdc.RegisterConcrete(&txs.QcpTxResult{}, "qbase/txs/qcpresult", nil)
 	cdc.RegisterConcrete(&txs.Signature{}, "qbase/txs/signature", nil)
 	cdc.RegisterConcrete(&txs.TxStd{}, "qbase/txs/stdtx", nil)
-	cdc.RegisterConcrete(&txs.TxQcp{}, "qbase/txs/qcptx", nil)
+	//cdc.RegisterConcrete(&txs.TxQcp{}, "qbase/txs/qcptx", nil)
 	cdc.RegisterInterface((*txs.ITx)(nil), nil)
 	cdc.RegisterInterface((*types.Tx)(nil), nil)
 
 	cdc.RegisterConcrete(&TxTransfer{}, "transfer/txs/TxTransfer", nil)
+
 	cdc.RegisterConcrete(&TxCreateDelegation{}, "stake/txs/TxCreateDelegation", nil)
 	cdc.RegisterConcrete(&TxUnbondDelegation{}, "stake/txs/TxUnbondDelegation", nil)
 

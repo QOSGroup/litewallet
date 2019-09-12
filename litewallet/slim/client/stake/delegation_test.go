@@ -1,4 +1,4 @@
-package client
+package stake
 
 import (
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"

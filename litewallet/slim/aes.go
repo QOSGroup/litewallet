@@ -6,7 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/respwrap"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/respwrap"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	"github.com/pkg/errors"
 	"io"

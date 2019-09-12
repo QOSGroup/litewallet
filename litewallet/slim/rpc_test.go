@@ -116,7 +116,7 @@ func TestIncreaseApprove(t *testing.T) {
 	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
 	coinsStr := "10000qos"
 	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	chainid := "aquarius-1000"
+	chainid := "aquarius-1001"
 	Tout, err := IncreaseApprove(toAddr, coinsStr, privkey, chainid)
 	if err != nil {
 		t.Log(err)
@@ -169,8 +169,18 @@ func TestCancelApproveSend(t *testing.T) {
 
 func TestQueryTx(t *testing.T) {
 	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	hashHex := "36E28325F65F806EEE7DFB69241F4DF53C3361ADF780F163B065101701E54EB2"
-	Tout, err := QueryTx(hashHex)
+	hashHex := "B5EECB27939D969556C61E00BDE8C910FFE3BE47BFA0356B57F58847D6502B70"
+	Tout, err := QueryTx("47.103.78.91:26657", hashHex)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
+}
+
+func TestQueryValidators(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	Tout, err := QueryValidatorInfo("47.103.78.91:26657", "address1tl0gdpdwjz2g77s7qcf0jvr4sxc0szw0nlk08t")
 	if err != nil {
 		t.Log(err)
 		return

@@ -1,20 +1,17 @@
 package types
 
 import (
-	cmn "github.com/tendermint/tendermint/libs/common"
-
-	"github.com/tendermint/tendermint/libs/common"
-	"github.com/tendermint/tendermint/types"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/commom"
 )
 
-// Result of querying for a tx
+// Result of querying for a txx
 type ResultTx struct {
-	Hash     cmn.HexBytes      `json:"hash"`
+	Hash     common.HexBytes   `json:"hash"`
 	Height   int64             `json:"height"`
 	Index    uint32            `json:"index"`
 	TxResult ResponseDeliverTx `json:"tx_result"`
-	Tx       types.Tx          `json:"tx"`
-	Proof    types.TxProof     `json:"proof,omitempty"`
+	Tx       Tx                `json:"tx"`
+	Proof    TxProof           `json:"proof,omitempty"`
 }
 
 type ResponseDeliverTx struct {
