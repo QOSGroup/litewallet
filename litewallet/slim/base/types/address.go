@@ -2,7 +2,7 @@ package types
 
 import (
 	"encoding/json"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
 	"github.com/pkg/errors"
 )
 

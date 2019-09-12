@@ -1,9 +1,12 @@
 package ed25519local
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"crypto/sha512"
 	"crypto/subtle"
+	"fmt"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
 	"github.com/tendermint/ed25519/edwards25519"
 	"github.com/tendermint/go-amino"
 )
@@ -21,36 +24,36 @@ const (
 var cdc = amino.NewCodec()
 
 func init() {
-	cdc.RegisterInterface((*PubKey)(nil), nil)
+	cdc.RegisterInterface((*crypto.PubKey)(nil), nil)
 	cdc.RegisterConcrete(PubKeyEd25519{},
 		Ed25519PubKeyAminoRoute, nil)
 
-	cdc.RegisterInterface((*PrivKey)(nil), nil)
+	cdc.RegisterInterface((*crypto.PrivKey)(nil), nil)
 	cdc.RegisterConcrete(PrivKeyEd25519{},
 		Ed25519PrivKeyAminoRoute, nil)
 }
 
-var _ PrivKey = PrivKeyEd25519{}
+var _ crypto.PrivKey = PrivKeyEd25519{}
 
-type PrivKey interface {
-	Bytes() []byte
-	Sign(msg []byte) ([]byte, error)
-	PubKey() PubKey
-}
+//type PrivKey interface {
+//	Bytes() []byte
+//	Sign(msg []byte) ([]byte, error)
+//	PubKey() crypto.PubKey
+//}
 
-type Address = HexBytes
+//type Address = HexBytes
 
-type HexBytes []byte
+//type HexBytes []byte
 
-func (bz HexBytes) Bytes() []byte {
-	return bz
-}
+//func (bz HexBytes) Bytes() []byte {
+//	return bz
+//}
 
-type PubKey interface {
-	Address() Address
-	Bytes() []byte
-	VerifyBytes(msg []byte, sig []byte) bool
-}
+//type PubKey interface {
+//	Address() Address
+//	Bytes() []byte
+//	VerifyBytes(msg []byte, sig []byte) bool
+//}
 
 // PrivKeyEd25519 implements crypto.PrivKey.
 type PrivKeyEd25519 [64]byte
@@ -68,7 +71,7 @@ func (privKey PrivKeyEd25519) Sign(msg []byte) ([]byte, error) {
 }
 
 // PubKey gets the corresponding public key from the private key.
-func (privKey PrivKeyEd25519) PubKey() PubKey {
+func (privKey PrivKeyEd25519) PubKey() crypto.PubKey {
 	privKeyBytes := [64]byte(privKey)
 	initialized := false
 	// If the latter 32 bytes of the privkey are all zero, compute the pubkey
@@ -90,12 +93,29 @@ func (privKey PrivKeyEd25519) PubKey() PubKey {
 	return PubKeyEd25519(pubBytes)
 }
 
+// Equals - you probably don't need to use this.
+// Runs in constant time based on length of the keys.
+func (privKey PrivKeyEd25519) Equals(other crypto.PrivKey) bool {
+	if otherEd, ok := other.(PrivKeyEd25519); ok {
+		return subtle.ConstantTimeCompare(privKey[:], otherEd[:]) == 1
+	} else {
+		return false
+	}
+}
+
+//-----------------------------------
+
+var _ crypto.PubKey = PubKeyEd25519{}
+
+// PubKeyEd25519Size is the number of bytes in an Ed25519 signature.
+const PubKeyEd25519Size = 32
+
 // PubKeyEd25519 implements crypto.PubKey for the Ed25519 signature scheme.
-type PubKeyEd25519 [32]byte
+type PubKeyEd25519 [PubKeyEd25519Size]byte
 
 // Address is the SHA256-20 of the raw pubkey bytes.
-func (pubKey PubKeyEd25519) Address() Address {
-	return Address(Sum(pubKey[:]))
+func (pubKey PubKeyEd25519) Address() crypto.Address {
+	return crypto.Address(Sum(pubKey[:]))
 }
 
 // Bytes marshals the PubKey using amino encoding.
@@ -117,6 +137,20 @@ func (pubKey PubKeyEd25519) VerifyBytes(msg []byte, sig_ []byte) bool {
 	pubKeyBytes := [32]byte(pubKey)
 	return Verify(&pubKeyBytes, msg, sig)
 }
+
+func (pubKey PubKeyEd25519) String() string {
+	return fmt.Sprintf("PubKeyEd25519{%X}", pubKey[:])
+}
+
+// nolint: golint
+func (pubKey PubKeyEd25519) Equals(other crypto.PubKey) bool {
+	if otherEd, ok := other.(PubKeyEd25519); ok {
+		return bytes.Equal(pubKey[:], otherEd[:])
+	} else {
+		return false
+	}
+}
+//------------------------------------
 
 // GenPrivKeyFromSecret hashes the secret with SHA2, and uses
 // that 32 byte output to create the private key.

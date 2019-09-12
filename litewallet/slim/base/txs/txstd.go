@@ -2,7 +2,7 @@ package txs
 
 import (
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
 	"github.com/pkg/errors"
 )
 
@@ -20,9 +20,9 @@ type TxStd struct {
 var _ types.Tx = (*TxStd)(nil)
 
 type Signature struct {
-	Pubkey    ed25519local.PubKey `json:"pubkey"`    //可选
-	Signature []byte              `json:"signature"` //签名内容
-	Nonce     int64               `json:"nonce"`     //nonce的值
+	Pubkey    crypto.PubKey `json:"pubkey"`    //可选
+	Signature []byte        `json:"signature"` //签名内容
+	Nonce     int64         `json:"nonce"`     //nonce的值
 }
 
 // Type: just for implements types.Tx
@@ -44,7 +44,7 @@ func (tx *TxStd) GetSignData() []byte {
 }
 
 // 签名：每个签名者外部调用此方法
-func (tx *TxStd) SignTx(privkey ed25519local.PrivKey, nonce int64, fromChainID string) (signedbyte []byte, err error) {
+func (tx *TxStd) SignTx(privkey crypto.PrivKey, nonce int64, fromChainID string) (signedbyte []byte, err error) {
 	if tx.ITx == nil {
 		return nil, errors.New("Signature txstd err(itx is nil)")
 	}

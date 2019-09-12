@@ -5,10 +5,11 @@ import (
 	btxs "github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/client"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bip39local"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/respwrap"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bip39local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/respwrap"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	"github.com/pkg/errors"
 	"log"
@@ -268,7 +269,7 @@ func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) [
 	if err1 != nil {
 		fmt.Println(err1)
 	}
-	priv := ed25519local.PrivKey(key)
+	priv := crypto.PrivKey(key)
 
 	signature, _ := txStd.SignTx(priv, nonce, chainid)
 	txStd.Signature = []btxs.Signature{btxs.Signature{

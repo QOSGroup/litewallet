@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/bech32local"
-	"github.com/QOSGroup/litewallet/litewallet/slim/funcInlocal/ed25519local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
 	"github.com/pkg/errors"
 )
 

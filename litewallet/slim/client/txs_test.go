@@ -7,8 +7,8 @@ import (
 
 func TestQueryTx(t *testing.T) {
 	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	hash := "20819ED6BE5E999C8F80D058C92918BB96ED212AE38B1AB568D9DE1366A4C74A"
-	Tout, err := QueryTx(hash)
+	hash := "B5EECB27939D969556C61E00BDE8C910FFE3BE47BFA0356B57F58847D6502B70"
+	Tout, err := QueryTx("47.103.78.91:26657", hash)
 	if err != nil {
 		t.Log(err)
 	}

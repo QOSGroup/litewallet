@@ -3,6 +3,7 @@ package slim
 import (
 	"fmt"
 	"github.com/QOSGroup/litewallet/litewallet/slim/client"
+	"github.com/QOSGroup/litewallet/litewallet/slim/client/stake"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 )
 
@@ -34,7 +35,7 @@ func Transfer(addrto, coinstr, privkey, chainid string) (string, error) {
 }
 
 func Delegation(addrto string, coins int64, privkey, chainid string) (string, error) {
-	tx, err := client.CreateSignedDelegation(addrto, coins, privkey, chainid)
+	tx, err := stake.CreateSignedDelegation(addrto, coins, privkey, chainid)
 	if err != nil {
 		return "", err
 	}
@@ -42,7 +43,7 @@ func Delegation(addrto string, coins int64, privkey, chainid string) (string, er
 }
 
 func UnbondDelegation(addrto string, coins int64, privkey, chainid string) (string, error) {
-	tx, err := client.CreateSignedUnbondDelegation(addrto, coins, privkey, chainid)
+	tx, err := stake.CreateSignedUnbondDelegation(addrto, coins, privkey, chainid)
 	if err != nil {
 		return "", err
 	}
@@ -97,8 +98,8 @@ func CancelApprove(addrto string, coinsStr string, privkey, chainid string) (str
 	return txs.BroadcastTx(tx)
 }
 
-func QueryTx(hashHex string) ([]byte, error) {
-	txResponse, err := client.QueryTx(hashHex)
+func QueryTx(remote, hashHex string) ([]byte, error) {
+	txResponse, err := client.QueryTx(remote, hashHex)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +108,18 @@ func QueryTx(hashHex string) ([]byte, error) {
 		return nil, fmt.Errorf("No transaction found with hash %s", hashHex)
 	}
 	return txs.Cdc.MarshalJSON(txResponse)
+}
+
+func QueryValidators(remote string) ([]byte, error) {
+	return stake.QueryValidators(remote)
+}
+
+func QueryValidatorInfo(remote, validatorAddr string) ([]byte,  error) {
+	validator, err := stake.QueryValidatorInfo(remote, validatorAddr)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(validator)
 }
 
 //func GetTx(tx string) string {
