@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/client"
+	"github.com/QOSGroup/litewallet/litewallet/slim/module"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	"strings"
 
@@ -247,13 +247,13 @@ func CosmosBroadcastTransferTx(rootDir, node, chainID, txString, broadcastMode s
 
 //for AdvertisersTrue
 func QOSAdvertisersTrue(privatekey, coinsType, coinAmount, qscchainid string) string {
-	output := client.AdvertisersTrue(privatekey, coinsType, coinAmount, qscchainid)
+	output := module.AdvertisersTrue(privatekey, coinsType, coinAmount, qscchainid)
 	return output
 }
 
 //for AdvertisersFalse
 func QOSAdvertisersFalse(privatekey, coinsType, coinAmount, qscchainid string) string {
-	output := client.AdvertisersFalse(privatekey, coinsType, coinAmount, qscchainid)
+	output := module.AdvertisersFalse(privatekey, coinsType, coinAmount, qscchainid)
 	return output
 }
 
@@ -292,13 +292,13 @@ func QOSGetBlanceByCointype(addrs, cointype string) string {
 //coinAmount             //竞拍数量
 //qscchainid             //chainid
 func QOSAcutionAd(articleHash, privatekey, coinsType, coinAmount, qscchainid string) string {
-	output := client.AcutionAd(articleHash, privatekey, coinsType, coinAmount, qscchainid)
+	output := module.AcutionAd(articleHash, privatekey, coinsType, coinAmount, qscchainid)
 	return output
 }
 
 //for Extract
 func QOSExtract(privatekey, coinsType, coinAmount, qscchainid string) string {
-	output := client.Extract(privatekey, coinsType, coinAmount, qscchainid)
+	output := module.Extract(privatekey, coinsType, coinAmount, qscchainid)
 	return output
 }
 
@@ -308,7 +308,7 @@ func QOSBroadcastTransferTxToQSC(txstring, broadcastModes string) string {
 }
 
 func QOSCommHandler(funcName, privatekey, args, qscchainid string) string {
-	output := client.CommHandler(funcName, privatekey, args, qscchainid)
+	output := module.CommHandler(funcName, privatekey, args, qscchainid)
 	return output
 }
 

@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 
-	amino "github.com/tendermint/go-amino"
+	"github.com/tendermint/go-amino"
 
+	cmn "github.com/QOSGroup/litewallet/litewallet/slim/tendermint/libs/common"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/merkle"
 	"github.com/tendermint/tendermint/crypto/tmhash"
-	cmn "github.com/tendermint/tendermint/libs/common"
 )
 
 // Tx is an arbitrary byte array.

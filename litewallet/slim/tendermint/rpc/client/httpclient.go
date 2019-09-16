@@ -1,11 +1,11 @@
 package client
 
 import (
+	cmn "github.com/QOSGroup/litewallet/litewallet/slim/tendermint/libs/common"
 	tendermint_types "github.com/QOSGroup/litewallet/litewallet/slim/tendermint/rpc/core/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/rpc/lib/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/types"
 	"github.com/pkg/errors"
-	cmn "github.com/tendermint/tendermint/libs/common"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 

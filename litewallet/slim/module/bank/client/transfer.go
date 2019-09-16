@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
+	txs2 "github.com/QOSGroup/litewallet/litewallet/slim/module/bank/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
 	ctxs "github.com/QOSGroup/litewallet/litewallet/slim/txs"
@@ -34,7 +35,7 @@ func CreateSignedTransfer(addrto, coinstr, privkey, chainid string) ([]byte, err
 		if err != nil {
 			return nil, err
 		}
-		return ctxs.TxTransfer{
+		return txs2.TxTransfer{
 			Senders:   senders,
 			Receivers: receivers,
 		}, nil

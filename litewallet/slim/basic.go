@@ -4,7 +4,8 @@ import (
 	"fmt"
 	btxs "github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/client"
+	"github.com/QOSGroup/litewallet/litewallet/slim/module/bank/client"
+	txs2 "github.com/QOSGroup/litewallet/litewallet/slim/module/bank/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bip39local"
@@ -255,7 +256,7 @@ func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) [
 		err.Error()
 	}
 
-	tn := txs.TxTransfer{
+	tn := txs2.TxTransfer{
 		Senders:   senders,
 		Receivers: receivers,
 	}

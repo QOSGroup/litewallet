@@ -1,7 +1,8 @@
 package types
 
 import (
-	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/commom"
+	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/libs/common"
+	common2 "github.com/QOSGroup/litewallet/litewallet/slim/tendermint/libs/common"
 )
 
 // Result of querying for a txx
@@ -29,9 +30,9 @@ type ResponseDeliverTx struct {
 }
 
 type Event struct {
-	Type                 string          `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	Attributes           []common.KVPair `protobuf:"bytes,2,rep,name=attributes" json:"attributes,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
+	Type                 string           `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Attributes           []common2.KVPair `protobuf:"bytes,2,rep,name=attributes" json:"attributes,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
 }

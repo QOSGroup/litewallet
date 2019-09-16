@@ -1,4 +1,4 @@
-package client
+package module
 
 import (
 	"encoding/json"
@@ -13,17 +13,35 @@ import (
 	"strconv"
 )
 
+//成为广告商
+//privatekey             //用户私钥
+//coinsType              //押金币种
+//coinAmount             //押金数量
+//qscchainid             //chainid
+func AdvertisersTrue(privatekey, coinsType, coinAmount, qscchainid string) string {
+	return Advertisers(coinAmount, privatekey, coinsType, "2", qscchainid)
+}
+
+//成为非广告商 赎回押金
+//privatekey             //用户私钥
+//coinsType              //押金币种
+//coinAmount             //押金数量
+//qscchainid             //chainid
+func AdvertisersFalse(privatekey, coinsType, coinAmount, qscchainid string) string {
+	return Advertisers(coinAmount, privatekey, coinsType, "1", qscchainid)
+}
+
 //广告商押金或赎回
-func Extract(amount, privatekey, cointype, qscchainid string) string {
+func Advertisers(amount, privatekey, cointype, isDeposit, qscchainid string) string {
 	var result ctypes.ResultInvest
 	result.Code = ctypes.ResultCodeSuccess
-	tx, berr := extract(amount, privatekey, cointype, qscchainid)
+	tx, berr := advertisers(amount, privatekey, cointype, isDeposit, qscchainid)
 	if berr != "" {
 		return berr
 	}
 	js, err := ctxs.Cdc.MarshalBinaryBare(tx)
 	if err != nil {
-		log.Printf("Extract err:%s", err.Error())
+		log.Printf("Advertisers err:%s", err.Error())
 		result.Code = ctypes.ResultCodeInternalError
 		result.Reason = err.Error()
 		return result.Marshal()
@@ -32,7 +50,8 @@ func Extract(amount, privatekey, cointype, qscchainid string) string {
 	return result.Marshal()
 }
 
-func extract(coins, privatekey, cointype, qscchainid string) (*txs.TxStd, string) {
+// investAd 投资广告
+func advertisers(coins, privatekey, cointype, isDeposit, qscchainid string) (*txs.TxStd, string) {
 	amount, err := strconv.Atoi(coins)
 	if err != nil {
 		return nil, ctypes.NewErrorResult("601", 0, "", "amount format error").Marshal()
@@ -59,10 +78,10 @@ func extract(coins, privatekey, cointype, qscchainid string) (*txs.TxStd, string
 	it := &ctypes.CoinsTx{}
 	it.Address = investor
 	it.Cointype = cointype
-	it.ChangeType = "2"
+	it.ChangeType = isDeposit
 	it.Amount = types.NewInt(int64(amount))
-	tx := ctxs.ExtractTx{it}
-	fmt.Println(investor, amount, cointype, "2")
+	tx := ctxs.AdvertisersTx{it}
+	fmt.Println(investor, amount, cointype, isDeposit)
 	tx2 := txs.NewTxStd(tx, qscchainid, gas)
 	signature2, _ := tx2.SignTx(priv, qscnonce, qscchainid)
 	tx2.Signature = []txs.Signature{txs.Signature{
