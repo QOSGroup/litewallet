@@ -5,6 +5,7 @@ import (
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	txs4 "github.com/QOSGroup/litewallet/litewallet/slim/module/approve/txs"
 	txs3 "github.com/QOSGroup/litewallet/litewallet/slim/module/bank/txs"
+	gov_types "github.com/QOSGroup/litewallet/litewallet/slim/module/gov/types"
 	txs2 "github.com/QOSGroup/litewallet/litewallet/slim/module/stake/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
@@ -85,6 +86,13 @@ func RegisterCodec(cdc *amino.Codec) {
 	cdc.RegisterConcrete(&txs4.TxDecreaseApprove{}, "approve/txs/TxDecreaseApprove", nil)
 	cdc.RegisterConcrete(&txs4.TxUseApprove{}, "approve/txs/TxUseApprove", nil)
 	cdc.RegisterConcrete(&txs4.TxCancelApprove{}, "approve/txs/TxCancelApprove", nil)
+
+	cdc.RegisterInterface((*gov_types.ProposalContent)(nil), nil)
+	cdc.RegisterConcrete(&gov_types.TextProposal{}, "gov/TextProposal", nil)
+	cdc.RegisterConcrete(&gov_types.TaxUsageProposal{}, "gov/TaxUsageProposal", nil)
+	cdc.RegisterConcrete(&gov_types.ParameterProposal{}, "gov/ParameterProposal", nil)
+	//cdc.RegisterConcrete(&gov_types.ModifyInflationProposal{}, "gov/ModifyInflationProposal", nil)
+	cdc.RegisterConcrete(&gov_types.SoftwareUpgradeProposal{}, "gov/SoftwareUpgradeProposal", nil)
 
 	cdc.RegisterConcrete(&InvestTx{}, "qstars/InvestTx", nil)
 	cdc.RegisterConcrete(&AdvertisersTx{}, "jianqian/AdvertisersTx", nil)

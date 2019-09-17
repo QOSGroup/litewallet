@@ -3,8 +3,6 @@ module github.com/QOSGroup/litewallet
 go 1.12
 
 require (
-	github.com/QOSGroup/qbase v0.2.3
-	github.com/QOSGroup/qos v0.0.7
 	github.com/allegro/bigcache v1.2.1 // indirect
 	github.com/aristanetworks/goarista v0.0.0-20190704150520-f44d68189fd7 // indirect
 	github.com/btcsuite/btcd v0.0.0-20190629003639-c26ffa870fd8

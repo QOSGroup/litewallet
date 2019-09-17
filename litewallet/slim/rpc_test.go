@@ -208,6 +208,76 @@ func TestQueryCommunityFeePool(t *testing.T) {
 	t.Log(string(Tout))
 }
 
+func TestQueryProposal(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	Tout, err := QueryProposal("47.103.78.91:26657", 1)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
+}
+
+func TestQueryProposals(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	Tout, err := QueryProposals("47.103.78.91:26657", "", "", "deposit_period")
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
+}
+
+func TestQueryVote(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	Tout, err := QueryVote("47.103.78.91:26657", 1, "")
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
+}
+
+func TestQueryVotes(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	Tout, err := QueryVotes("47.103.78.91:26657", 1)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
+}
+
+func TestQueryDeposit(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	Tout, err := QueryDeposit("47.103.78.91:26657", 1, "")
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
+}
+
+func TestQueryDeposits(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	Tout, err := QueryDeposits("47.103.78.91:26657", 1)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
+}
+
+func TestQueryTally(t *testing.T) {
+	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	Tout, err := QueryTally("47.103.78.91:26657", 1, "")
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	t.Log(string(Tout))
+}
+
 func TestQueryTx(t *testing.T) {
 	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
 	hashHex := "B5EECB27939D969556C61E00BDE8C910FFE3BE47BFA0356B57F58847D6502B70"

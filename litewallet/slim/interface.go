@@ -6,6 +6,7 @@ import (
 	approve_client "github.com/QOSGroup/litewallet/litewallet/slim/module/approve/client"
 	bank_client "github.com/QOSGroup/litewallet/litewallet/slim/module/bank/client"
 	distribution_client "github.com/QOSGroup/litewallet/litewallet/slim/module/distribution/client"
+	gov_client "github.com/QOSGroup/litewallet/litewallet/slim/module/gov/client"
 	stake_client "github.com/QOSGroup/litewallet/litewallet/slim/module/stake/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 )
@@ -134,6 +135,62 @@ func QueryDelegatorIncomeInfo(remote, privkey, ownerAddr string) ([]byte, error)
 
 func QueryCommunityFeePool(remote string) ([]byte, error) {
 	result, err := distribution_client.QueryCommunityFeePool(remote)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(result)
+}
+
+func QueryProposal(remote string, pId uint64) ([]byte, error) {
+	result, err := gov_client.QueryProposal(remote, pId)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(result)
+}
+
+func QueryProposals(remote, depositor, voter, statusStr string) ([]byte, error) {
+	result, err := gov_client.QueryProposals(remote, depositor, voter, statusStr)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(result)
+}
+
+func QueryVote(remote string, pId uint64, addrStr string) ([]byte, error) {
+	result, err := gov_client.QueryVote(remote, pId, addrStr)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(result)
+}
+
+func QueryVotes(remote string, pId uint64) ([]byte, error) {
+	result, err := gov_client.QueryVotes(remote, pId)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(result)
+}
+
+func QueryDeposit(remote string, pId uint64, addrStr string) ([]byte, error) {
+	result, err := gov_client.QueryDeposit(remote, pId, addrStr)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(result)
+}
+
+func QueryDeposits(remote string, pId uint64) ([]byte, error) {
+	result, err := gov_client.QueryDeposits(remote, pId)
+	if err != nil {
+		return nil, err
+	}
+	return txs.Cdc.MarshalJSON(result)
+}
+
+func QueryTally(remote string, pId uint64, addrStr string) ([]byte, error) {
+	result, err := gov_client.QueryTally(remote, pId, addrStr)
 	if err != nil {
 		return nil, err
 	}
