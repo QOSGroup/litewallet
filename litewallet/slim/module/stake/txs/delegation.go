@@ -38,3 +38,24 @@ func (tx *TxUnbondDelegation) GetSignData() (ret []byte) {
 	ret = append(ret, btypes.Bool2Byte(tx.IsUnbondAll)...)
 	return
 }
+
+type TxCreateReDelegation struct {
+	Delegator          btypes.Address //委托人
+	FromValidatorOwner btypes.Address //原委托验证人Owner
+	ToValidatorOwner   btypes.Address //现委托验证人Owner
+	Amount             uint64         //委托数量
+	IsRedelegateAll    bool           //
+	IsCompound         bool           //
+}
+
+var _ txs.ITx = (*TxCreateReDelegation)(nil)
+
+func (tx *TxCreateReDelegation) GetSignData() (ret []byte) {
+	ret = append(ret, tx.Delegator...)
+	ret = append(ret, tx.FromValidatorOwner...)
+	ret = append(ret, tx.ToValidatorOwner...)
+	ret = append(ret, btypes.Int2Byte(int64(tx.Amount))...)
+	ret = append(ret, btypes.Bool2Byte(tx.IsCompound)...)
+	ret = append(ret, btypes.Bool2Byte(tx.IsRedelegateAll)...)
+	return
+}

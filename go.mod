@@ -3,6 +3,8 @@ module github.com/QOSGroup/litewallet
 go 1.12
 
 require (
+	github.com/QOSGroup/qbase v0.2.3
+	github.com/QOSGroup/qos v0.0.7
 	github.com/allegro/bigcache v1.2.1 // indirect
 	github.com/aristanetworks/goarista v0.0.0-20190704150520-f44d68189fd7 // indirect
 	github.com/btcsuite/btcd v0.0.0-20190629003639-c26ffa870fd8
@@ -27,8 +29,8 @@ require (
 	github.com/spf13/viper v1.4.0
 	github.com/tendermint/crypto v0.0.0-20180820045704-3764759f34a5
 	github.com/tendermint/ed25519 v0.0.0-20171027050219-d8387025d2b9
-	github.com/tendermint/go-amino v0.14.1
-	github.com/tendermint/tendermint v0.31.4
+	github.com/tendermint/go-amino v0.15.0
+	github.com/tendermint/tendermint v0.32.0
 	github.com/tyler-smith/go-bip39 v1.0.0
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect

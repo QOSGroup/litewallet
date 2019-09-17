@@ -4,6 +4,8 @@ import (
 	"fmt"
 	btxs "github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	btypes "github.com/QOSGroup/litewallet/litewallet/slim/base/types"
+	txs2 "github.com/QOSGroup/litewallet/litewallet/slim/module/approve/txs"
+	"github.com/QOSGroup/litewallet/litewallet/slim/module/bank/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
@@ -97,13 +99,13 @@ func applyApprove(operType operateType, toAddrStr, coinstr, privKey, chainId str
 		}
 
 		if operType == cancleType {
-			return txs.TxCancelApprove{
+			return txs2.TxCancelApprove{
 				From: fromAddr,
 				To:   toAddr,
 			}, nil
 		}
 
-		qos, qscs, err := NewParseCoins(coinstr)
+		qos, qscs, err := client.NewParseCoins(coinstr)
 		if err != nil {
 			return nil, err
 		}
@@ -111,13 +113,13 @@ func applyApprove(operType operateType, toAddrStr, coinstr, privKey, chainId str
 
 		switch operType {
 		case createType:
-			return txs.TxCreateApprove{Approve: appr}, nil
+			return txs2.TxCreateApprove{Approve: appr}, nil
 		case increaseType:
-			return txs.TxIncreaseApprove{Approve: appr}, nil
+			return txs2.TxIncreaseApprove{Approve: appr}, nil
 		case decreaseType:
-			return txs.TxDecreaseApprove{Approve: appr}, nil
+			return txs2.TxDecreaseApprove{Approve: appr}, nil
 		case useType:
-			return txs.TxUseApprove{Approve: appr}, nil
+			return txs2.TxUseApprove{Approve: appr}, nil
 		default:
 			return nil, errors.New("operType invalid")
 		}
