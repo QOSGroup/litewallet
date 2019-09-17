@@ -1,6 +1,7 @@
 package types
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
 	"github.com/pkg/errors"
@@ -14,6 +15,22 @@ type Address []byte
 
 func (add Address) Bytes() []byte {
 	return add[:]
+}
+
+// 判断地址是否为空
+func (add Address) Empty() bool {
+	if len(add[:]) == 0 {
+		return true
+	}
+	return false
+}
+
+// 判断两地址是否相同
+func (add Address) EqualsTo(anotherAdd Address) bool {
+	if add.Empty() && anotherAdd.Empty() {
+		return true
+	}
+	return bytes.Compare(add.Bytes(), anotherAdd.Bytes()) == 0
 }
 
 func (add Address) String() string {
