@@ -1,14 +1,15 @@
 package txs
 
 import (
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/baseabci"
 	"github.com/tendermint/go-amino"
 )
 
-//var Cdc = baseabci.MakeQBaseCodec()
-//
-//func init() {
-//	RegisterCodec(Cdc)
-//}
+var Cdc = baseabci.MakeQBaseCodec()
+
+func init() {
+	RegisterCodec(Cdc)
+}
 
 func RegisterCodec(cdc *amino.Codec) {
 	// validator

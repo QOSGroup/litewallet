@@ -1,81 +1,133 @@
 package account
 
 import (
+	"errors"
+	"fmt"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/account"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/client/context"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/tendermint/tendermint/crypto"
+	"strings"
+
+	"github.com/spf13/viper"
 )
 
-type Account interface {
-	GetAddress() types.Address
-	SetAddress(addr types.Address) error
-	GetPubicKey() crypto.PubKey
-	SetPublicKey(pubKey crypto.PubKey) error
-	GetNonce() int64
-	SetNonce(nonce int64) error
-}
+var (
+	ErrAccountNotExsits = errors.New("account not exists")
+)
 
-type BaseAccount struct {
-	AccountAddress types.Address `json:"account_address"` // account address
-	Publickey      crypto.PubKey `json:"public_key"`      // public key
-	Nonce          int64         `json:"nonce"`           // identifies tx_status of an account
-}
-
-func ProtoBaseAccount() Account {
-	return &BaseAccount{}
-}
-
-// getter for account address
-func (accnt *BaseAccount) GetAddress() types.Address {
-	return accnt.AccountAddress
-}
-
-// setter for account address
-func (accnt *BaseAccount) SetAddress(addr types.Address) error {
-	if len(addr) == 0 {
-		return types.ErrInvalidAddress(types.CodeToDefaultMsg(types.CodeInvalidAddress))
+func QueryAccount(cliCtx context.CLIContext, addrStr string) (account.Account, error) {
+	var addr types.Address
+	addr, err := GetAddrFromValue(addrStr)
+	if err != nil {
+		return nil, err
 	}
-	accnt.AccountAddress = addr
-	return nil
+
+	return queryAccount(cliCtx, addr.Bytes())
 }
 
-// getter for public key
-func (accnt *BaseAccount) GetPubicKey() crypto.PubKey {
-	return accnt.Publickey
+func queryAccount(cliCtx context.CLIContext, addr []byte) (account.Account, error) {
+	path := account.BuildAccountStoreQueryPath()
+	res, err := cliCtx.Query(string(path), account.AddressStoreKey(types.AccAddress(addr)))
+	if err != nil {
+		return nil, err
+	}
+
+	if len(res) == 0 {
+		return nil, ErrAccountNotExsits
+	}
+
+	var acc account.Account
+	err = cliCtx.Codec.UnmarshalBinaryBare(res, &acc)
+	if err != nil {
+		return nil, err
+	}
+
+	return acc, nil
 }
 
-// setter for public key
-func (accnt *BaseAccount) SetPublicKey(pubKey crypto.PubKey) error {
-	accnt.Publickey = pubKey
-	return nil
+func GetAccount(ctx context.CLIContext, address []byte) (account.Account, error) {
+	return queryAccount(ctx, address)
 }
 
-// getter for nonce
-func (accnt *BaseAccount) GetNonce() int64 {
-	return accnt.Nonce
+func GetAccountFromBech32Addr(ctx context.CLIContext, bech32Addr string) (account.Account, error) {
+
+	addrBytes, err := types.AccAddressFromBech32(bech32Addr)
+
+	if err != nil {
+		return nil, fmt.Errorf("%s is not a valid bech32Addr", bech32Addr)
+	}
+
+	return queryAccount(ctx, addrBytes)
 }
 
-// setter for nonce
-func (accnt *BaseAccount) SetNonce(nonce int64) error {
-	accnt.Nonce = nonce
-	return nil
+func GetAccountNonce(ctx context.CLIContext, address []byte) (int64, error) {
+	account, err := queryAccount(ctx, address)
+
+	if err == ErrAccountNotExsits {
+		return 0, nil
+	}
+
+	if err != nil {
+		return 0, err
+	}
+
+	return account.GetNonce(), nil
 }
 
-//func IsAccountExists(ctx context.CLIContext, address []byte) bool {
-//	_, err := queryAccount(ctx, address)
-//
-//	if err != nil {
-//		return false
-//	}
-//
-//	return true
-//}
-//
-//func GetAddrFromFlag(ctx context.CLIContext, flag string) (types.Address, error) {
-//	value := viper.GetString(flag)
-//	return GetAddrFromValue(ctx, value)
-//}
+func IsAccountExists(ctx context.CLIContext, address []byte) bool {
+	_, err := queryAccount(ctx, address)
 
-func GetAddrFromValue(value string) (types.Address, error) {
-	addr, err := types.GetAddrFromBech32(value)
-	return addr, err
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
+func GetAddrFromFlag(ctx context.CLIContext, flag string) (types.AccAddress, error) {
+	value := viper.GetString(flag)
+	return GetAddrFromValue(value)
+}
+
+func GetAddrFromValue(value string) (types.AccAddress, error) {
+	//prefix := types.GetAddressConfig().GetBech32AccountAddrPrefix()
+	//if strings.HasPrefix(value, prefix) {
+	//	addr, err := types.AccAddressFromBech32(value)
+	//	if err == nil {
+	//		return addr, nil
+	//	} else {
+	//		return types.AccAddress{}, fmt.Errorf("Address:%s is not a valid bech32 address. Error: %s", value, err.Error())
+	//	}
+	//}
+	//
+	//info, err := keys.GetKeyInfo(ctx, value)
+	//if err != nil {
+	//	return nil, fmt.Errorf("Name:%s not exsits in current keybase. Error: %s", value, err.Error())
+	//}
+	//
+	//return info.GetAddress(), nil
+	addr, err := types.AccAddressFromBech32(value)
+	if err == nil {
+		return addr, nil
+	} else {
+		return types.AccAddress{}, fmt.Errorf("Address:%s is not a valid bech32 address. Error: %s", value, err.Error())
+	}
+}
+
+func GetValidatorAddrFromFlag(ctx context.CLIContext, flag string) (types.ValAddress, error) {
+	value := viper.GetString(flag)
+	return GetValidatorAddrFromValue(value)
+}
+
+func GetValidatorAddrFromValue(value string) (types.ValAddress, error) {
+	prefix := types.GetAddressConfig().GetBech32ValidatorAddrPrefix()
+
+	if strings.HasPrefix(value, prefix) {
+		addr, err := types.ValAddressFromBech32(value)
+		if err == nil {
+			return addr, nil
+		}
+	}
+
+	return types.ValAddress{}, fmt.Errorf("%s is not a validator address. it must start with %s", value, prefix)
 }

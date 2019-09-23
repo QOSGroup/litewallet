@@ -57,22 +57,23 @@ func (c *baseRPCClient) ABCIQueryWithOptions(path string, data cmn.HexBytes, opt
 //	return result, nil
 //}
 
-//func (c *baseRPCClient) BroadcastTxAsync(tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-//	return c.broadcastTX("broadcast_tx_async", tx)
-//}
-//
-//func (c *baseRPCClient) BroadcastTxSync(tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-//	return c.broadcastTX("broadcast_tx_sync", tx)
-//}
-//
-//func (c *baseRPCClient) broadcastTX(route string, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-//	result := new(ctypes.ResultBroadcastTx)
-//	_, err := c.caller.Call(route, map[string]interface{}{"tx": tx}, result)
-//	if err != nil {
-//		return nil, errors.Wrap(err, route)
-//	}
-//	return result, nil
-//}
+func (c *baseRPCClient) BroadcastTxAsync(tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
+	return c.broadcastTX("broadcast_tx_async", tx)
+}
+
+func (c *baseRPCClient) BroadcastTxSync(tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
+	return c.broadcastTX("broadcast_tx_sync", tx)
+}
+
+func (c *baseRPCClient) broadcastTX(route string, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
+	result := new(ctypes.ResultBroadcastTx)
+	_, err := c.caller.Call(route, map[string]interface{}{"tx": tx}, result)
+	if err != nil {
+		return nil, errors.Wrap(err, route)
+	}
+	return result, nil
+}
+
 func (c *baseRPCClient) Block(height *int64) (*tendermint_types.ResultBlock, error) {
 	result := new(tendermint_types.ResultBlock)
 	_, err := c.caller.Call("block", map[string]interface{}{"height": height}, result)

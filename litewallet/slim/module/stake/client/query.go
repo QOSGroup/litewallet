@@ -2,14 +2,13 @@ package client
 
 import (
 	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 	qcliacc "github.com/QOSGroup/litewallet/litewallet/slim/base/client/account"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/client/context"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/store"
 	btypes "github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/module/stake/mapper"
 	"github.com/QOSGroup/litewallet/litewallet/slim/module/stake/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/libs/common"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/rpc/client"
 	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
@@ -19,7 +18,6 @@ import (
 )
 
 const (
-	flagActive   = "active"
 	activeDesc   = "active"
 	inactiveDesc = "inactive"
 
@@ -30,29 +28,37 @@ const (
 )
 
 type validatorDisplayInfo struct {
-	Owner           btypes.Address    `json:"owner"`
-	ValidatorAddr   string            `json:"validatorAddress"`
-	ValidatorPubKey crypto.PubKey     `json:"validatorPubkey"`
-	BondTokens      uint64            `json:"bondTokens"` //不能超过int64最大值
-	Description     types.Description `json:"description"`
-	Commission      types.Commission  `json:"commission"`
+	OperatorAddress btypes.ValAddress  `json:"validator"`
+	Owner           btypes.AccAddress  `json:"owner"`
+	ConsAddress     btypes.ConsAddress `json:"consensusAddress"`
+	ConsPubKey      string             `json:"consensusPubKey"`
+	BondTokens      btypes.BigInt      `json:"bondTokens"`
+	Description     types.Description  `json:"description"`
+	Commission      types.Commission   `json:"commission"`
 
 	Status         string    `json:"status"`
 	InactiveDesc   string    `json:"InactiveDesc"`
 	InactiveTime   time.Time `json:"inactiveTime"`
-	InactiveHeight uint64    `json:"inactiveHeight"`
+	InactiveHeight int64     `json:"inactiveHeight"`
 
-	BondHeight uint64 `json:"bondHeight"`
+	MinPeriod  int64 `json:"minPeriod"`
+	BondHeight int64 `json:"bondHeight"`
 }
 
 func toValidatorDisplayInfo(validator types.Validator) validatorDisplayInfo {
+
+	consPubKey, _ := btypes.ConsensusPubKeyString(validator.ConsPubKey)
+
 	info := validatorDisplayInfo{
+		OperatorAddress: validator.OperatorAddress,
 		Owner:           validator.Owner,
-		ValidatorPubKey: validator.ValidatorPubKey,
+		ConsAddress:     validator.ConsAddress(),
+		ConsPubKey:      consPubKey,
 		BondTokens:      validator.BondTokens,
 		Description:     validator.Description,
 		InactiveTime:    validator.InactiveTime,
 		InactiveHeight:  validator.InactiveHeight,
+		MinPeriod:       validator.MinPeriod,
 		BondHeight:      validator.BondHeight,
 		Commission:      validator.Commission,
 	}
@@ -73,23 +79,21 @@ func toValidatorDisplayInfo(validator types.Validator) validatorDisplayInfo {
 		info.InactiveDesc = inactiveDoubleDesc
 	}
 
-	info.ValidatorAddr = strings.ToUpper(hex.EncodeToString(validator.ValidatorPubKey.Address()))
-
 	return info
 }
 
-func QueryValidatorInfo(remote, address string) (types.Validator, error) {
-	cliCtx := context.NewCLIContext(remote)
-	ownerAddress, err := qcliacc.GetAddrFromValue(address)
+func QueryValidatorInfo(ctx context.CLIContext, address string) (types.Validator, error) {
+	//cliCtx := context.NewCLIContext(remote)
+	ownerAddress, err := qcliacc.GetValidatorAddrFromValue(address)
 	if err != nil {
 		return types.Validator{}, err
 	}
-	validator, err := getValidator(cliCtx, ownerAddress)
+	validator, err := getValidator(ctx, ownerAddress)
 	return validator, nil
 }
 
-func getValidator(ctx context.CLIContext, ownerAddress btypes.Address) (types.Validator, error) {
-	result, err := ctx.Client.ABCIQueryWithOptions(string(types.BuildStakeStoreQueryPath()), types.BuildOwnerWithValidatorKey(ownerAddress), buildQueryOptions())
+func getValidator(ctx context.CLIContext, validatorAddr btypes.ValAddress) (types.Validator, error) {
+	result, err := ctx.Client.ABCIQueryWithOptions(string(types.BuildStakeStoreQueryPath()), types.BuildValidatorKey(validatorAddr), buildQueryOptions())
 	if err != nil {
 		return types.Validator{}, err
 	}
@@ -102,19 +106,8 @@ func getValidator(ctx context.CLIContext, ownerAddress btypes.Address) (types.Va
 	var address btypes.Address
 	txs.Cdc.UnmarshalBinaryBare(valueBz, &address)
 
-	key := types.BuildValidatorKey(address)
-	result, err = ctx.Client.ABCIQueryWithOptions(string(types.BuildStakeStoreQueryPath()), key, buildQueryOptions())
-	if err != nil {
-		return types.Validator{}, err
-	}
-
-	valueBz = result.Response.GetValue()
-	if len(valueBz) == 0 {
-		return types.Validator{}, errors.New("response empty value")
-	}
-
 	var validator types.Validator
-	txs.Cdc.UnmarshalBinaryBare(valueBz, &validator)
+	ctx.Codec.UnmarshalBinaryBare(valueBz, &validator)
 	return validator, nil
 }
 
@@ -132,8 +125,8 @@ func buildQueryOptions() client.ABCIQueryOptions {
 	}
 }
 
-func QueryValidators(remote string) ([]byte, error) {
-	cliCtx := context.NewCLIContext(remote)
+func QueryValidators(cliCtx context.CLIContext) ([]byte, error) {
+	//cliCtx := context.NewCLIContext(remote)
 
 	opts := client.ABCIQueryOptions{
 		Height: 0,
@@ -168,10 +161,10 @@ func QueryValidators(remote string) ([]byte, error) {
 	return txs.Cdc.MarshalJSON(validators)
 }
 
-func QueryValidatorMissedVoteInfo(remote, address string) (voteSummary, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryValidatorMissedVoteInfo(cliCtx context.CLIContext, address string) (voteSummary, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
-	ownerAddress, err := qcliacc.GetAddrFromValue(address)
+	ownerAddress, err := qcliacc.GetValidatorAddrFromValue(address)
 	if err != nil {
 		return voteSummary{}, err
 	}
@@ -191,7 +184,7 @@ type voteInfoDetail struct {
 	Vote   bool
 }
 
-func queryVotesInfoByOwner(ctx context.CLIContext, ownerAddress btypes.Address) (voteSummary, error) {
+func queryVotesInfoByOwner(ctx context.CLIContext, validatorAddr btypes.ValAddress) (voteSummary, error) {
 	voteSummaryDisplay := voteSummary{}
 
 	windownLength, err := getStakeConfig(ctx)
@@ -201,19 +194,17 @@ func queryVotesInfoByOwner(ctx context.CLIContext, ownerAddress btypes.Address) 
 
 	votesInfo := make([]voteInfoDetail, 0, windownLength)
 
-	val, err := getValidator(ctx, ownerAddress)
+	_, err = getValidator(ctx, validatorAddr)
 	if err != nil {
 		return voteSummaryDisplay, err
 	}
 
-	validatorAddress := btypes.Address(val.ValidatorPubKey.Address())
-
-	voteInfo, err := getValidatorVoteInfo(ctx, validatorAddress)
+	voteInfo, err := getValidatorVoteInfo(ctx, validatorAddr)
 	if err != nil {
 		return voteSummaryDisplay, err
 	}
 
-	voteInfoMap, _, err := queryValidatorVotesInWindow(ctx, validatorAddress)
+	voteInfoMap, _, err := queryValidatorVotesInWindow(ctx, validatorAddr)
 	if err != nil {
 		return voteSummaryDisplay, err
 	}
@@ -221,15 +212,15 @@ func queryVotesInfoByOwner(ctx context.CLIContext, ownerAddress btypes.Address) 
 	votedBlockLength := voteInfo.IndexOffset - 1
 
 	endWindowHeight := voteInfo.StartHeight + votedBlockLength
-	startWindowHeight := uint64(1)
+	startWindowHeight := int64(1)
 	if votedBlockLength <= windownLength {
 		startWindowHeight = voteInfo.StartHeight
 	} else {
 		startWindowHeight = endWindowHeight - windownLength + 1
 	}
 
-	voteSummaryDisplay.StartHeight = int64(startWindowHeight)
-	voteSummaryDisplay.EndHeight = int64(endWindowHeight)
+	voteSummaryDisplay.StartHeight = startWindowHeight
+	voteSummaryDisplay.EndHeight = endWindowHeight
 
 	i := int8(0)
 	for h := endWindowHeight; h >= startWindowHeight; h-- {
@@ -251,7 +242,7 @@ func queryVotesInfoByOwner(ctx context.CLIContext, ownerAddress btypes.Address) 
 	return voteSummaryDisplay, nil
 }
 
-func getStakeConfig(ctx context.CLIContext) (uint64, error) {
+func getStakeConfig(ctx context.CLIContext) (int64, error) {
 	node, err := ctx.GetNode()
 	if err != nil {
 		return 0, err
@@ -270,7 +261,7 @@ func getStakeConfig(ctx context.CLIContext) (uint64, error) {
 		return 0, errors.New("response empty value. getStakeConfig is empty")
 	}
 
-	var length uint64
+	var length int64
 	ctx.Codec.UnmarshalBinaryBare(valueBz, &length)
 
 	return length, nil
@@ -282,7 +273,7 @@ func BuildParamKey(paramSpace string, key []byte) []byte {
 	return append([]byte(paramSpace), key...)
 }
 
-func getValidatorVoteInfo(ctx context.CLIContext, validatorAddr btypes.Address) (types.ValidatorVoteInfo, error) {
+func getValidatorVoteInfo(ctx context.CLIContext, validatorAddr btypes.ValAddress) (types.ValidatorVoteInfo, error) {
 	node, err := ctx.GetNode()
 	if err != nil {
 		return types.ValidatorVoteInfo{}, err
@@ -307,9 +298,9 @@ func getValidatorVoteInfo(ctx context.CLIContext, validatorAddr btypes.Address) 
 	return voteInfo, nil
 }
 
-func queryValidatorVotesInWindow(ctx context.CLIContext, validatorAddr btypes.Address) (map[uint64]bool, int64, error) {
+func queryValidatorVotesInWindow(ctx context.CLIContext, validatorAddr btypes.ValAddress) (map[int64]bool, int64, error) {
 
-	voteInWindowInfo := make(map[uint64]bool)
+	voteInWindowInfo := make(map[int64]bool)
 
 	node, err := ctx.GetNode()
 	if err != nil {
@@ -329,13 +320,13 @@ func queryValidatorVotesInWindow(ctx context.CLIContext, validatorAddr btypes.Ad
 		return voteInWindowInfo, result.Response.Height, nil
 	}
 
-	var vKVPair []common.KVPair
+	var vKVPair []store.KVPair
 	ctx.Codec.UnmarshalBinaryLengthPrefixed(valueBz, &vKVPair)
 
 	for _, kv := range vKVPair {
 		k := kv.Key
 		var vote bool
-		index := binary.LittleEndian.Uint64(k[(len(k) - 8):])
+		index := int64(binary.LittleEndian.Uint64(k[(len(k) - 8):]))
 		ctx.Codec.UnmarshalBinaryBare(kv.Value, &vote)
 		voteInWindowInfo[index] = vote
 	}
@@ -343,21 +334,21 @@ func queryValidatorVotesInWindow(ctx context.CLIContext, validatorAddr btypes.Ad
 	return voteInWindowInfo, result.Response.Height, nil
 }
 
-func QueryDelegationInfo(remote, ownerAddr, delegatorAddr string) (mapper.DelegationQueryResult, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryDelegationInfo(cliCtx context.CLIContext, ownerAddr, delegatorAddr string) (mapper.DelegationQueryResult, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
-	var owner btypes.Address
-	var delegator btypes.Address
+	var validator btypes.ValAddress
+	var delegator btypes.AccAddress
 
-	if o, err := qcliacc.GetAddrFromValue(ownerAddr); err == nil {
-		owner = o
+	if o, err := qcliacc.GetValidatorAddrFromValue(ownerAddr); err == nil {
+		validator = o
 	}
 
 	if d, err := qcliacc.GetAddrFromValue(delegatorAddr); err == nil {
 		delegator = d
 	}
 
-	var path = types.BuildGetDelegationCustomQueryPath(delegator, owner)
+	var path = types.BuildGetDelegationCustomQueryPath(delegator, validator)
 
 	res, err := cliCtx.Query(path, []byte(""))
 	if err != nil {
@@ -369,9 +360,9 @@ func QueryDelegationInfo(remote, ownerAddr, delegatorAddr string) (mapper.Delega
 	return result, err
 }
 
-func QueryDelegations(remote, address string) ([]mapper.DelegationQueryResult, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
-	var delegator btypes.Address
+func QueryDelegations(cliCtx context.CLIContext, address string) ([]mapper.DelegationQueryResult, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+	var delegator btypes.AccAddress
 
 	if d, err := qcliacc.GetAddrFromValue(address); err == nil {
 		delegator = d
@@ -389,10 +380,10 @@ func QueryDelegations(remote, address string) ([]mapper.DelegationQueryResult, e
 	return result, err
 }
 
-func QueryUnbondings(remote, address string) ([]types.UnbondingDelegationInfo, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryUnbondings(cliCtx context.CLIContext, address string) ([]types.UnbondingDelegationInfo, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
-	var delegator btypes.Address
+	var delegator btypes.AccAddress
 
 	if o, err := qcliacc.GetAddrFromValue(address); err == nil {
 		delegator = o
@@ -410,10 +401,10 @@ func QueryUnbondings(remote, address string) ([]types.UnbondingDelegationInfo, e
 	return result, err
 }
 
-func QueryRedelegations(remote, address string) ([]types.RedelegationInfo, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryRedelegations(cliCtx context.CLIContext, address string) ([]types.RedelegationInfo, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
-	var delegator btypes.Address
+	var delegator btypes.AccAddress
 
 	if o, err := qcliacc.GetAddrFromValue(address); err == nil {
 		delegator = o

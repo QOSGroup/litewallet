@@ -4,7 +4,7 @@ import "github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 
 type AuctionTx struct {
 	ArticleHash string        // 文章hash
-	Address     types.Address //qos地址
+	Address     types.AccAddress //qos地址
 	CoinsType   string        //币种
 	CoinAmount  types.BigInt  //数量
 	Gas         types.BigInt

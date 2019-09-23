@@ -2,49 +2,51 @@ package client
 
 import (
 	"fmt"
+	qcliacc "github.com/QOSGroup/litewallet/litewallet/slim/base/client/account"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/client/context"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/client/tx"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
-	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	txs2 "github.com/QOSGroup/litewallet/litewallet/slim/module/bank/txs"
+	btypes "github.com/QOSGroup/litewallet/litewallet/slim/base/types"
+	bank_txs "github.com/QOSGroup/litewallet/litewallet/slim/module/bank/txs"
+	"github.com/QOSGroup/litewallet/litewallet/slim/module/bank/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
 	ctxs "github.com/QOSGroup/litewallet/litewallet/slim/txs"
-	ctypes "github.com/QOSGroup/litewallet/litewallet/slim/types"
-	"regexp"
-	"strconv"
+	qtypes "github.com/QOSGroup/litewallet/litewallet/slim/types"
 	"strings"
 )
 
-func CreateSignedTransfer(addrto, coinstr, privkey, chainid string) ([]byte, error) {
-	return ctxs.BuildAndSignTx(privkey, chainid, func() (txs.ITx, error) {
+func CreateTransfer(cliCtx context.CLIContext, addrto, coinstr, privkey, chainid string) ([]byte, error) {
+	return tx.BuildAndSignTx(cliCtx, privkey, chainid, func() (txs.ITx, error) {
 		var key ed25519local.PrivKeyEd25519
 		ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
 		err := ctxs.Cdc.UnmarshalJSON([]byte(ts), &key)
 		if err != nil {
 			fmt.Println(err)
 		}
-		addrben32, _ := bech32local.ConvertAndEncode(types.PREF_ADD, key.PubKey().Address().Bytes())
+		addrben32, _ := bech32local.ConvertAndEncode(btypes.PREF_ADD, key.PubKey().Address().Bytes())
 
 		sendersStr := addrben32 + `,` + coinstr
-		senders, err := ParseTransItem(sendersStr)
+		senders, err := parseTransItem(cliCtx, sendersStr)
 		if err != nil {
 			return nil, err
 		}
 
 		receiversStr := addrto + `,` + coinstr
-		receivers, err := ParseTransItem(receiversStr)
+		receivers, err := parseTransItem(cliCtx, receiversStr)
 		if err != nil {
 			return nil, err
 		}
-		return txs2.TxTransfer{
+		return bank_txs.TxTransfer{
 			Senders:   senders,
 			Receivers: receivers,
 		}, nil
 	})
 }
 
-// Parse flags from string, Senders, eg: Arya,10qos,100qstar. multiple users separated by ';'
-func ParseTransItem(str string) (ctypes.TransItems, error) {
-	items := make(ctypes.TransItems, 0)
+// Parse flags from string
+func parseTransItem(cliCtx context.CLIContext, str string) (types.TransItems, error) {
+	items := make(types.TransItems, 0)
 	tis := strings.Split(str, ";")
 	for _, ti := range tis {
 		if ti == "" {
@@ -56,15 +58,15 @@ func ParseTransItem(str string) (ctypes.TransItems, error) {
 			return nil, fmt.Errorf("`%s` not match rules", ti)
 		}
 
-		addr, err := types.GetAddrFromBech32(addrAndCoins[0])
+		addr, err := qcliacc.GetAddrFromValue(addrAndCoins[0])
 		if err != nil {
 			return nil, err
 		}
-		qos, qscs, err := NewParseCoins(strings.Join(addrAndCoins[1:], ","))
+		qos, qscs, err := qtypes.ParseCoins(strings.Join(addrAndCoins[1:], ","))
 		if err != nil {
 			return nil, err
 		}
-		items = append(items, ctypes.TransItem{
+		items = append(items, types.TransItem{
 			Address: addr,
 			QOS:     qos,
 			QSCs:    qscs,
@@ -74,40 +76,40 @@ func ParseTransItem(str string) (ctypes.TransItems, error) {
 	return items, nil
 }
 
-// Parse QOS and QSCs from string
-// str example : 100qos,100qstar
-func NewParseCoins(str string) (types.BigInt, types.QSCs, error) {
-	if len(str) == 0 {
-		return types.ZeroInt(), types.QSCs{}, nil
-	}
-	reDnm := `[[:alpha:]][[:alnum:]]{2,15}`
-	reAmt := `[[:digit:]]+`
-	reSpc := `[[:space:]]*`
-	reCoin := regexp.MustCompile(fmt.Sprintf(`^(%s)%s(%s)$`, reAmt, reSpc, reDnm))
-
-	arr := strings.Split(str, ",")
-	qos := types.ZeroInt()
-	qscs := types.QSCs{}
-	for _, q := range arr {
-		coin := reCoin.FindStringSubmatch(q)
-		if len(coin) != 3 {
-			return types.ZeroInt(), nil, fmt.Errorf("coins str: %s parse faild", q)
-		}
-		coin[2] = strings.TrimSpace(coin[2])
-		amount, err := strconv.ParseInt(strings.TrimSpace(coin[1]), 10, 64)
-		if err != nil {
-			return types.ZeroInt(), nil, err
-		}
-		if strings.ToLower(coin[2]) == "qos" {
-			qos = types.NewInt(amount)
-		} else {
-			qscs = append(qscs, &types.QSC{
-				coin[2],
-				types.NewInt(amount),
-			})
-		}
-
-	}
-
-	return qos, qscs, nil
-}
+//// Parse QOS and QSCs from string
+//// str example : 100qos,100qstar
+//func NewParseCoins(str string) (btypes.BigInt, types.QSCs, error) {
+//	if len(str) == 0 {
+//		return btypes.ZeroInt(), btypes.QSCs{}, nil
+//	}
+//	reDnm := `[[:alpha:]][[:alnum:]]{2,15}`
+//	reAmt := `[[:digit:]]+`
+//	reSpc := `[[:space:]]*`
+//	reCoin := regexp.MustCompile(fmt.Sprintf(`^(%s)%s(%s)$`, reAmt, reSpc, reDnm))
+//
+//	arr := strings.Split(str, ",")
+//	qos := btypes.ZeroInt()
+//	qscs := btypes.QSCs{}
+//	for _, q := range arr {
+//		coin := reCoin.FindStringSubmatch(q)
+//		if len(coin) != 3 {
+//			return btypes.ZeroInt(), nil, fmt.Errorf("coins str: %s parse faild", q)
+//		}
+//		coin[2] = strings.TrimSpace(coin[2])
+//		amount, err := strconv.ParseInt(strings.TrimSpace(coin[1]), 10, 64)
+//		if err != nil {
+//			return btypes.ZeroInt(), nil, err
+//		}
+//		if strings.ToLower(coin[2]) == "qos" {
+//			qos = btypes.NewInt(amount)
+//		} else {
+//			qscs = append(qscs, &types.QSC{
+//				coin[2],
+//				btypes.NewInt(amount),
+//			})
+//		}
+//
+//	}
+//
+//	return qos, qscs, nil
+//}
