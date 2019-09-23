@@ -9,11 +9,10 @@ import (
 	"github.com/QOSGroup/litewallet/litewallet/slim/module/distribution/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
-	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	ctxs "github.com/QOSGroup/litewallet/litewallet/slim/txs"
 )
 
-func QueryDelegatorIncomeInfo(remote, privKey, ownerAddr string) (mapper.DelegatorIncomeInfoQueryResult, error) {
+func QueryDelegatorIncomeInfo(cliCtx context.CLIContext, privKey, validatorAddr string) (mapper.DelegatorIncomeInfoQueryResult, error) {
 	var key ed25519local.PrivKeyEd25519
 	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privKey + "\"}"
 	err := ctxs.Cdc.UnmarshalJSON([]byte(ts), &key)
@@ -22,20 +21,20 @@ func QueryDelegatorIncomeInfo(remote, privKey, ownerAddr string) (mapper.Delegat
 	}
 	addrben32, _ := bech32local.ConvertAndEncode(btypes.PREF_ADD, key.PubKey().Address().Bytes())
 
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
-	var owner btypes.Address
-	var delegator btypes.Address
+	var validator btypes.ValAddress
+	var delegator btypes.AccAddress
 
-	if o, err := qcliacc.GetAddrFromValue(ownerAddr); err == nil {
-		owner = o
+	if o, err := qcliacc.GetValidatorAddrFromValue(validatorAddr); err == nil {
+		validator = o
 	}
 
 	if d, err := qcliacc.GetAddrFromValue(addrben32); err == nil {
 		delegator = d
 	}
 
-	path := types.BuildQueryDelegatorIncomeInfoCustomQueryPath(delegator, owner)
+	path := types.BuildQueryDelegatorIncomeInfoCustomQueryPath(delegator, validator)
 	res, err := cliCtx.Query(path, []byte(""))
 	if err != nil {
 		return mapper.DelegatorIncomeInfoQueryResult{}, err
@@ -46,8 +45,8 @@ func QueryDelegatorIncomeInfo(remote, privKey, ownerAddr string) (mapper.Delegat
 	return result, err
 }
 
-func QueryCommunityFeePool(remote string) (btypes.BigInt, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryCommunityFeePool(cliCtx context.CLIContext, ) (btypes.BigInt, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
 	res, err := cliCtx.Query(fmt.Sprintf("/store/%s/key", types.MapperName), types.BuildCommunityFeePoolKey())
 	if err != nil {

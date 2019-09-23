@@ -6,12 +6,17 @@ import (
 	"testing"
 )
 
-var chainId = "aquarius-1001"
+var (
+	remote  = "39.97.234.227:26657"
+	chainId = "pre-2002"
+	privKey = "1kXd3ZQ53dcCJzoHOK8bI6hY4j49lyfWIdqva3qsfWSMAixKeEWamOMIenvzTkiHOg4Io8DF+tGRQZur8xPQyA=="
+	addr    = "qosacc10z5uu2fqrfy5jl8rv5kwkm835lpu8ncadvgcea"
+)
 
 func TestQueryAccount(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	addr := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
-	bytes, err := QueryAccount(addr)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	//addr := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
+	bytes, err := QueryAccount(remote, addr)
 	if err != nil {
 		t.Log(err)
 		return
@@ -26,16 +31,16 @@ func TestQueryAccount(t *testing.T) {
 //	t.Log(Aout)
 //}
 
-func TestTransferSend(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	addrto := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
+func TestTransfer(t *testing.T) {
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	//addrto := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
 	coinstr := "10000qos"
-	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	Tout, err := Transfer(addrto, coinstr, privkey, chainId)
+	//privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	Tout, err := Transfer(remote, addr, coinstr, privKey, chainId)
 	if err != nil {
 		t.Log(err)
 	}
-	t.Log(Tout)
+	t.Log(string(Tout))
 }
 
 //func TestQSCCreateSignedTransfer(t *testing.T) {
@@ -52,53 +57,53 @@ func TestTransferSend(t *testing.T) {
 //}
 
 //stake
-func TestDelegationSend(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+func TestDelegation(t *testing.T) {
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
 	//validatorAddress := "address13l90zvt26szkrquutwpgj7kef58mgyntfs46l2"
-	validatorAddress := "address1tl0gdpdwjz2g77s7qcf0jvr4sxc0szw0nlk08t"
+	validatorAddress := "qosval1e97fvkm8hh2836d7l0ga52dcdwasj4dxwtcm2q"
 	//coinstr := "10000qos"
 	coins := int64(1000)
-	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	Tout, err := Delegation(validatorAddress, coins, privkey, chainId)
+	//privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	Tout, err := Delegation(remote, validatorAddress, coins, privKey, chainId)
 	if err != nil {
 		t.Log(err)
 		return
 	}
-	t.Log(Tout)
+	t.Log(string(Tout))
 }
 
-func TestUnbondDelegationSend(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	validatorAddress := "address1tl0gdpdwjz2g77s7qcf0jvr4sxc0szw0nlk08t"
+func TestUnbondDelegation(t *testing.T) {
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	validatorAddress := "qosval1d880y3hmj62m4c9xx3spfkjm3lh32swrh9mffj"
 	//coinstr := "10000qos"
-	coins := int64(500)
-	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	Tout, err := UnbondDelegation(validatorAddress, coins, privkey, chainId)
+	coins := int64(123)
+	//privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	Tout, err := UnbondDelegation(remote, validatorAddress, coins, privKey, chainId)
 	if err != nil {
 		t.Log(err)
 		return
 	}
-	t.Log(Tout)
+	t.Log(string(Tout))
 }
 
 func TestRedelegations(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	formValidatorAddr := "address1tl0gdpdwjz2g77s7qcf0jvr4sxc0szw0nlk08t"
-	toValidatorAddr := "address1demk4rqhfc5ewlsefa2g805ycnzse26mr534nu"
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	formValidatorAddr := "qosval1d880y3hmj62m4c9xx3spfkjm3lh32swrh9mffj"
+	toValidatorAddr := "qosval1d880y3hmj62m4c9xx3spfkjm3lh32swrh9mffj"
 	coins := int64(500)
-	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	Tout, err := ReDelegation("47.103.78.91:26657", formValidatorAddr, toValidatorAddr, coins, privkey, chainId)
+	//privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	Tout, err := ReDelegation(remote, formValidatorAddr, toValidatorAddr, coins, privKey, chainId)
 	if err != nil {
 		t.Log(err)
 		return
 	}
-	t.Log(Tout)
+	t.Log(string(Tout))
 }
 
 func TestQueryValidatorInfo(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
 	validatorAddr := "address1tl0gdpdwjz2g77s7qcf0jvr4sxc0szw0nlk08t"
-	Tout, err := QueryValidatorInfo("47.103.78.91:26657", validatorAddr)
+	Tout, err := QueryValidatorInfo(remote, validatorAddr)
 	if err != nil {
 		t.Log(err)
 		return
@@ -107,8 +112,8 @@ func TestQueryValidatorInfo(t *testing.T) {
 }
 
 func TestQueryValidators(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryValidators("47.103.78.91:26657")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryValidators(remote)
 	if err != nil {
 		t.Log(err)
 		return
@@ -117,9 +122,9 @@ func TestQueryValidators(t *testing.T) {
 }
 
 func TestQueryValidatorMissedVoteInfo(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
 	address := "address1tl0gdpdwjz2g77s7qcf0jvr4sxc0szw0nlk08t"
-	Tout, err := QueryValidatorMissedVoteInfo("47.103.78.91:26657", address)
+	Tout, err := QueryValidatorMissedVoteInfo(remote, address)
 	if err != nil {
 		t.Log(err)
 		return
@@ -128,10 +133,10 @@ func TestQueryValidatorMissedVoteInfo(t *testing.T) {
 }
 
 func TestQueryDelegationInfo(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	ownerAddr := "address1tl0gdpdwjz2g77s7qcf0jvr4sxc0szw0nlk08t"
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	ownerAddr := "address1demk4rqhfc5ewlsefa2g805ycnzse26mr534nu"
 	delegatorAddr := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
-	Tout, err := QueryDelegationInfo("47.103.78.91:26657", ownerAddr, delegatorAddr)
+	Tout, err := QueryDelegationInfo(remote, ownerAddr, delegatorAddr)
 	if err != nil {
 		t.Log(err)
 		return
@@ -140,9 +145,8 @@ func TestQueryDelegationInfo(t *testing.T) {
 }
 
 func TestQueryDelegations(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	address := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
-	Tout, err := QueryDelegations("47.103.78.91:26657", address)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryDelegations(remote, addr)
 	if err != nil {
 		t.Log(err)
 		return
@@ -151,9 +155,8 @@ func TestQueryDelegations(t *testing.T) {
 }
 
 func TestQueryUnbondings(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	address := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
-	Tout, err := QueryUnbondings("47.103.78.91:26657", address)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryUnbondings(remote, addr)
 	if err != nil {
 		t.Log(err)
 		return
@@ -162,9 +165,8 @@ func TestQueryUnbondings(t *testing.T) {
 }
 
 func TestQueryRedelegations(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	address := "address1v26ael2jh0q7aetuk45yqf3jcyyywg2g6wq2tv"
-	Tout, err := QueryRedelegations("47.103.78.91:26657", address)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryRedelegations(remote, addr)
 	if err != nil {
 		t.Log(err)
 		return
@@ -174,10 +176,9 @@ func TestQueryRedelegations(t *testing.T) {
 
 //approve
 func TestQueryApprove(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	toAddr := "address1nzv9awha9606jp5rpqe2kujckddpyauggu56ru"
-	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	Tout, err := QueryApprove(toAddr, privkey)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	//privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	Tout, err := QueryApprove(remote, addr, privKey)
 	if err != nil {
 		t.Log(err)
 		return
@@ -187,10 +188,10 @@ func TestQueryApprove(t *testing.T) {
 
 //distribution
 func TestQueryDelegatorIncomeInfo(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
-	ownerAddr := "address1tl0gdpdwjz2g77s7qcf0jvr4sxc0szw0nlk08t"
-	Tout, err := QueryDelegatorIncomeInfo("47.103.78.91:26657", privkey, ownerAddr)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	//privkey := "xGZuHJYesaYlgNJi7yeugj9A6Sc34f6plx5on6DDTTCVRb5f7neBxIsLUHgO+13Og38maO2E4kz55kX+4obHWQ=="
+	validatorAddr := "qosval1d880y3hmj62m4c9xx3spfkjm3lh32swrh9mffj"
+	Tout, err := QueryDelegatorIncomeInfo(remote, privKey, validatorAddr)
 	if err != nil {
 		t.Log(err)
 		return
@@ -199,8 +200,8 @@ func TestQueryDelegatorIncomeInfo(t *testing.T) {
 }
 
 func TestQueryCommunityFeePool(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryCommunityFeePool("47.103.78.91:26657")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryCommunityFeePool(remote)
 	if err != nil {
 		t.Log(err)
 		return
@@ -209,8 +210,8 @@ func TestQueryCommunityFeePool(t *testing.T) {
 }
 
 func TestQueryProposal(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryProposal("47.103.78.91:26657", 1)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryProposal(remote, 1)
 	if err != nil {
 		t.Log(err)
 		return
@@ -219,8 +220,8 @@ func TestQueryProposal(t *testing.T) {
 }
 
 func TestQueryProposals(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryProposals("47.103.78.91:26657", "", "", "deposit_period")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryProposals(remote, "", "", "deposit_period")
 	if err != nil {
 		t.Log(err)
 		return
@@ -229,8 +230,8 @@ func TestQueryProposals(t *testing.T) {
 }
 
 func TestQueryVote(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryVote("47.103.78.91:26657", 1, "")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryVote(remote, 1, "")
 	if err != nil {
 		t.Log(err)
 		return
@@ -239,8 +240,8 @@ func TestQueryVote(t *testing.T) {
 }
 
 func TestQueryVotes(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryVotes("47.103.78.91:26657", 1)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryVotes(remote, 1)
 	if err != nil {
 		t.Log(err)
 		return
@@ -249,8 +250,8 @@ func TestQueryVotes(t *testing.T) {
 }
 
 func TestQueryDeposit(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryDeposit("47.103.78.91:26657", 1, "")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryDeposit(remote, 1, "")
 	if err != nil {
 		t.Log(err)
 		return
@@ -259,8 +260,8 @@ func TestQueryDeposit(t *testing.T) {
 }
 
 func TestQueryDeposits(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryDeposits("47.103.78.91:26657", 1)
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryDeposits(remote, 1)
 	if err != nil {
 		t.Log(err)
 		return
@@ -269,8 +270,8 @@ func TestQueryDeposits(t *testing.T) {
 }
 
 func TestQueryTally(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
-	Tout, err := QueryTally("47.103.78.91:26657", 1, "")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
+	Tout, err := QueryTally(remote, 1, "")
 	if err != nil {
 		t.Log(err)
 		return
@@ -279,9 +280,9 @@ func TestQueryTally(t *testing.T) {
 }
 
 func TestQueryTx(t *testing.T) {
-	txs.SetBlockchainEntrance("47.103.78.91:26657", "forQmoonAddr")
+	txs.SetBlockchainEntrance(remote, "forQmoonAddr")
 	hashHex := "B5EECB27939D969556C61E00BDE8C910FFE3BE47BFA0356B57F58847D6502B70"
-	Tout, err := QueryTx("47.103.78.91:26657", hashHex)
+	Tout, err := QueryTx(remote, hashHex)
 	if err != nil {
 		t.Log(err)
 		return
@@ -339,36 +340,36 @@ func TestCommHandler(t *testing.T) {
 	txs.SetBlockchainEntrance("localhost:26657", "forQmoonAddr")
 	t.Log("2222222222222222")
 
-	privkey := "9QkouVPl29N2v1lBO1+azUDqm38fAgs6d3Xo8DcnCus7xjMqsavhc190xCGzZuXcjapUahi7Y7v2DD4hzVCAsQ=="
+	//privkey := "9QkouVPl29N2v1lBO1+azUDqm38fAgs6d3Xo8DcnCus7xjMqsavhc190xCGzZuXcjapUahi7Y7v2DD4hzVCAsQ=="
 	chainid := "test-chain-dpYlL3"
 
 	args := "[\"address1y9r4pjjnvkmpvw46de8tmwunw4nx4qnz2ax5ux\",\"0\",\"abcde\",\"20\",\"20\",\"10\",\"50\",\"20\",\"3\",\"ATOM\"]"
 
-	Tout := module.CommHandler("ArticleTx", privkey, args, chainid)
+	Tout := module.CommHandler("ArticleTx", privKey, args, chainid)
 	t.Log(Tout)
 
 	result := txs.BroadcastTransferTxToQSC(Tout, "sync")
 	t.Log(result)
 }
 
-func TestLocalTxGen(t *testing.T) {
-	fromStr := "address1vpszt2jp2j8m5l3mutvqserzuu9uylmzydqaj9"
-
-	toStr := "address1eep59h9ez4thymept8nxl0padlrc6r78fsjmp3"
-
-	coinstr := "2qos"
-	//generate singed Tx
-	chainid := "capricorn-2000"
-	nonce := int64(1)
-	//gas := NewBigInt(int64(0))
-
-	//PrivKey output
-	privkey := "sV5sRbwnR8DddL5e4UC1ntKPiOtGEaOFAqvePTfhJFI9GcC28zmPURSUI6C1oBlnk2ykBcAtIbYUazuCexWyqg=="
-
-	jasonpayload := LocalTxGen(fromStr, toStr, coinstr, chainid, privkey, nonce)
-
-	t.Log("msg\n", string(jasonpayload))
-}
+//func TestLocalTxGen(t *testing.T) {
+//	fromStr := "address1vpszt2jp2j8m5l3mutvqserzuu9uylmzydqaj9"
+//
+//	toStr := "address1eep59h9ez4thymept8nxl0padlrc6r78fsjmp3"
+//
+//	coinstr := "2qos"
+//	//generate singed Tx
+//	chainid := "capricorn-2000"
+//	nonce := int64(1)
+//	//gas := NewBigInt(int64(0))
+//
+//	//PrivKey output
+//	//privkey := "sV5sRbwnR8DddL5e4UC1ntKPiOtGEaOFAqvePTfhJFI9GcC28zmPURSUI6C1oBlnk2ykBcAtIbYUazuCexWyqg=="
+//
+//	jasonpayload := LocalTxGen(fromStr, toStr, coinstr, chainid, privKey, nonce)
+//
+//	t.Log("msg\n", string(jasonpayload))
+//}
 
 ////HTTP POST to QOS chain
 //func TestHttpBrToChain(t *testing.T) {

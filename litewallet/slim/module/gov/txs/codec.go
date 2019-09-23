@@ -18,7 +18,7 @@ func RegisterCodec(cdc *amino.Codec) {
 	cdc.RegisterConcrete(&types.TextProposal{}, "gov/TextProposal", nil)
 	cdc.RegisterConcrete(&types.TaxUsageProposal{}, "gov/TaxUsageProposal", nil)
 	cdc.RegisterConcrete(&types.ParameterProposal{}, "gov/ParameterProposal", nil)
-	cdc.RegisterConcrete(&types.ModifyInflationProposal{}, "gov/ModifyInflationProposal", nil)
+	//cdc.RegisterConcrete(&types.ModifyInflationProposal{}, "gov/ModifyInflationProposal", nil)
 	cdc.RegisterConcrete(&types.SoftwareUpgradeProposal{}, "gov/SoftwareUpgradeProposal", nil)
 	//cdc.RegisterConcrete(&TxParameterChange{}, "gov/txs/TxParameterChange", nil)
 	//cdc.RegisterConcrete(&TxTaxUsage{}, "gov/txs/TxTaxUsage", nil)

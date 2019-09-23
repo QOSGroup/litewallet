@@ -2,7 +2,6 @@ package mapper
 
 import (
 	btypes "github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
 )
 
 /*
@@ -20,9 +19,9 @@ return:
 */
 
 type DelegationQueryResult struct {
-	DelegatorAddr   btypes.Address `json:"delegator_address"`
-	OwnerAddr       btypes.Address `json:"owner_address"`
-	ValidatorPubKey crypto.PubKey  `json:"validator_pub_key"`
-	Amount          uint64         `json:"delegate_amount"`
-	IsCompound      bool           `json:"is_compound"`
+	DelegatorAddr            btypes.AccAddress `json:"delegator_address"`
+	ValidatorAddr            btypes.ValAddress `json:"validator_address"`
+	ValidatorConsensusPubKey string            `json:"validator_cons_pub_key"`
+	Amount                   btypes.BigInt     `json:"delegate_amount"`
+	IsCompound               bool              `json:"is_compound"`
 }

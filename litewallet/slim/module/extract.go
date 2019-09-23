@@ -3,6 +3,8 @@ package module
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/client/account"
+	tx3 "github.com/QOSGroup/litewallet/litewallet/slim/base/client/tx"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
@@ -45,10 +47,10 @@ func extract(coins, privatekey, cointype, qscchainid string) (*txs.TxStd, string
 		fmt.Println(err1)
 	}
 	priv := key
-	gas := types.NewInt(int64(ctxs.MaxGas))
+	gas := types.NewInt(int64(tx3.MaxGas))
 
 	addrben32, _ := bech32local.ConvertAndEncode(types.PREF_ADD, key.PubKey().Address().Bytes())
-	investor, _ := types.GetAddrFromBech32(addrben32)
+	investor, _ := account.GetAddrFromValue(addrben32)
 
 	acc, _ := ctxs.QueryAccount(investor)
 	var qscnonce int64
@@ -64,7 +66,7 @@ func extract(coins, privatekey, cointype, qscchainid string) (*txs.TxStd, string
 	tx := ctxs.ExtractTx{it}
 	fmt.Println(investor, amount, cointype, "2")
 	tx2 := txs.NewTxStd(tx, qscchainid, gas)
-	signature2, _ := tx2.SignTx(priv, qscnonce, qscchainid)
+	signature2, _ := tx2.SignTx(priv, qscnonce, "", qscchainid)
 	tx2.Signature = []txs.Signature{txs.Signature{
 		Pubkey:    priv.PubKey(),
 		Signature: signature2,

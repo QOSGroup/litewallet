@@ -3,8 +3,8 @@ package txs
 import (
 	"encoding/hex"
 	"errors"
-	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/cosmos/cosmos-sdk/client"
+	qtypes "github.com/QOSGroup/litewallet/litewallet/slim/base/types"
+	"github.com/QOSGroup/litewallet/litewallet/slim/types"
 	rpcclient "github.com/tendermint/tendermint/rpc/client"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
@@ -203,7 +203,7 @@ func init() {
 //	return resp.Value, nil
 //}
 
-func QueryAccount(addr types.Address) (*QOSAccount, error) {
+func QueryAccount(addr qtypes.Address) (*types.QOSAccount, error) {
 	key := AddressStoreKey(addr)
 	res, err := Query("/store/acc/key", key)
 	if err != nil {
@@ -213,7 +213,7 @@ func QueryAccount(addr types.Address) (*QOSAccount, error) {
 	if len(res) == 0 {
 		return nil, errors.New("account not exists")
 	}
-	var acc *QOSAccount
+	var acc *types.QOSAccount
 	err = Cdc.UnmarshalBinaryBare(res, &acc)
 	if err != nil {
 		return nil, err
@@ -222,7 +222,7 @@ func QueryAccount(addr types.Address) (*QOSAccount, error) {
 }
 
 // 将地址转换成存储通用的key
-func AddressStoreKey(addr types.Address) []byte {
+func AddressStoreKey(addr qtypes.Address) []byte {
 	return append([]byte(accountStoreKey), addr.Bytes()...)
 }
 
@@ -256,7 +256,7 @@ func BroadcastTransferTxToQSC(txb string, broadcastModes string) string {
 	}
 	var res *ctypes.ResultBroadcastTx
 	switch broadcastModes {
-	case client.BroadcastSync:
+	case "sync":
 		res, err = RPC.BroadcastTxSync(txBytes)
 		//默认异步
 	default:

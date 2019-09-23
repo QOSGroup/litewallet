@@ -1,11 +1,5 @@
 package module
 
-import (
-	"fmt"
-	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
-)
-
 //const (
 //	AccountMapperName = "acc"      // 用户获取账户存储的store的键名
 //	accountStoreKey   = "account:" // 便于获取全部账户的通用存储键名，继承BaseAccount时，可根据不同业务设置存储前缀
@@ -15,13 +9,13 @@ import (
 //	ErrAccountNotExsits = errors.New("account not exists")
 //)
 
-func GetAccountFromBech32Addr(bech32Addr string) (*txs.QOSAccount, error) {
-	addrBytes, err := types.GetAddrFromBech32(bech32Addr)
-	if err != nil {
-		return nil, fmt.Errorf("%s is not a valid bech32Addr", bech32Addr)
-	}
-	return txs.QueryAccount(addrBytes)
-}
+//func GetAccountFromBech32Addr(bech32Addr string) (*txs.QOSAccount, error) {
+//	addrBytes, err := types.GetAddrFromBech32(bech32Addr)
+//	if err != nil {
+//		return nil, fmt.Errorf("%s is not a valid bech32Addr", bech32Addr)
+//	}
+//	return txs.QueryAccount(addrBytes)
+//}
 
 //func queryAccount(addr []byte) (*txs.QOSAccount, error) {
 //	path := BuildAccountStoreQueryPath()

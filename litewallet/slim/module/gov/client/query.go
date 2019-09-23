@@ -7,12 +7,11 @@ import (
 	btypes "github.com/QOSGroup/litewallet/litewallet/slim/base/types"
 	"github.com/QOSGroup/litewallet/litewallet/slim/module/gov/mapper"
 	"github.com/QOSGroup/litewallet/litewallet/slim/module/gov/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 	"github.com/pkg/errors"
 )
 
-func QueryProposal(remote string, pID uint64) (types.Proposal, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryProposal(cliCtx context.CLIContext, pID uint64) (types.Proposal, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 	//pID, err := strconv.ParseUint(args[0], 10, 64)
 	//if err != nil {
 	//	return fmt.Errorf("proposal id %s is not a valid uint value", args[0])
@@ -34,8 +33,8 @@ func QueryProposal(remote string, pID uint64) (types.Proposal, error) {
 	return result, err
 }
 
-func QueryProposals(remote, depositor, voter, statusStr string) ([]types.Proposal, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryProposals(cliCtx context.CLIContext, depositor, voter, statusStr string) ([]types.Proposal, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
 	var depositorAddr btypes.Address
 	var voterAddr btypes.Address
@@ -98,9 +97,8 @@ func toProposalStatus(statusStr string) types.ProposalStatus {
 	}
 }
 
-func QueryVote(remote string, pID uint64, addrStr string) (types.Vote, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
-
+func QueryVote(cliCtx context.CLIContext, pID uint64, addrStr string) (types.Vote, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 	addr, err := qcliacc.GetAddrFromValue(addrStr)
 	if err != nil {
 		return types.Vote{}, fmt.Errorf("voter %s is not a valid address value", addrStr)
@@ -124,8 +122,8 @@ func QueryVote(remote string, pID uint64, addrStr string) (types.Vote, error) {
 	return vote, err
 }
 
-func QueryVotes(remote string, pID uint64) ([]types.Vote, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryVotes(cliCtx context.CLIContext, pID uint64) ([]types.Vote, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
 	path := mapper.BuildQueryVotesPath(pID)
 	res, err := cliCtx.Query(path, []byte{})
@@ -149,8 +147,8 @@ func QueryVotes(remote string, pID uint64) ([]types.Vote, error) {
 	return votes, err
 }
 
-func QueryDeposit(remote string, pID uint64, addrStr string) (types.Deposit, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryDeposit(cliCtx context.CLIContext, pID uint64, addrStr string) (types.Deposit, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
 	addr, err := qcliacc.GetAddrFromValue(addrStr)
 	if err != nil {
@@ -175,8 +173,8 @@ func QueryDeposit(remote string, pID uint64, addrStr string) (types.Deposit, err
 	return deposit, err
 }
 
-func QueryDeposits(remote string, pID uint64) ([]types.Deposit, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryDeposits(cliCtx context.CLIContext, pID uint64) ([]types.Deposit, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
 	path := mapper.BuildQueryVotesPath(pID)
 	res, err := cliCtx.Query(path, []byte{})
@@ -196,8 +194,8 @@ func QueryDeposits(remote string, pID uint64) ([]types.Deposit, error) {
 	return deposits, err
 }
 
-func QueryTally(remote string, pID uint64, addrStr string) (types.TallyResult, error) {
-	cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
+func QueryTally(cliCtx context.CLIContext, pID uint64, addrStr string) (types.TallyResult, error) {
+	//cliCtx := context.NewCLIContext(remote).WithCodec(txs.Cdc)
 
 	addr, err := qcliacc.GetAddrFromValue(addrStr)
 	if err != nil {

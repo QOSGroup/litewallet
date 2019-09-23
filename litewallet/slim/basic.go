@@ -2,11 +2,7 @@ package slim
 
 import (
 	"fmt"
-	btxs "github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/module/bank/client"
-	txs2 "github.com/QOSGroup/litewallet/litewallet/slim/module/bank/txs"
-	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bech32local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/bip39local"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
@@ -40,7 +36,6 @@ const (
 	//Bech32PrefixAccPub = "cosmosaccpub"
 	AccountResultType = "local"
 	DenomQOS          = "qos"
-	PREF_ADD          = "address"
 )
 
 func AccountCreate(password string) *ResultCreateAccount {
@@ -64,7 +59,7 @@ func AccountCreate(password string) *ResultCreateAccount {
 
 	addr := key.PubKey().Address()
 	//bech32Pub, _ := bech32local.ConvertAndEncode(Bech32PrefixAccPub, pub)
-	bech32Addr, _ := bech32local.ConvertAndEncode(PREF_ADD, addr.Bytes())
+	bech32Addr, _ := bech32local.ConvertAndEncode(types.PREF_ADD, addr.Bytes())
 
 	privkeyAmino, _ := txs.Cdc.MarshalJSON(key)
 	var privkeyAminoStc PrivkeyAmino
@@ -121,7 +116,7 @@ func AccountRecoverStr(mncode, password string) string {
 
 	addr := key.PubKey().Address()
 	//bech32Pub, _ := bech32local.ConvertAndEncode("cosmosaccpub", pub)
-	bech32Addr, _ := bech32local.ConvertAndEncode(PREF_ADD, addr.Bytes())
+	bech32Addr, _ := bech32local.ConvertAndEncode(types.PREF_ADD, addr.Bytes())
 
 	privkeyAmino, _ := txs.Cdc.MarshalJSON(key)
 	var privkeyAminoStc PrivkeyAmino
@@ -170,7 +165,7 @@ func PubAddrRetrievalStr(s string) string {
 
 	addr := key.PubKey().Address()
 	//bech32Pub, _ := bech32local.ConvertAndEncode(Bech32PrefixAccPub, pub)
-	bech32Addr, _ := bech32local.ConvertAndEncode(PREF_ADD, addr.Bytes())
+	bech32Addr, _ := bech32local.ConvertAndEncode(types.PREF_ADD, addr.Bytes())
 
 	result := &PubAddrRetrieval{}
 	result.PubKey = pubkeyAminoStr
@@ -215,7 +210,7 @@ func AccountCreateFromSeed(mncode string) string {
 
 	addr := key.PubKey().Address()
 	//bech32Pub, _ := bech32local.ConvertAndEncode("cosmosaccpub", pub)
-	bech32Addr, _ := bech32local.ConvertAndEncode(PREF_ADD, addr.Bytes())
+	bech32Addr, _ := bech32local.ConvertAndEncode(types.PREF_ADD, addr.Bytes())
 
 	privkeyAmino, _ := txs.Cdc.MarshalJSON(key)
 	var privkeyAminoStc PrivkeyAmino
@@ -242,47 +237,47 @@ func AccountCreateFromSeed(mncode string) string {
 
 }
 
-//Local Tx generation
-func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) []byte {
-	sendersStr := fromStr + `,` + coinstr
-	senders, err := client.ParseTransItem(sendersStr)
-	if err != nil {
-		err.Error()
-	}
-
-	receiversStr := toStr + `,` + coinstr
-	receivers, err := client.ParseTransItem(receiversStr)
-	if err != nil {
-		err.Error()
-	}
-
-	tn := txs2.TxTransfer{
-		Senders:   senders,
-		Receivers: receivers,
-	}
-
-	gas := types.NewInt(int64(20000))
-	txStd := btxs.NewTxStd(tn, chainid, gas)
-
-	var key ed25519local.PrivKeyEd25519
-	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
-	err1 := txs.Cdc.UnmarshalJSON([]byte(ts), &key)
-	if err1 != nil {
-		fmt.Println(err1)
-	}
-	priv := crypto.PrivKey(key)
-
-	signature, _ := txStd.SignTx(priv, nonce, chainid)
-	txStd.Signature = []btxs.Signature{btxs.Signature{
-		Pubkey:    priv.PubKey(),
-		Signature: signature,
-		Nonce:     nonce,
-	}}
-	msg := txStd
-	jasonpayload, err := txs.Cdc.MarshalBinaryBare(msg)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return jasonpayload
-}
+////Local Tx generation
+//func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) []byte {
+//	sendersStr := fromStr + `,` + coinstr
+//	senders, err := client.ParseTransItem(sendersStr)
+//	if err != nil {
+//		err.Error()
+//	}
+//
+//	receiversStr := toStr + `,` + coinstr
+//	receivers, err := client.ParseTransItem(receiversStr)
+//	if err != nil {
+//		err.Error()
+//	}
+//
+//	tn := txs2.TxTransfer{
+//		Senders:   senders,
+//		Receivers: receivers,
+//	}
+//
+//	gas := types.NewInt(int64(20000))
+//	txStd := btxs.NewTxStd(tn, chainid, gas)
+//
+//	var key ed25519local.PrivKeyEd25519
+//	ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
+//	err1 := txs.Cdc.UnmarshalJSON([]byte(ts), &key)
+//	if err1 != nil {
+//		fmt.Println(err1)
+//	}
+//	priv := crypto.PrivKey(key)
+//
+//	signature, _ := txStd.SignTx(priv, nonce, chainid)
+//	txStd.Signature = []btxs.Signature{btxs.Signature{
+//		Pubkey:    priv.PubKey(),
+//		Signature: signature,
+//		Nonce:     nonce,
+//	}}
+//	msg := txStd
+//	jasonpayload, err := txs.Cdc.MarshalBinaryBare(msg)
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//
+//	return jasonpayload
+//}

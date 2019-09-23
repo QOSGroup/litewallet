@@ -1,15 +1,16 @@
 package txs
 
 import (
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/account"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	txs4 "github.com/QOSGroup/litewallet/litewallet/slim/module/approve/txs"
 	txs3 "github.com/QOSGroup/litewallet/litewallet/slim/module/bank/txs"
 	gov_types "github.com/QOSGroup/litewallet/litewallet/slim/module/gov/types"
 	txs2 "github.com/QOSGroup/litewallet/litewallet/slim/module/stake/txs"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto"
 	"github.com/QOSGroup/litewallet/litewallet/slim/tendermint/crypto/funcInlocal/ed25519local"
 	ctypes "github.com/QOSGroup/litewallet/litewallet/slim/tendermint/rpc/core/types"
+	qtypes "github.com/QOSGroup/litewallet/litewallet/slim/types"
 	"github.com/tendermint/go-amino"
 )
 
@@ -78,14 +79,16 @@ func RegisterCodec(cdc *amino.Codec) {
 	cdc.RegisterConcrete(&txs2.TxUnbondDelegation{}, "stake/txs/TxUnbondDelegation", nil)
 	cdc.RegisterConcrete(&txs2.TxCreateReDelegation{}, "stake/txs/TxCreateReDelegation", nil)
 
-	cdc.RegisterConcrete(&QOSAccount{}, "qos/types/QOSAccount", nil)
-	cdc.RegisterConcrete(&BaseAccount{}, "qbase/account/BaseAccount", nil)
+	cdc.RegisterConcrete(&qtypes.QOSAccount{}, "qos/types/QOSAccount", nil)
+	//cdc.RegisterConcrete(&BaseAccount{}, "qbase/account/BaseAccount", nil)
+	cdc.RegisterInterface((*account.Account)(nil), nil)
+	cdc.RegisterConcrete(&account.BaseAccount{}, "qbase/account/BaseAccount", nil)
 
-	cdc.RegisterConcrete(&txs4.TxCreateApprove{}, "approve/txs/TxCreateApprove", nil)
-	cdc.RegisterConcrete(&txs4.TxIncreaseApprove{}, "approve/txs/TxIncreaseApprove", nil)
-	cdc.RegisterConcrete(&txs4.TxDecreaseApprove{}, "approve/txs/TxDecreaseApprove", nil)
-	cdc.RegisterConcrete(&txs4.TxUseApprove{}, "approve/txs/TxUseApprove", nil)
-	cdc.RegisterConcrete(&txs4.TxCancelApprove{}, "approve/txs/TxCancelApprove", nil)
+	//cdc.RegisterConcrete(&txs4.TxCreateApprove{}, "approve/txs/TxCreateApprove", nil)
+	//cdc.RegisterConcrete(&txs4.TxIncreaseApprove{}, "approve/txs/TxIncreaseApprove", nil)
+	//cdc.RegisterConcrete(&txs4.TxDecreaseApprove{}, "approve/txs/TxDecreaseApprove", nil)
+	//cdc.RegisterConcrete(&txs4.TxUseApprove{}, "approve/txs/TxUseApprove", nil)
+	//cdc.RegisterConcrete(&txs4.TxCancelApprove{}, "approve/txs/TxCancelApprove", nil)
 
 	cdc.RegisterInterface((*gov_types.ProposalContent)(nil), nil)
 	cdc.RegisterConcrete(&gov_types.TextProposal{}, "gov/TextProposal", nil)
