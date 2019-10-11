@@ -3,14 +3,12 @@ package litewallet
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
-	"github.com/QOSGroup/litewallet/litewallet/slim/module"
-	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
-	"strings"
-
 	"github.com/QOSGroup/litewallet/litewallet/eth"
 	"github.com/QOSGroup/litewallet/litewallet/sdksource"
 	"github.com/QOSGroup/litewallet/litewallet/slim"
+	"github.com/QOSGroup/litewallet/litewallet/slim/base/types"
+	"github.com/QOSGroup/litewallet/litewallet/slim/module"
+	"github.com/QOSGroup/litewallet/litewallet/slim/txs"
 )
 
 //create the seed(mnemonic) for the account generation
@@ -159,8 +157,8 @@ func QOSAccountCreateFromSeed(mncode string) string {
 //}
 
 //for QOSQueryAccount
-func QOSQueryAccount(addr string) string {
-	output, err := slim.QueryAccount(addr)
+func QOSQueryAccount(remote, addr string) string {
+	output, err := slim.QueryAccount(remote, addr)
 	if (err != nil) {
 		return err.Error()
 	}
@@ -192,21 +190,30 @@ func QOSPubAddrRetrieval(priv string) string {
 }
 
 //for QSCtransferSend
-func QOSTransferSend(addrto, coinstr, privkey, chainid string) string {
-	output, _ := slim.TransferSend(addrto, coinstr, privkey, chainid)
-	return output
+func QOSTransferSend(remote, addrto, coinstr, privkey, chainid string) string {
+	output, err := slim.Transfer(remote, addrto, coinstr, privkey, chainid)
+	if err != nil {
+		return err.Error()
+	}
+	return string(output)
 }
 
 //for QOSDelegationSend
-func QOSDelegationSend(validatorAddr string, coins int64, privkey, chainid string) string {
-	output, _ := slim.DelegationSend(validatorAddr, coins, privkey, chainid)
-	return output
+func QOSDelegationSend(remote, validatorAddr string, coins int64, privkey, chainid string) string {
+	output, err := slim.Delegation(remote, validatorAddr, coins, privkey, chainid)
+	if err != nil {
+		return err.Error()
+	}
+	return string(output)
 }
 
 //for QOSDelegationSend
-func QOSUnbondDelegationSend(validatorAddr string, coins int64, privkey, chainid string) string {
-	output, _ := slim.UnbondDelegationSend(validatorAddr, coins, privkey, chainid)
-	return output
+func QOSUnbondDelegationSend(remote, validatorAddr string, coins int64, privkey, chainid string) string {
+	output, err := slim.UnbondDelegation(remote, validatorAddr, coins, privkey, chainid)
+	if err != nil {
+		return err.Error()
+	}
+	return string(output)
 }
 
 ////for QOSCommitResultCheck
@@ -258,9 +265,12 @@ func QOSAdvertisersFalse(privatekey, coinsType, coinAmount, qscchainid string) s
 }
 
 //for GetTx
-func QOSGetTx(tx string) string {
-	output := slim.GetTx(tx)
-	return output
+func QOSGetTx(remote, tx string) string {
+	output, err := slim.QueryTx(remote, tx)
+	if err != nil {
+		return err.Error()
+	}
+	return string(output)
 }
 
 func QOSGetBlance(addrs string) string {
@@ -273,17 +283,17 @@ func QOSGetBlance(addrs string) string {
 	return string(result)
 }
 
-func QOSGetBlanceByCointype(addrs, cointype string) string {
-	result := QOSGetBlance(addrs)
-	var qsc types.QSCs
-	json.Unmarshal([]byte(result), &qsc)
-	for _, v := range qsc {
-		if strings.ToUpper(v.Name) == strings.ToUpper(cointype) {
-			return v.Amount.String()
-		}
-	}
-	return "0"
-}
+//func QOSGetBlanceByCointype(addrs, cointype string) string {
+//	result := QOSGetBlance(addrs)
+//	var qsc types.QSCs
+//	json.Unmarshal([]byte(result), &qsc)
+//	for _, v := range qsc {
+//		if strings.ToUpper(v.Name) == strings.ToUpper(cointype) {
+//			return v.Amount.String()
+//		}
+//	}
+//	return "0"
+//}
 
 // acutionAd 竞拍广告
 //articleHash            //广告位标识
