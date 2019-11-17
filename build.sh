@@ -1,14 +1,19 @@
 #!/bin/bash
 
-env GO111MODULE=off go get -v -d github.com/QOSGroup/litewallet
+actualPath="${GOPATH}/src/github.com/QOSGroup/litewallet"
 
-cd ${GOPATH}/src/github.com/QOSGroup/litewallet/ || echo "get litewallet err!" && exit 1
+if [ "$PWD" != "$actualPath" ];then
+  echo "Must Build Project in $actualPath"
+  exit 1
+fi
+
+cd $actualPath || (echo "$actualPath not exsits" && exit 1)
 
 env GO111MODULE=on go mod tidy
 env GO111MODULE=on go mod vendor
 
 if [ ! -d "${GOPATH}/src/github.com/ethereum/go-ethereum" ];then
-  env GO111MODULE=off go get -v -d github.com/ethereum/go-ethereum
+  env GO111MODULE=off go get -d github.com/ethereum/go-ethereum
 fi
 
 cp -r \

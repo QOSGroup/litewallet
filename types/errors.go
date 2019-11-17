@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	codeKeyNotFound   = 1
-	codeWrongPassword = 2
+	codeKeyNotFound      = 1
+	codeWrongPassword    = 2
 	codeKeyAlreadyExists = 3
 )
 
@@ -96,7 +96,6 @@ func NewErrKeyAlreadyExists(name string) error {
 		name: name,
 	}
 }
-
 
 func IsErrKeyAlreadyExists(err error) bool {
 	if err == nil {

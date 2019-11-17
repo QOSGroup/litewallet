@@ -5,9 +5,9 @@ import (
 	"github.com/QOSGroup/litewallet/eth"
 	"github.com/QOSGroup/litewallet/qos/account"
 	"github.com/QOSGroup/litewallet/qos/wallet"
+	"github.com/QOSGroup/litewallet/types"
 	db "github.com/tendermint/tm-db"
 )
-
 
 //QOS wallet part
 var _qosWallet wallet.Wallet
@@ -83,7 +83,6 @@ func SignBase64(address, password, base64Str string) string {
 	return string(str)
 }
 
-
 //From here, Eth wallet part start
 func EthCreateAccount(rootDir, name, password, seed string) string {
 	output := eth.CreateAccount(rootDir, name, password, seed)
@@ -135,4 +134,10 @@ func EthSpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr,
 func EthGetNonceAt(rootDir, node, fromName, password string) int64 {
 	output := eth.GetNonceAt(rootDir, node, fromName, password)
 	return output
+}
+
+//util
+
+func WalletAddressCheck(addr string) string {
+	return types.AddressType(addr)
 }
