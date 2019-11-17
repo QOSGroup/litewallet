@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	defaultEntropySize = 256
+	defaultEntropySize = 128
 )
 
 type Wallet struct {

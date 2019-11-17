@@ -19,7 +19,7 @@
 ```json
 {
  "code":0,
- "data":"twist report state exchange army walnut thing that behave poem behind agree choice century side begin normal velvet flock just convince face staff mean"
+ "data":"twist report state exchange army walnut thing that behave poem behind agree"
 }
 ```
 

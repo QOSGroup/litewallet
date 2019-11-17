@@ -92,7 +92,7 @@ func TestAccountOperation(t *testing.T) {
 }
 
 func genMnemonic() (string, error) {
-	bz, err := bip39.NewEntropy(256)
+	bz, err := bip39.NewEntropy(128)
 	if err != nil {
 		return "", err
 	}
