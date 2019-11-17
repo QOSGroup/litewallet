@@ -1,8 +1,8 @@
 #!/bin/bash
 
-env GO111MODULE=off go get -v github.com/QOSGroup/litewallet/mobile
+env GO111MODULE=off go get -v github.com/QOSGroup/litewallet
 
-cd $GOPATH/src/github.com/QOSGroup/litewallet/ || exit 1
+cd $GOPATH/src/github.com/QOSGroup/litewallet/ || echo "get litewallet err!" && exit 1
 
 env GO111MODULE=on go mod tidy
 env GO111MODULE=on go mod vendor
