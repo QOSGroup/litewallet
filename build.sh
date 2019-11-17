@@ -9,6 +9,9 @@ fi
 
 cd $actualPath || (echo "$actualPath not exsits" && exit 1)
 
+rm -f litewallet.aar
+rm -f litewallet-sources.jar
+
 env GO111MODULE=on go mod tidy
 env GO111MODULE=on go mod vendor
 
