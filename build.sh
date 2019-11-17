@@ -1,14 +1,14 @@
 #!/bin/bash
 
-env GO111MODULE=off go get -v github.com/QOSGroup/litewallet
+env GO111MODULE=off go get -v -d github.com/QOSGroup/litewallet
 
-cd $GOPATH/src/github.com/QOSGroup/litewallet/ || echo "get litewallet err!" && exit 1
+cd ${GOPATH}/src/github.com/QOSGroup/litewallet/ || echo "get litewallet err!" && exit 1
 
 env GO111MODULE=on go mod tidy
 env GO111MODULE=on go mod vendor
 
-if [ ! -d "${GOPATH}/src/github.com/ethereum/go-ethereum/crypto/secp256k1/libsecp256k1" ];then
-  go get -v github.com/ethereum/go-ethereum
+if [ ! -d "${GOPATH}/src/github.com/ethereum/go-ethereum" ];then
+  env GO111MODULE=off go get -v -d github.com/ethereum/go-ethereum
 fi
 
 cp -r \
@@ -16,4 +16,5 @@ cp -r \
   "vendor/github.com/ethereum/go-ethereum/crypto/secp256k1/"
 
 env GO111MODULE=off gomobile bind -target android -o litewallet.aar github.com/QOSGroup/litewallet/mobile
+
 rm -rf vendor
