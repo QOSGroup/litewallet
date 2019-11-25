@@ -1,6 +1,28 @@
 # QOS Wallet SDK API
 
-## 初始化钱包
+## API功能
+
+* [初始化钱包](#InitWallet)
+* [生成助记词](#ProduceMnemonic)
+* [使用默认名称创建账户](#CreateAccount)
+* [使用指定名称创建账户](#CreateAccountWithName)
+* [使用指定助记词创建账户](#CreateAccountWithMnemonic)
+* [根据账户地址获取账户信息](#GetAccount)
+* [根据账户名称获取账户信息](#GetAccountByName)
+* [删除账户](#DeleteAccount)
+* [导出账户](#ExportAccount)
+* [使用助记词导入新账户](#ImportMnemonic)
+* [使用私钥导入新账户](#ImportPrivateKey)
+* [获取账户列表](#ImportPrivateKey)
+* [对原始数据串签名](#Sign)
+* [对Base64编码数据串签名](#SignBase64)
+
+## API说明
+
+调用说明: 第一步先[初始化钱包](#InitWallet), 然后进行其他操作
+
+
+### <span id="InitWallet">初始化钱包</span>
 
 * 方法:  InitWallet(name, storagePath string)
 * 参数
@@ -9,7 +31,7 @@
 * 返回示例
     - 无
 
-## 生成助记词
+### <span id="ProduceMnemonic">生成助记词</span>
 
 * 方法
     - ProduceMnemonic() string 
@@ -23,7 +45,7 @@
 }
 ```
 
-## 创建账户(1)
+### <span id="CreateAccount"> 创建账户(1) </span>
 
 使用默认名称创建账户, 默认名称格式为`Account${index}`
 
@@ -60,20 +82,21 @@ error:
 ```
 
 
-## 创建账户(2)
+### <span id="CreateAccountWithName"> 创建账户(2) </span>
+
+使用指定名称创建账户
 
 * 方法:  CreateAccountWithName(name, password string) string 
 
-使用指定名称创建账户
 
 * 参数
     - name: 账户名称
     - password: 账户密码
 * 返回示例
-    - 同[创建账户(1)]()
+    - 同[创建账户(1)](#CreateAccount)
     
 
-## 创建账户(3)
+### <span id="CreateAccountWithMnemonic"> 创建账户(3) </span>
 
 * 方法:  CreateAccountWithMnemonic(name, password, mnemonic string) string
 
@@ -84,9 +107,9 @@ error:
     - password: 账户密码
     - mnemonic: 助记词
 * 返回示例
-    - 同[创建账户(1)]()
+    - 同[创建账户(1)](#CreateAccount)
 
-## 获取账户(1)
+### <span id="GetAccount"> 获取账户(1) </span>
 
 根据账户地址获取账户信息
 
@@ -126,7 +149,7 @@ error:
 }
 ```
 
-## 获取账户(2)
+### <span id="GetAccountByName"> 获取账户(2) </span>
 
 根据账户名称获取账户信息
 
@@ -134,9 +157,10 @@ error:
 * 参数
     - name: 账户名称
 * 返回示例
-    - 同[获取账户(1)]()
+    - 同[获取账户(1)](#GetAccount)
 
-## 删除账户
+
+### <span id="DeleteAccount"> 删除账户 </span>
 
 * 方法:  DeleteAccount(address, password string) string
 * 参数
@@ -159,7 +183,7 @@ error:
 }
 ```
 
-## 导出账户
+### <span id="ExportAccount"> 导出账户 </span>
 
 * 方法:  ExportAccount(address, password string) string
 * 参数
@@ -183,7 +207,7 @@ success
 }
 ```
 
-## 导入账户(1)
+### <span id="ImportMnemonic"> 导入账户(1) </span>
 
 使用助记词导入新账户
 
@@ -208,19 +232,19 @@ success:
 ```
 
 
-## 导入账户(2)
+### <span id="ImportPrivateKey"> 导入账户(2) </span>
 
-使用私钥导入新账户, 私钥为[导出账户]()中的`private_key`
+使用私钥导入新账户, 私钥为[导出账户](#ExportAccount)中的`private_key`
 
 * 方法:  ImportPrivateKey(hexPrivateKey, password string) string
 * 参数
     - hexPrivateKey: 16进制编码的私钥
     - password: 账户密码
 * 返回示例
-    - 同[导入账户(1)]()
+    - 同[导入账户(1)](#ImportMnemonic)
 
 
-## 获取账户列表
+### <span id="ListAllAccounts"> 获取账户列表 </span>
 
 * 方法:  ListAllAccounts() string
 * 参数
@@ -257,7 +281,7 @@ success:
 }
 ```
 
-## 签名(1)
+### <span id="Sign"> 签名(1) </span>
 
 * 方法:  Sign(address, password, signStr string) string
 * 参数
@@ -276,7 +300,7 @@ success:
 }
 ```
 
-## 签名(2)
+### <span id="SignBase64"> 签名(2) </span>
 
 * 方法:  SignBase64(address, password, base64Str string) string
 * 参数
@@ -284,6 +308,6 @@ success:
     - password: 账户密码
     - base64Str: base64编码的待签名串
 * 返回示例
-    - 同[签名(1)]()
+    - 同[签名(1)](#Sign)
 
 
