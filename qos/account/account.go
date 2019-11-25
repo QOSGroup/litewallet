@@ -7,6 +7,7 @@ import (
 	"github.com/QOSGroup/js-keys/keys"
 	"github.com/QOSGroup/litewallet/types"
 	db "github.com/tendermint/tm-db"
+	"strings"
 	"sync"
 )
 
@@ -207,7 +208,7 @@ func (manager *AccountManager) DecryptPrivateKey(acc *Account, passphrase string
 		return "", err
 	}
 
-	return types.EncodeHex(bz), nil
+	return strings.ToUpper(types.EncodeHex(bz)), nil
 }
 
 func (manager *AccountManager) increaseAccountIndex() (index uint64) {
