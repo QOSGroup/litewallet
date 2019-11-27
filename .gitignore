@@ -10,7 +10,6 @@
 *.out
 .idea
 .vscode
-*.xml
 .idea/*.xml
 
 target
