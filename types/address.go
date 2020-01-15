@@ -13,7 +13,7 @@ const (
 
 var (
 	cosmosAddressPattern = regexp.MustCompile("^cosmos1[0-9a-z]{38}$")
-	qosAddressPattern    = regexp.MustCompile("^qos1[0-9a-z]{38}$")
+	qosAddressPattern    = regexp.MustCompile("^qosacc1[0-9a-z]{38}$")
 	ethAddressPattern    = regexp.MustCompile("^0x[0-9a-fA-F]{40}$")
 )
 
