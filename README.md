@@ -46,22 +46,22 @@ The litewallet is a lite protocal based client SDK for mobile clients such as an
 
 ## Gomobile installation 
 Let’s start with gomobile installation:
-```
+```go
 go get -v golang.org/x/mobile/cmd/gomobile
 ```
 Note: in OS X you need to have installed Xcode Command Line Tools. Then you need to initialize gomobile, this can be done one time in any work directory.
-```
+```go
 gomobile init
 ```
 Note: this command might take several minutes.
 
 ## Android SDK environment setting
 Download and unpack Android SDK to home directory, for example, `~/android-sdk`, and make the following command for API installation.
-```
+```r
 ~/android-sdk/tools/android sdk
 ```
 Then you need to set environment variable:
-```
+```r
 export ANDROID_HOME=$HOME"/android-sdk"
 ```
 So far the environment for the library development and building is ready.
@@ -115,14 +115,18 @@ gomobile bind --target=ios .
 The folder `.framework` will be created in the current repository.
 
 This works for both Objective-C and Swift. Transfer `.framework` folder to Xcode’s file browser and add import to project:
-```
-#import "Logpackermobilesdk/Logpackermobilesdk.h"
+```go
+import "Logpackermobilesdk/Logpackermobilesdk.h"
 ```
 
 Note: Go allows you to build not only SDK but also to compile the application to apk/ipa file from main.go file only without native mobile Ul. 
 
-##Conclusion
+## Conclusion
 Everybody understands that separate commands development for every mobile platform – is not a cheap and easy task. But it is essential for creation a high-quality product at this time. Our task we did in terms of cross platform development and used all its advantages:
 * Minimal development resources.
 * High development speed.
 * Simple decision-support in the future.
+
+## Thanks
+Thank JetBrains for providing OS tools in developing.
+![avatar](logo/jetbrains-variant-2.png)
