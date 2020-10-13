@@ -562,41 +562,6 @@ type QOSAccount struct {
 
 //only need the following arguments, it`s enough!
 func QSCtransferSendStr(addrto, coinstr, privkey, chainid string) string {
-	//var key ed25519local.PrivKeyEd25519
-	//ts := "{\"type\": \"tendermint/PrivKeyEd25519\",\"value\": \"" + privkey + "\"}"
-	//err := Cdc.UnmarshalJSON([]byte(ts), &key)
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//priv := key
-	//addrben32, _ := bech32local.ConvertAndEncode(PREF_ADD, key.PubKey().Address().Bytes())
-	//from, err2 := getAddrFromBech32(addrben32)
-	//if err2 != nil {
-	//	fmt.Println(err2)
-	//}
-	////Get "nonce" from the func RpcQueryAccount
-	//acc,_ := RpcQueryAccount(from)
-	//var qscnonce int64
-	//if acc!=nil{
-	//	qscnonce = int64(acc.Nonce)
-	//}
-	//qscnonce++
-	//
-	//sendersStr := addrben32 + `,` + coinstr
-	//senders, err := ParseTransItem(sendersStr)
-	//if err != nil {
-	//	return err.Error()
-	//}
-	//
-	//receiversStr := addrto + `,` + coinstr
-	//receivers, err := ParseTransItem(receiversStr)
-	//if err != nil {
-	//	return err.Error()
-	//}
-	//tn := TxTransfer{
-	//	Senders:   senders,
-	//	Receivers: receivers,
-	//}
 	jasonpayload, err := QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid)
 	if err != nil {
 		fmt.Println(err)
@@ -657,10 +622,6 @@ func QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid string) (string, 
 	}
 	return string(jasonpayload), nil
 }
-//type InvestTx struct {
-//	Std         *TxStd
-//	ArticleHash []byte `json:"articleHash"` // 文章hash
-//}
 
 
 type InvestTx struct {
@@ -713,11 +674,6 @@ func NewErrorResult(code string, height int64, hash string, reason string) Resul
 }
 
 func (ri ResultInvest) Marshal() string {
-	//jsonBytes, err := json.MarshalIndent(ri, "", "  ")
-	//if err != nil {
-	//	fmt.Printf("InvestAd err:%s", err.Error())
-	//	return InternalError(err.Error()).Marshal()
-	//}
 	if ri.Code==ResultCodeSuccess{
 		return string(	hex.EncodeToString(ri.Result))
 	}
