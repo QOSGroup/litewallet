@@ -17,8 +17,8 @@ func TestCreateAccount(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
 	name := "cm"
-	password := "wm131421"
-	seed := "tomorrow room limit true galaxy dove chicken fine resemble tonight record yellow"
+	password := ""
+	seed := "tomorrow room limit true galaxy dove chicken fine resemble tonight record "
 	output := CreateAccount(rootDir,name,password,seed)
 	t.Log(output)
 }
