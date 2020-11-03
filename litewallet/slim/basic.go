@@ -93,6 +93,7 @@ func AccountCreateStr(password string) string {
 
 func AccountRecoverStr(mncode, password string) string {
 	if len(password) == 0 {
+		//todo not use the plain text pass word
 		password = "DNWTTY"
 	}
 	// add mnemonics validation
