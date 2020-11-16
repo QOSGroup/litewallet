@@ -41,6 +41,7 @@ const (
 func AccountCreate(password string) *ResultCreateAccount {
 	entropy, _ := bip39local.NewEntropy(256)
 	mnemonic, _ := bip39local.NewMnemonic(entropy)
+	//todo default password need reconsidering
 	if len(password) == 0 {
 		password = "DNWTTY"
 	}
