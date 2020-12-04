@@ -27,7 +27,7 @@ func TestRecoverKey(t *testing.T) {
 	usr, _ := user.Current()
 	rootDir := usr.HomeDir
 	name := "easyzone2"
-	password := "wm131421"
+	password := "DNWTTTY"
 	seed := "style library milk jazz race dune disorder stay duck bunker garden favorite"
 	output := RecoverKey(rootDir,name,password,seed)
 	t.Log(output)
@@ -38,7 +38,7 @@ func TestUpdateKey(t *testing.T) {
 	rootDir := usr.HomeDir
 	name := "c33"
 	oldpass := "wm131421"
-	newpass := "wm131422"
+	newpass := "DNWTTTY"
 	output := UpdateKey(rootDir, name, oldpass, newpass)
 	t.Log(output)
 }
