@@ -81,3 +81,8 @@ func TestSigVerify(t *testing.T) {
 	data2sign := []byte("hello")
 	SigVerify(rootDir,name,password,data2sign)
 }
+
+func TestLocaltest(t *testing.T) {
+	remote_node := "https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
+	t.Logf("the node with connection:%s", remote_node)
+}
