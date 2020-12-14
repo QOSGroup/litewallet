@@ -10,6 +10,8 @@ import (
 	bip39 "github.com/cosmos/go-bip39"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/cli"
+	Bip39 "github.com/tyler-smith/go-bip39"
+	Bip32 "github.com/tyler-smith/go-bip32"
 )
 
 // keybase is used to make GetKeyBase a singleton
@@ -261,4 +263,25 @@ func WalletAddressCheck(addr string) string {
 	default:
 		return fmt.Sprintf("None")
 	}
+}
+
+func createSeedWithMulLangs(lang string) string {
+	//SetWordlist interactively
+	Bip39.SetWordList(Bip39.GetWordList())
+
+	// Generate a mnemonic for memorization or user-friendly seeds
+	entropy, _ := Bip39.NewEntropy(256)
+	mnemonic, _ := Bip39.NewMnemonic(entropy)
+
+	// Generate a Bip32 HD wallet for the mnemonic and a user supplied password
+	seed := Bip39.NewSeed(mnemonic, "Secret Passphrase")
+
+	masterKey, _ := Bip32.NewMasterKey(seed)
+	publicKey := masterKey.PublicKey()
+
+	// Display mnemonic and keys
+	fmt.Println("Mnemonic: ", mnemonic)
+	fmt.Println("Master private key: ", masterKey)
+	fmt.Println("Master public key: ", publicKey)
+	return mnemonic
 }
