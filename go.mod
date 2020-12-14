@@ -27,6 +27,7 @@ require (
 	github.com/tendermint/ed25519 v0.0.0-20171027050219-d8387025d2b9
 	github.com/tendermint/go-amino v0.14.1
 	github.com/tendermint/tendermint v0.31.4
+	github.com/tyler-smith/go-bip32 v1.0.0
 	github.com/tyler-smith/go-bip39 v1.0.1-0.20181017060643-dbb3b84ba2ef
 	github.com/wsddn/go-ecdh v0.0.0-20161211032359-48726bab9208 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
