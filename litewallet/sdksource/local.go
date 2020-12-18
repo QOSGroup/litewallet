@@ -3,6 +3,7 @@ package sdksource
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/tyler-smith/go-bip39/wordlists"
 	"regexp"
 
 	"github.com/cosmos/cosmos-sdk/client/keys"
@@ -10,8 +11,8 @@ import (
 	bip39 "github.com/cosmos/go-bip39"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/cli"
-	Bip39 "github.com/tyler-smith/go-bip39"
 	Bip32 "github.com/tyler-smith/go-bip32"
+	Bip39 "github.com/tyler-smith/go-bip39"
 )
 
 // keybase is used to make GetKeyBase a singleton
@@ -267,7 +268,19 @@ func WalletAddressCheck(addr string) string {
 
 func createSeedWithMulLangs(lang string) string {
 	//SetWordlist interactively
-	Bip39.SetWordList(Bip39.GetWordList())
+	switch lang {
+	case "English" : Bip39.SetWordList(wordlists.English)
+	case "French"  : Bip39.SetWordList(wordlists.French)
+	case "ChineseSimplified" : Bip39.SetWordList(wordlists.ChineseSimplified)
+	case "ChineseTraditional" : Bip39.SetWordList(wordlists.ChineseTraditional)
+	case "Korean" : Bip39.SetWordList(wordlists.Korean)
+	case "Japanese" : Bip39.SetWordList(wordlists.Japanese)
+	case "Italian" : Bip39.SetWordList(wordlists.Italian)
+	case "Spanish" : Bip39.SetWordList(wordlists.Spanish)
+	default:
+		fmt.Print("no match language list in wordlist, use English as default")
+		Bip39.SetWordList(wordlists.English)
+	}
 
 	// Generate a mnemonic for memorization or user-friendly seeds
 	entropy, _ := Bip39.NewEntropy(256)
