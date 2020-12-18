@@ -54,3 +54,9 @@ func TestWalletAddressCheck(t *testing.T) {
 	output := WalletAddressCheck(address)
 	t.Log(output)
 }
+
+func TestCreateSeed2(t *testing.T) {
+	lang := "ChineseSimplified"
+	output := createSeedWithMulLangs(lang)
+	t.Log(output)
+}
