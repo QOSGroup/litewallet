@@ -298,3 +298,7 @@ func createSeedWithMulLangs(lang string) string {
 	fmt.Println("Master public key: ", publicKey)
 	return mnemonic
 }
+
+func changeMnemonicLang(lang string) string {
+	return createSeedWithMulLangs(lang)
+}
