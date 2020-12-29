@@ -300,5 +300,10 @@ func createSeedWithMulLangs(lang string) string {
 }
 
 func changeMnemonicLang(lang string) string {
-	return createSeedWithMulLangs(lang)
+	_, ok := Bip39.GetWordIndex(lang)
+	if ok {
+		return createSeedWithMulLangs(lang)
+	}
+	fmt.Errorf("No lang matched")
+	return ""
 }
