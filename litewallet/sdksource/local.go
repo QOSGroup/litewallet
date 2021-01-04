@@ -307,3 +307,14 @@ func changeMnemonicLang(lang string) string {
 	fmt.Errorf("No lang matched")
 	return ""
 }
+
+func compateKDF(functionName string) string{
+	var algo string
+	switch functionName {
+	case "secpk1": algo = "secp256k1"
+	case "ed25519": algo = "ed25519"
+	default:
+		algo = "secp256k1"
+	}
+	return algo
+}
