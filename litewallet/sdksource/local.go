@@ -266,7 +266,7 @@ func WalletAddressCheck(addr string) string {
 	}
 }
 
-func createSeedWithMulLangs(lang string) string {
+func CreateSeedWithMulLangs(lang string) string {
 	//SetWordlist interactively
 	switch lang {
 	case "English" : Bip39.SetWordList(wordlists.English)
@@ -302,7 +302,7 @@ func createSeedWithMulLangs(lang string) string {
 func changeMnemonicLang(lang string) string {
 	_, ok := Bip39.GetWordIndex(lang)
 	if ok {
-		return createSeedWithMulLangs(lang)
+		return CreateSeedWithMulLangs(lang)
 	}
 	fmt.Errorf("No lang matched")
 	return ""

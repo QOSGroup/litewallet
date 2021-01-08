@@ -16,6 +16,12 @@ func CreateSeed() string {
 	return output
 }
 
+//create mnemonic for account creation
+func CreateMnemonic(lang string) string {
+	output := sdksource.CreateSeedWithMulLangs(lang)
+	return output
+}
+
 //WalletAddressCheck for different chains
 func WalletAddressCheck(addr string) string {
 	output := sdksource.WalletAddressCheck(addr)
