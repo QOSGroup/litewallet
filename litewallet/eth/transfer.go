@@ -91,7 +91,7 @@ func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount str
 
 }
 
-//Transfer with ERC20 token
+// TransferERC20 Transfer with ERC20 token
 func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenValue, gasPrice string, GasLimit int64) string {
 	//setup the client, here use the infura own project "eth_wallet" node="https://kovan.infura.io/v3/ef4fee2bd9954c6c8303854e0dce1ffe"
 	client, err := ethclient.Dial(node)
@@ -208,7 +208,7 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 	return signedTx.Hash().Hex()
 }
 
-//Deprecated in cshare for mobile!
+// GetPendingNonceAt Deprecated in cshare for mobile!
 // PendingNonceAt returns the account nonce of the given account in the pending state.
 // This is the nonce that should be used for the next transaction.
 func GetPendingNonceAt(rootDir, node, fromName, password string) int64 {
@@ -242,7 +242,7 @@ func GetPendingNonceAt(rootDir, node, fromName, password string) int64 {
 	return nonceInt
 }
 
-//Speedup Tnx with Pending nonce
+// SpeedTransferETH Speedup Tnx with Pending nonce
 func SpeedTransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount string, GasLimit, pendingNonce int64) string {
 	//fromName generated from keyspace locally
 	if fromName == "" {

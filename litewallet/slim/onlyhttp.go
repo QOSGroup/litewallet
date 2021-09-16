@@ -35,7 +35,7 @@ var (
 	RPC rpcclient.Client
 )
 
-//set Block Chain entrance hosts for both Qstars and Qmoon
+// SetBlockchainEntrance set Block Chain entrance hosts for both Qstars and Qmoon
 func SetBlockchainEntrance(qstarshost, qmoonhost string) {
 	Shost = qstarshost
 	Mhost = qmoonhost
@@ -138,7 +138,7 @@ func RPCCQSCQueryAccountGet(addr string) string {
 }
 
 
-//for QOS account query function
+// QOSQueryAccountGet for QOS account query function
 func QOSQueryAccountGet(addr string) string {
 	aurl := QOSAccounturl + addr
 	resp, _ := http.Get(aurl)
@@ -156,7 +156,7 @@ func QOSQueryAccountGet(addr string) string {
 	return output
 }
 
-//for QOSCommitResultCheck Restful interface
+// QOSCommitResultCheck for QOSCommitResultCheck Restful interface
 func QOSCommitResultCheck(txhash, height string) string {
 	qstarskey := "heigth:" + height + ",hash:" + txhash
 	qrcurl := QResulturl + qstarskey
@@ -213,7 +213,7 @@ func Query(path string, key common.HexBytes) (res []byte, err error) {
 }
 
 
-// 提交到联盟链上
+// BroadcastTransferTxToQSC 提交到联盟链上
 func BroadcastTransferTxToQSC(txb string,broadcastModes string) string {
 	txBytes, err := hex.DecodeString(txb)
 	if err != nil {

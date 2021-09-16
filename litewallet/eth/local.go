@@ -33,7 +33,7 @@ const (
 	BcryptSecurityParameter = 12
 )
 
-// localInfo is the public information about a locally stored key
+// LocalInfo is the public information about a locally stored key
 type LocalInfo struct {
 	Name         string `json:"name"`
 	PubKey       string `json:"pubkey"`
@@ -54,7 +54,7 @@ type KeyOutput struct {
 	Denom    string `json:"denom"`
 }
 
-//follow the cosmos hd implementation
+// CreateAccount follow the cosmos hd implementation
 func CreateAccount(rootDir, name, password, mnemonic string) string {
 	if name == "" {
 		err := errMissingName()
@@ -180,7 +180,7 @@ func CreateAccount(rootDir, name, password, mnemonic string) string {
 
 }
 
-//List local account
+// ListLocalAccount List local account
 func ListLocalAccount(rootDir string) string {
 	//init a go level DB to store the key and Info, specify the ethkeys
 	db, err := dbm.NewGoLevelDB("keys", filepath.Join(rootDir, "ethkeys"))
@@ -232,7 +232,7 @@ func encryptPrivKey(privKey []byte, passphrase string) (saltBytes []byte, encByt
 	return saltBytes, xsalsa20symmetric.EncryptSymmetric(privKeyBytes, key)
 }
 
-// Unarmor and decrypt the private key.
+// UnarmorDecryptPrivKey Unarmor and decrypt the private key.
 func UnarmorDecryptPrivKey(armorStr string, passphrase string) (*ecdsa.PrivateKey, error) {
 	var privKey *ecdsa.PrivateKey
 	blockType, header, encBytes, err := armor.DecodeArmor(armorStr)
@@ -272,7 +272,7 @@ func decryptPrivKey(saltBytes []byte, encBytes []byte, passphrase string) (privK
 	return privKey, err
 }
 
-//Fetch private key for signning
+// FetchtoSign Fetch private key for signning
 func FetchtoSign(rootDir, name, password string) (privKey *ecdsa.PrivateKey, err error) {
 	//init a go level DB to store the key and Info, specify the ethkeys
 	db, err := dbm.NewGoLevelDB("keys", filepath.Join(rootDir, "ethkeys"))
@@ -311,7 +311,7 @@ func errKeyNameConflict(name string) error {
 	return fmt.Errorf("acount with name %s already exists", name)
 }
 
-//verify the signature
+// SigVerify verify the signature
 func SigVerify(rootDir, name, password string, data2sign []byte) {
 	//Fetch the privateKey
 	privateKey, err := FetchtoSign(rootDir, name, password)
