@@ -30,8 +30,8 @@ const (
 )
 
 
-//genStdSendTx for the Tx send operation
 // NewInt constructs BigInt from int64
+// genStdSendTx for the Tx send operation
 func NewInt(n int64) Int {
 	return Int{big.NewInt(n)}
 }
@@ -146,7 +146,7 @@ func unmarshalJSON(i *big.Int, bz []byte) error {
 	return i.UnmarshalText([]byte(text))
 }
 
-// 函数：int64 转化为 []byte
+// Int2Byte 函数：int64 转化为 []byte
 func Int2Byte(in int64) []byte {
 	var ret = bytes.NewBuffer([]byte{})
 	err := binary.Write(ret, binary.BigEndian, in)
@@ -183,7 +183,7 @@ func (tx *TxStd) GetSignData() []byte {
 	return ret
 }
 
-// 签名：每个签名者外部调用此方法
+// SignTx 签名：每个签名者外部调用此方法
 func (tx *TxStd) SignTx(privkey ed25519local.PrivKey, nonce int64, fromChainID string) (signedbyte []byte, err error) {
 	if tx.ITx == nil {
 		return nil, errors.New("Signature txstd err(itx is nil)")
@@ -230,7 +230,7 @@ type Signature struct {
 	Nonce     int64               `json:"nonce"`     //nonce的值
 }
 
-// 调用 NewTxStd后，需调用TxStd.SignTx填充TxStd.Signature(每个TxStd.Signer())
+// NewTxStd 调用 NewTxStd后，需调用TxStd.SignTx填充TxStd.Signature(每个TxStd.Signer())
 func NewTxStd(itx ITx, cid string, mgas BigInt) (rTx *TxStd) {
 	rTx = &TxStd{
 		itx,
@@ -255,7 +255,7 @@ func genStdSendTx(sendTx ITx, priKey ed25519local.PrivKeyEd25519, chainid string
 	return stx
 }
 
-// 将地址转换成存储通用的key
+// AddressStoreKey 将地址转换成存储通用的key
 func AddressStoreKey(addr Address) []byte {
 	return append([]byte(accountStoreKey), addr.Bytes()...)
 }
@@ -289,7 +289,7 @@ func (add Address) MarshalJSON() ([]byte, error) {
 	return json.Marshal(add.String())
 }
 
-// 将Bech32编码的地址Json进行UnMarshal
+// UnmarshalJSON 将Bech32编码的地址Json进行UnMarshal
 func (add *Address) UnmarshalJSON(bech32Addr []byte) error {
 	var s string
 	err := json.Unmarshal(bech32Addr, &s)
@@ -342,7 +342,7 @@ type TxTransfer struct {
 //	Receivers []TransItem `json:"receivers"` // 接收集合
 //}
 
-// 签名字节
+// GetSignData 签名字节
 func (tx TxTransfer) GetSignData() (ret []byte) {
 	for _, sender := range tx.Senders {
 		ret = append(ret, sender.Address...)
@@ -453,7 +453,7 @@ func ParseCoins(coinsStr string) (coins Coins, err error) {
 
 	return coins, nil
 }
-// Parse QOS and QSCs from string
+// NewParseCoins Parse QOS and QSCs from string
 // str example : 100qos,100qstar
 func NewParseCoins(str string) (BigInt, QSCs, error) {
 	if len(str) == 0 {
@@ -560,7 +560,7 @@ type QOSAccount struct {
 	QSCs        QSCs   `json:"qscs"` // varied QSCs
 }
 
-//only need the following arguments, it`s enough!
+// QSCtransferSendStr only need the following arguments, it`s enough!
 func QSCtransferSendStr(addrto, coinstr, privkey, chainid string) string {
 	jasonpayload, err := QSCCreateSignedTransfer(addrto, coinstr, privkey, chainid)
 	if err != nil {
@@ -863,20 +863,20 @@ func (tx AuctionTx) GetSignData() (ret []byte) {
 
 
 
-//成为广告商
-//privatekey             //用户私钥
-//coinsType              //押金币种
-//coinAmount             //押金数量
-//qscchainid             //chainid
+// AdvertisersTrue 成为广告商
+// privatekey             //用户私钥
+// coinsType              //押金币种
+// coinAmount             //押金数量
+// qscchainid             //chainid
 func AdvertisersTrue( privatekey,  coinsType, coinAmount,qscchainid string) string {
 	return Advertisers(coinAmount,privatekey,coinsType,"2",qscchainid)
 }
 
-//成为非广告商 赎回押金
-//privatekey             //用户私钥
-//coinsType              //押金币种
-//coinAmount             //押金数量
-//qscchainid             //chainid
+// AdvertisersFalse 成为非广告商 赎回押金
+// privatekey             //用户私钥
+// coinsType              //押金币种
+// coinAmount             //押金数量
+// qscchainid             //chainid
 func AdvertisersFalse( privatekey,  coinsType, coinAmount,qscchainid string) string {
 	return Advertisers(coinAmount,privatekey,coinsType,"1",qscchainid)
 }
@@ -891,12 +891,12 @@ func GetTx(tx string)string{
     return string(txhashs)
 }
 
-// acutionAd 竞拍广告
-//articleHash            //广告位标识
-//privatekey             //用户私钥
-//coinsType              //竞拍币种
-//coinAmount             //竞拍数量
-//qscchainid             //chainid
+// AcutionAd 竞拍广告
+// articleHash            //广告位标识
+// privatekey             //用户私钥
+// coinsType              //竞拍币种
+// coinAmount             //竞拍数量
+// qscchainid             //chainid
 func AcutionAd( articleHash, privatekey,  coinsType, coinAmount,qscchainid string) string {
 	var result ResultInvest
 	result.Code = ResultCodeSuccess
@@ -972,7 +972,7 @@ func (tx ExtractTx) GetSignData() (ret []byte) {
 
 
 
-//广告商押金或赎回
+// Extract 广告商押金或赎回
 func Extract( amount, privatekey, cointype,qscchainid string) string {
 	var result ResultInvest
 	result.Code = ResultCodeSuccess
@@ -1033,7 +1033,7 @@ func extract( coins, privatekey, cointype,qscchainid string) (*TxStd, string) {
 	return tx2, ""
 }
 
-// Parse flags from string, Senders, eg: Arya,10qos,100qstar. multiple users separated by ';'
+// ParseTransItem Parse flags from string, Senders, eg: Arya,10qos,100qstar. multiple users separated by ';'
 func ParseTransItem(str string) (TransItems, error) {
 	items := make(TransItems, 0)
 	tis := strings.Split(str, ";")
