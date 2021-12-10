@@ -34,6 +34,15 @@ var (
 		},
 	}
 
+	ethGetPendingNonceAtCmd = &cobra.Command{
+		Use:   "getPendingNonceAt",
+		Short: "getPendingNonceAt cli command",
+		Run: func(cmd *cobra.Command, args []string) {
+			res := eth.GetPendingNonceAt(rootDir, node, fromName, password)
+			cmd.Println(res)
+		},
+	}
+
 	ethCreateAccountCmd = &cobra.Command{
 		Use:   "createAccount",
 		Short: "createAccount cli command",
@@ -91,6 +100,11 @@ func init() {
 	ethTransferERC20Cmd.PersistentFlags().StringVar(&gasPrice, "gasPrice", "", "gasPrice")
 	ethTransferERC20Cmd.PersistentFlags().Int64Var(&gasLimit, "gasLimit", 0, "gasLimit")
 
+	ethGetPendingNonceAtCmd.PersistentFlags().StringVar(&rootDir, "rootDir", "", "rootDir")
+	ethGetPendingNonceAtCmd.PersistentFlags().StringVar(&name, "name", "", "name")
+	ethGetPendingNonceAtCmd.PersistentFlags().StringVar(&password, "password", "", "password")
+	ethGetPendingNonceAtCmd.PersistentFlags().StringVar(&mnemonic, "mnemonic", "", "mnemonic")
+
 	ethGetAccountCmd.PersistentFlags().StringVar(&node, "node", "", "node")
 	ethGetAccountCmd.PersistentFlags().StringVar(&addr, "addr", "", "addr")
 
@@ -108,6 +122,7 @@ func init() {
 
 	ethCmd.AddCommand(ethTransferETHCmd)
 	ethCmd.AddCommand(ethTransferERC20Cmd)
+	ethCmd.AddCommand(ethGetPendingNonceAtCmd)
 	ethCmd.AddCommand(ethCreateAccountCmd)
 	ethCmd.AddCommand(ethListLocalAccountCmd)
 	ethCmd.AddCommand(ethGetAccountCmd)
