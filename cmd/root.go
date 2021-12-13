@@ -31,6 +31,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(ethCmd)
+	rootCmd.AddCommand(qosCmd)
 }
 
 func Execute() {
