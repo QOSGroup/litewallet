@@ -32,6 +32,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(ethCmd)
 	rootCmd.AddCommand(qosCmd)
+	rootCmd.AddCommand(cosmosCmd)
 }
 
 func Execute() {
