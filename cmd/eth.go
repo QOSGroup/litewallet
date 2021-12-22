@@ -7,10 +7,10 @@ import (
 
 // ethCmd
 var (
-	addr, name, mnemonic, tokenAddr, tokenValue                 string
-	rootDir, node, fromName, password, toAddr, gasPrice, amount string
-	gasLimit                                                    int64
-	ethCmd                                                      = &cobra.Command{
+	addr, name, mnemonic, tokenAddr, tokenValue, oldpass, newpass string
+	rootDir, node, fromName, password, toAddr, gasPrice, amount   string
+	gasLimit                                                      int64
+	ethCmd                                                        = &cobra.Command{
 		Use:   "eth",
 		Short: "eth cli command",
 	}
