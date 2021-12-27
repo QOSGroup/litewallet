@@ -10,6 +10,7 @@ var (
 	addr, name, mnemonic, tokenAddr, tokenValue, oldpass, newpass        string
 	rootDir, node, chainID, fromName, password, toAddr, gasPrice, amount string
 	toStr, coinStr, feeStr, broadcastMode                                string
+	delegatorName, delegatorAddr, validatorAddr, delegationCoinStr       string
 	gasLimit                                                             int64
 	ethCmd                                                               = &cobra.Command{
 		Use:   "eth",

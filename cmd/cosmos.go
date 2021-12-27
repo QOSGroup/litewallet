@@ -75,6 +75,25 @@ var (
 			cmd.Println(res)
 		},
 	}
+
+	cosmosDelegateCmd = &cobra.Command{
+		Use:   "delegate",
+		Short: "delegate cli command",
+		Run: func(cmd *cobra.Command, args []string) {
+			res := sdksource.Delegate(rootDir, node, chainID, delegatorName, password, delegatorAddr, validatorAddr,
+				delegationCoinStr, feeStr, broadcastMode)
+			cmd.Println(res)
+		},
+	}
+
+	cosmosGetDelegationSharesCmd = &cobra.Command{
+		Use:   "getDelegationShares",
+		Short: "getDelegationShares cli command",
+		Run: func(cmd *cobra.Command, args []string) {
+			res := sdksource.GetDelegationShares(rootDir, node, chainID, delegatorAddr, validatorAddr)
+			cmd.Println(res)
+		},
+	}
 )
 
 func init() {
@@ -110,6 +129,23 @@ func init() {
 	cosmosTransferCmd.PersistentFlags().StringVar(&feeStr, "feeStr", "", "feeStr")
 	cosmosTransferCmd.PersistentFlags().StringVar(&broadcastMode, "broadcastMode", "", "broadcastMode")
 
+	cosmosDelegateCmd.PersistentFlags().StringVar(&rootDir, "rootDir", "", "rootDir")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&node, "node", "", "node")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&chainID, "chainID", "", "chainID")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&delegatorName, "delegatorName", "", "delegatorName")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&password, "password", "", "password")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&delegatorAddr, "delegatorAddr", "", "delegatorAddr")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&validatorAddr, "validatorAddr", "", "validatorAddr")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&delegationCoinStr, "delegationCoinStr", "", "delegationCoinStr")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&feeStr, "feeStr", "", "feeStr")
+	cosmosDelegateCmd.PersistentFlags().StringVar(&broadcastMode, "broadcastMode", "", "broadcastMode")
+
+	cosmosGetDelegationSharesCmd.PersistentFlags().StringVar(&rootDir, "rootDir", "", "rootDir")
+	cosmosGetDelegationSharesCmd.PersistentFlags().StringVar(&node, "node", "", "node")
+	cosmosGetDelegationSharesCmd.PersistentFlags().StringVar(&chainID, "chainID", "", "chainID")
+	cosmosGetDelegationSharesCmd.PersistentFlags().StringVar(&delegatorAddr, "delegatorAddr", "", "delegatorAddr")
+	cosmosGetDelegationSharesCmd.PersistentFlags().StringVar(&validatorAddr, "validatorAddr", "", "validatorAddr")
+
 	cosmosCmd.AddCommand(cosmosGetAccountCmd)
 	cosmosCmd.AddCommand(cosmosCreateSeedCmd)
 	cosmosCmd.AddCommand(cosmosCreateAccountCmd)
@@ -117,4 +153,6 @@ func init() {
 	cosmosCmd.AddCommand(cosmosUpdateKeyCmd)
 	cosmosCmd.AddCommand(cosmosWalletAddressCheckCmd)
 	cosmosCmd.AddCommand(cosmosTransferCmd)
+	cosmosCmd.AddCommand(cosmosDelegateCmd)
+	cosmosCmd.AddCommand(cosmosGetDelegationSharesCmd)
 }
