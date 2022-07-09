@@ -7,6 +7,8 @@ require (
 	github.com/aristanetworks/goarista v0.0.0-20190704150520-f44d68189fd7 // indirect
 	github.com/btcsuite/btcd v0.0.0-20190629003639-c26ffa870fd8
 	github.com/btcsuite/btcutil v0.0.0-20190425235716-9e5f4b9a998d
+	github.com/casbin/casbin v1.9.1 // indirect
+	github.com/casbin/casbin/v2 v2.50.1 // indirect
 	github.com/cespare/cp v1.1.1 // indirect
 	github.com/cosmos/cosmos-sdk v0.34.1
 	github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d
@@ -20,6 +22,7 @@ require (
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/rjeczalik/notify v0.9.2 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.4.0
 	github.com/status-im/keycard-go v0.0.0-20190424133014-d95853db0f48 // indirect
