@@ -130,12 +130,17 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 	//	log.Fatal(err)
 	//}
 	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
-	gasAmount, err := strconv.ParseFloat(gasPrice, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	gasgwei := gasAmount * 1000000000
-	bigGas := big.NewInt(int64(gasgwei))
+	//gasAmount, err := strconv.ParseFloat(gasPrice, 64)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//gasgwei := gasAmount * 1000000000
+
+	var v big.Int
+	gasAmount, _ := v.SetString(gasPrice, 10)
+
+	gasgwei := gasAmount.Mul(gasAmount, big.NewInt(1000000000))
+	bigGas := gasgwei
 
 	//the receiptant address
 	toAddress := common.HexToAddress(toAddr)
