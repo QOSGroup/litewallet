@@ -1,6 +1,9 @@
 package eth
 
 import (
+	"encoding/base64"
+	"encoding/hex"
+	"github.com/stretchr/testify/assert"
 	"os/user"
 	"testing"
 )
@@ -88,4 +91,12 @@ func TestSpeedTransferETH(t *testing.T) {
 	pendingNonce := int64(10)
 	output := SpeedTransferETH(rootDir, node, name, password, toAddr, gasPrice, amount, gasLimit, pendingNonce)
 	t.Log(output)
+}
+
+func TestB64Convert(t *testing.T) {
+	b64str := "pqG7LyWYEZcPMGLq2Euna7Txi8A65fWQ4dwLrJbR+E4="
+	hashB64, err := base64.StdEncoding.DecodeString(b64str)
+	assert.NoError(t, err)
+	hash := hex.EncodeToString(hashB64)
+	t.Log(hash)
 }
