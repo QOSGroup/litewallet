@@ -264,12 +264,16 @@ func SpeedTransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amoun
 		log.Fatal(err)
 	}
 	//amount convertion to wei
-	Amount, err := strconv.ParseFloat(amount, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	Amountwei := Amount * 1000000000000000000
-	value := big.NewInt(int64(Amountwei))
+	//Amount, err := strconv.ParseFloat(amount, 64)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//Amountwei := Amount * 1000000000000000000
+	//value := big.NewInt(int64(Amountwei))
+
+	var v big.Int
+	value, _ := v.SetString(amount, 10)
+	value.Mul(value, big.NewInt(int64(1000000000000000000)))
 
 	//value := big.NewInt(amount)
 
