@@ -44,14 +44,6 @@ func TransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amount str
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	//amount convertion to wei
-	//Amount, err := strconv.ParseFloat(amount, 64)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//Amountwei := Amount * 1000000000000000000
-	//value := big.NewInt(int64(Amountwei))
 	var v big.Int
 	value, _ := v.SetString(amount, 10)
 	value.Mul(value, big.NewInt(int64(1000000000000000000)))
@@ -124,17 +116,6 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 
 	//value is zero here for ERC20 tx
 	value := big.NewInt(0) // in wei (0 eth)
-	//set the amount and gasPrice for this Tx
-	//gasPrice, err := client.SuggestGasPrice(context.Background())
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
-	//gasAmount, err := strconv.ParseFloat(gasPrice, 64)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//gasgwei := gasAmount * 1000000000
 
 	var v big.Int
 	gasAmount, _ := v.SetString(gasPrice, 10)
@@ -164,15 +145,6 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 	}
 	digit := int(decimals)
 
-	//convert the tokenValue to decimals on corresponding ERC20
-	//vamount, err := strconv.ParseFloat(tokenValue,64)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//
-	//vwei := vamount*1000000000000000000
-	//vstring := strconv.FormatFloat(vdigit.String(), 'f', -1, 32)
-
 	vbalance := new(big.Float)
 	vbalance.SetString(tokenValue)
 
@@ -188,14 +160,6 @@ func TransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, tokenVa
 	data = append(data, methodID...)
 	data = append(data, paddedAddress...)
 	data = append(data, paddedAmount...)
-
-	//gasLimit, err := client.EstimateGas(context.Background(), ethereum.CallMsg{
-	//	To: &tokenAddress,
-	//	Data: data,
-	//})
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
 
 	//create a transaction
 	gasLimit := uint64(GasLimit)
@@ -264,13 +228,6 @@ func SpeedTransferETH(rootDir, node, fromName, password, toAddr, gasPrice, amoun
 		log.Fatal(err)
 	}
 	//amount convertion to wei
-	//Amount, err := strconv.ParseFloat(amount, 64)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//Amountwei := Amount * 1000000000000000000
-	//value := big.NewInt(int64(Amountwei))
-
 	var v big.Int
 	value, _ := v.SetString(amount, 10)
 	value.Mul(value, big.NewInt(int64(1000000000000000000)))
@@ -331,12 +288,8 @@ func SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, to
 	}
 	//value is zero here for ERC20 tx
 	value := big.NewInt(0) // in wei (0 eth)
-	//set the amount and gasPrice for this Tx
-	//gasPrice, err := client.SuggestGasPrice(context.Background())
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//gasPrice fethced from ethgasstation then convert the gasPrice of string to gwei
+
+	//gasPrice fetched from ethgasstation then convert the gasPrice of string to gwei
 	gasAmount, err := strconv.ParseFloat(gasPrice, 64)
 	if err != nil {
 		log.Fatal(err)
@@ -403,7 +356,7 @@ func SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, to
 
 }
 
-//GetNonceAt return the nonce at latest block under the sepcific account.
+// GetNonceAt return the nonce at latest block under the sepcific account.
 func GetNonceAt(rootDir, node, fromName, password string) int64 {
 	//fromName generated from keyspace locally
 	if fromName == "" {
