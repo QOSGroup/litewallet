@@ -289,13 +289,17 @@ func SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, to
 	//value is zero here for ERC20 tx
 	value := big.NewInt(0) // in wei (0 eth)
 
+	var v big.Int
+	bigGas, _ := v.SetString(gasPrice, 10)
+	bigGas.Mul(bigGas, big.NewInt(int64(1000000000)))
+
 	//gasPrice fetched from ethgasstation then convert the gasPrice of string to gwei
-	gasAmount, err := strconv.ParseFloat(gasPrice, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	gasgwei := gasAmount * 1000000000
-	bigGas := big.NewInt(int64(gasgwei))
+	//gasAmount, err := strconv.ParseFloat(gasPrice, 64)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//gasgwei := gasAmount * 1000000000
+	//bigGas := big.NewInt(int64(gasgwei))
 
 	//the receiptant address
 	toAddress := common.HexToAddress(toAddr)
