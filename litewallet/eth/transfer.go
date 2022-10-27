@@ -313,12 +313,15 @@ func SpeedTransferERC20(rootDir, node, fromName, password, toAddr, tokenAddr, to
 	paddedAddress := common.LeftPadBytes(toAddress.Bytes(), 32)
 
 	//convert the tokenValue to wei in ERC20
-	vamount, err := strconv.ParseFloat(tokenValue, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	vwei := vamount * 1000000000000000000
-	vstring := strconv.FormatFloat(vwei, 'f', -1, 32)
+	//vamount, err := strconv.ParseFloat(tokenValue, 64)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//vwei := vamount * 1000000000000000000
+	var vamount big.Int
+	bigvv, _ := vamount.SetString(tokenValue, 10)
+	bigvv.Mul(bigvv, big.NewInt(int64(1000000000)))
+	vstring := bigvv.String()
 
 	Tamount := new(big.Int)
 	//1000 token to transfer
