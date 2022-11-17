@@ -76,6 +76,7 @@ const (
 	FlagReverse          = "reverse"
 	FlagTip              = "tip"
 	FlagAux              = "aux"
+	FlagFeeAccount       = "fee-account"
 	FlagOutput           = tmcli.OutputFlag
 
 	// Tendermint logging flags
