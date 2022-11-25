@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"syscall"
 	"testing"
 	"time"
@@ -577,4 +578,26 @@ func state(nVals int, height int64) (sm.State, dbm.DB, []types.PrivValidator) {
 		}
 	}
 	return s, stateDB, privVals
+}
+
+func TestLBMGensisState(t *testing.T) {
+	c := cfg.DefaultConfig()
+	userHome, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	c.SetRoot(filepath.Join(userHome, ".simapp/simapp3"))
+	require.FileExists(t, c.GenesisFile())
+	genDoc, err := types.GenesisDocFromFile(c.GenesisFile())
+	require.NoError(t, err)
+	require.Equal(t, "sim", genDoc.ChainID)
+
+	stateDB, err := DefaultDBProvider(&DBContext{ID: "state", Config: c})
+	require.NoError(t, err)
+
+	genesisDocProvider := DefaultGenesisDocProviderFunc(c)
+	state, genDoc, err := LoadStateFromDBOrGenesisDocProvider(stateDB, genesisDocProvider)
+	t.Logf("fetch validators from state %v with validators number of %d", state.Validators, len(state.Validators.Validators))
+
+	require.NoError(t, err)
 }
