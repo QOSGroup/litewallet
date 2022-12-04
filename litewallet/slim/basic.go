@@ -10,14 +10,13 @@ import (
 	"log"
 )
 
-
 type ResultCreateAccount struct {
 	PubKey   string `json:"pubKey"`
 	PrivKey  string `json:"privKey"`
 	Addr     string `json:"addr"`
 	Mnemonic string `json:"mnemonic"`
 	Type     string `json:"type"`
-	Denom    string	`json:"denom"`
+	Denom    string `json:"denom"`
 }
 
 type PrivkeyAmino struct {
@@ -34,8 +33,8 @@ const (
 	// Bech32 prefixes
 	//Bech32PrefixAccPub = "cosmosaccpub"
 	AccountResultType = "local"
-	DenomQOS         = "qos"
-	PREF_ADD = "address"
+	DenomQOS          = "qos"
+	PREF_ADD          = "address"
 )
 
 func AccountCreate(password string) *ResultCreateAccount {
@@ -83,7 +82,7 @@ func AccountCreate(password string) *ResultCreateAccount {
 	return result
 }
 
-//convert the output to json string format
+// convert the output to json string format
 func AccountCreateStr(password string) string {
 	acc := AccountCreate(password)
 	result, _ := respwrap.ResponseWrapper(Cdc, acc, nil)
@@ -94,8 +93,7 @@ func AccountCreateStr(password string) string {
 
 func AccountRecoverStr(mncode, password string) string {
 	if len(password) == 0 {
-		//todo not use the plain text pass word
-		password = "DNWTTY"
+		password = ""
 	}
 	// add mnemonics validation
 	if bip39local.IsMnemonicValid(mncode) == false {
@@ -178,7 +176,7 @@ func PubAddrRetrievalStr(s string) string {
 	return out
 }
 
-//new account result with field of Denom
+// new account result with field of Denom
 type AccountKeyOut struct {
 	PubKey   string `json:"pubKey"`
 	PrivKey  string `json:"privKey"`
@@ -188,7 +186,7 @@ type AccountKeyOut struct {
 	Denom    string `json:"denom"`
 }
 
-//add new function for Account Creation with seed input
+// add new function for Account Creation with seed input
 func AccountCreateFromSeed(mncode string) string {
 	// add mnemonics validation
 	if bip39local.IsMnemonicValid(mncode) == false {
@@ -239,7 +237,7 @@ func AccountCreateFromSeed(mncode string) string {
 
 }
 
-//Local Tx generation
+// Local Tx generation
 func LocalTxGen(fromStr, toStr, coinstr, chainid, privkey string, nonce int64) []byte {
 	sendersStr := fromStr + `,` + coinstr
 	senders, err := ParseTransItem(sendersStr)
