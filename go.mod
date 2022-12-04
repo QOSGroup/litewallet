@@ -13,9 +13,12 @@ require (
 	github.com/google/uuid v1.0.0
 	github.com/olekukonko/tablewriter v0.0.2-0.20190409134802-7e037d187b0c
 	github.com/pkg/errors v0.8.1
+	github.com/prometheus/client_golang v0.9.3
+	github.com/prometheus/common v0.4.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.4.0
+	github.com/stretchr/testify v1.4.0
 	github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15
 	github.com/tendermint/ed25519 v0.0.0-20171027050219-d8387025d2b9
 	github.com/tendermint/go-amino v0.14.1
@@ -74,9 +77,7 @@ require (
 	github.com/pelletier/go-toml v1.2.0 // indirect
 	github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v0.9.3 // indirect
 	github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90 // indirect
-	github.com/prometheus/common v0.4.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084 // indirect
 	github.com/prometheus/tsdb v0.7.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20180503174638-e2704e165165 // indirect
@@ -90,7 +91,6 @@ require (
 	github.com/status-im/keycard-go v0.0.0-20190424133014-d95853db0f48 // indirect
 	github.com/steakknife/bloomfilter v0.0.0-20180922174646-6819c0d2a570 // indirect
 	github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3 // indirect
-	github.com/stretchr/testify v1.4.0 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20190923125748-758128399b1d // indirect
 	github.com/tendermint/btcd v0.1.1 // indirect
 	github.com/tendermint/iavl v0.12.1 // indirect
