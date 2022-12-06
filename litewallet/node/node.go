@@ -353,30 +353,30 @@ func doHandshake(
 	return nil
 }
 
-func logNodeStartupInfo(state sm.State, pubKey crypto.PubKey, logger, consensusLogger log.Logger) {
-	// Log the version info.
-	logger.Info("Version info",
-		"software", version.OCCoreSemVer,
-		"block", version.BlockProtocol,
-		"p2p", version.P2PProtocol,
-	)
-
-	// If the state and software differ in block version, at least log it.
-	if state.Version.Consensus.Block != version.BlockProtocol {
-		logger.Info("Software and state have different block protocols",
-			"software", version.BlockProtocol,
-			"state", state.Version.Consensus.Block,
-		)
-	}
-
-	addr := pubKey.Address()
-	// Log whether this node is a validator or an observer
-	if state.Validators.HasAddress(addr) {
-		consensusLogger.Info("This node is a validator", "addr", addr, "pubKey", pubKey)
-	} else {
-		consensusLogger.Info("This node is not a validator", "addr", addr, "pubKey", pubKey)
-	}
-}
+//func logNodeStartupInfo(state sm.State, pubKey crypto.PubKey, logger, consensusLogger log.Logger) {
+//	// Log the version info.
+//	logger.Info("Version info",
+//		"software", version.OCCoreSemVer,
+//		"block", version.BlockProtocol,
+//		"p2p", version.P2PProtocol,
+//	)
+//
+//	// If the state and software differ in block version, at least log it.
+//	if state.Version.Consensus.Block != version.BlockProtocol {
+//		logger.Info("Software and state have different block protocols",
+//			"software", version.BlockProtocol,
+//			"state", state.Version.Consensus.Block,
+//		)
+//	}
+//
+//	addr := pubKey.Address()
+//	// Log whether this node is a validator or an observer
+//	if state.Validators.HasAddress(addr) {
+//		consensusLogger.Info("This node is a validator", "addr", addr, "pubKey", pubKey)
+//	} else {
+//		consensusLogger.Info("This node is not a validator", "addr", addr, "pubKey", pubKey)
+//	}
+//}
 
 func onlyValidatorIsUs(state sm.State, pubKey crypto.PubKey) bool {
 	if state.Validators.Size() > 1 {
@@ -783,7 +783,7 @@ func NewNode(config *cfg.Config,
 	// app may modify the validator set, specifying ourself as the only validator.
 	fastSync := config.FastSyncMode && !onlyValidatorIsUs(state, pubKey)
 
-	logNodeStartupInfo(state, pubKey, logger, consensusLogger)
+	//logNodeStartupInfo(state, pubKey, logger, consensusLogger)
 
 	csMetrics, p2pMetrics, memplMetrics, smMetrics := metricsProvider(genDoc.ChainID)
 
