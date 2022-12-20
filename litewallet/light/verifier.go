@@ -31,10 +31,10 @@ var (
 // maxClockDrift defines how much untrustedHeader.Time can drift into the
 // future.
 func VerifyNonAdjacent(
-	trustedHeader *types.SignedHeader, // height=X
-	trustedVoters *types.VoterSet, // height=X or height=X+1
+	trustedHeader *types.SignedHeader,   // height=X
+	trustedVoters *types.VoterSet,       // height=X or height=X+1
 	untrustedHeader *types.SignedHeader, // height=Y
-	untrustedVoters *types.VoterSet, // height=Y
+	untrustedVoters *types.VoterSet,     // height=Y
 	trustingPeriod time.Duration,
 	now time.Time,
 	maxClockDrift time.Duration,
@@ -91,62 +91,62 @@ func VerifyNonAdjacent(
 //
 // maxClockDrift defines how much untrustedHeader.Time can drift into the
 // future.
-func VerifyAdjacent(
-	trustedHeader *types.SignedHeader, // height=X
-	untrustedHeader *types.SignedHeader, // height=X+1
-	untrustedVoters *types.VoterSet, // height=X+1
-	trustingPeriod time.Duration,
-	now time.Time,
-	maxClockDrift time.Duration) error {
-
-	if untrustedHeader.Height != trustedHeader.Height+1 {
-		return errors.New("headers must be adjacent in height")
-	}
-
-	if HeaderExpired(trustedHeader, trustingPeriod, now) {
-		return ErrOldHeaderExpired{trustedHeader.Time.Add(trustingPeriod), now}
-	}
-
-	if err := verifyNewHeaderAndVoters(
-		untrustedHeader, untrustedVoters,
-		trustedHeader,
-		now, maxClockDrift); err != nil {
-		return ErrInvalidHeader{err}
-	}
-
-	// Check the validator hashes are the same
-	if !bytes.Equal(untrustedHeader.ValidatorsHash, trustedHeader.NextValidatorsHash) {
-		err := fmt.Errorf("expected old header next validators (%X) to match those from new header (%X)",
-			trustedHeader.NextValidatorsHash,
-			untrustedHeader.ValidatorsHash,
-		)
-		return err
-	}
-
-	// Check the voter hashes are right
-	if !bytes.Equal(untrustedHeader.VotersHash, untrustedVoters.Hash()) {
-		err := fmt.Errorf("expected new header's voters hash (%X) to calculated voters' hash (%X)",
-			untrustedHeader.VotersHash,
-			untrustedVoters.Hash(),
-		)
-		return err
-	}
-
-	// Ensure that +2/3 of new validators signed correctly.
-	if err := untrustedVoters.VerifyCommitLight(trustedHeader.ChainID, untrustedHeader.Commit.BlockID,
-		untrustedHeader.Height, untrustedHeader.Commit); err != nil {
-		return ErrInvalidHeader{err}
-	}
-
-	return nil
-}
+//func VerifyAdjacent(
+//	trustedHeader *types.SignedHeader, // height=X
+//	untrustedHeader *types.SignedHeader, // height=X+1
+//	untrustedVoters *types.VoterSet, // height=X+1
+//	trustingPeriod time.Duration,
+//	now time.Time,
+//	maxClockDrift time.Duration) error {
+//
+//	if untrustedHeader.Height != trustedHeader.Height+1 {
+//		return errors.New("headers must be adjacent in height")
+//	}
+//
+//	if HeaderExpired(trustedHeader, trustingPeriod, now) {
+//		return ErrOldHeaderExpired{trustedHeader.Time.Add(trustingPeriod), now}
+//	}
+//
+//	if err := verifyNewHeaderAndVoters(
+//		untrustedHeader, untrustedVoters,
+//		trustedHeader,
+//		now, maxClockDrift); err != nil {
+//		return ErrInvalidHeader{err}
+//	}
+//
+//	// Check the validator hashes are the same
+//	if !bytes.Equal(untrustedHeader.ValidatorsHash, trustedHeader.NextValidatorsHash) {
+//		err := fmt.Errorf("expected old header next validators (%X) to match those from new header (%X)",
+//			trustedHeader.NextValidatorsHash,
+//			untrustedHeader.ValidatorsHash,
+//		)
+//		return err
+//	}
+//
+//	// Check the voter hashes are right
+//	if !bytes.Equal(untrustedHeader.VotersHash, untrustedVoters.Hash()) {
+//		err := fmt.Errorf("expected new header's voters hash (%X) to calculated voters' hash (%X)",
+//			untrustedHeader.VotersHash,
+//			untrustedVoters.Hash(),
+//		)
+//		return err
+//	}
+//
+//	// Ensure that +2/3 of new validators signed correctly.
+//	if err := untrustedVoters.VerifyCommitLight(trustedHeader.ChainID, untrustedHeader.Commit.BlockID,
+//		untrustedHeader.Height, untrustedHeader.Commit); err != nil {
+//		return ErrInvalidHeader{err}
+//	}
+//
+//	return nil
+//}
 
 // Verify combines both VerifyAdjacent and VerifyNonAdjacent functions.
 func Verify(
-	trustedHeader *types.SignedHeader, // height=X
-	trustedVals *types.ValidatorSet, // height=X or height=X+1
+	trustedHeader *types.SignedHeader,   // height=X
+	trustedVals *types.ValidatorSet,     // height=X or height=X+1
 	untrustedHeader *types.SignedHeader, // height=Y
-	untrustedVals *types.ValidatorSet, // height=Y
+	untrustedVals *types.ValidatorSet,   // height=Y
 	trustingPeriod time.Duration,
 	now time.Time,
 	maxClockDrift time.Duration,
