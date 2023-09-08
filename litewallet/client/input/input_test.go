@@ -40,7 +40,7 @@ func TestReadLineFromBuf(t *testing.T) {
 		buf := bufio.NewReader(fr)
 
 		_, err := readLineFromBuf(buf)
-		require.ErrorIs(t, err, io.EOF)
+		require.Error(t, err, io.EOF)
 	})
 
 	t.Run("it returns the error if it's not EOF regardles if it read something or not", func(t *testing.T) {
@@ -51,6 +51,6 @@ func TestReadLineFromBuf(t *testing.T) {
 		buf := bufio.NewReader(fr)
 
 		_, err := readLineFromBuf(buf)
-		require.ErrorIs(t, err, expectedErr)
+		require.Error(t, err, expectedErr)
 	})
 }
